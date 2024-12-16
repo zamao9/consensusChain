@@ -1,0 +1,32 @@
+{
+	"name": "consensuschain",
+	"private": true,
+	"version": "0.0.0",
+	"type": "module",
+	"homepage": "https://zamao9.github.io/consensusChain/",
+	"scripts": {
+		"dev": "vite",
+		"build": "vite build",
+		"preview": "vite preview",
+		"predeploy": "npm run build",
+		"deploy": "gh-pages -d dist",
+		"deployAlt": "gh-pages -d dist --remote originAlt"
+	},
+	"dependencies": {
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
+		"sass": "^1.83.0"
+	},
+	"devDependencies": {
+		"@eslint/js": "^9.15.0",
+		"@types/react": "^18.3.12",
+		"@types/react-dom": "^18.3.1",
+		"@vitejs/plugin-react": "^4.3.4",
+		"eslint": "^9.15.0",
+		"eslint-plugin-react": "^7.37.2",
+		"eslint-plugin-react-hooks": "^5.0.0",
+		"eslint-plugin-react-refresh": "^0.4.14",
+		"globals": "^15.12.0",
+		"vite": "^6.0.1"
+	}
+}
