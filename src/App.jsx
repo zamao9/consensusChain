@@ -1,7 +1,8 @@
-import './App.css';
+import './App.sass';
+import AppScreen from './components/appScreen/AppScreen';
 
 function App() {
-	return <></>;
+	return <AppScreen />;
 }
 
 export default App;
