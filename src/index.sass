@@ -49,6 +49,7 @@ body
 
 .section
 	background-color: $c-bg-main
+	padding-top: 160px
 
 .container
 	width: 100%
@@ -75,6 +76,23 @@ body
 svg
 	flex-shrink: 0
 	stroke: $c-text
+
+.button
+	display: flex
+	justify-content: center
+	align-items: center
+	width: 100%
+	height: 100%
+	@include button
+	color: $c-text
+	font-family: $f-global
+	font-size: 16px
+	font-weight: 600
+	&.disabled
+		user-select: none
+		background: transparent
+		box-shadow: none
+		color: $c-text-disabled
 
 /* Modificators */
 .button--reset
