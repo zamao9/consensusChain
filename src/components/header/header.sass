@@ -3,10 +3,19 @@
 .header
 	position: fixed
 	z-index: 1
-	top: 15px
-	right: 15px
+	top: 0
+	left: 50%
+	transform: translateX(-50%)
+	display: flex
+	justify-content: flex-end
+	align-items: center
+	width: 100%
+	max-width: 470px
+	padding: 15px
+	background-color: index.$c-bg-main
+	box-shadow: 0 0 10px 10px index.$c-bg-main
 
-	&__wrapper
+	&__profile
 		display: flex
 		align-items: center
 		justify-content: center
@@ -15,7 +24,6 @@
 	.balance
 		position: relative
 		z-index: -1
-		// right: -100%
 		display: flex
 		align-items: center
 		justify-content: center
@@ -28,6 +36,7 @@
 		border-radius: 7px 0 0 7px
 		border: 1px solid index.$c-stroke
 		border-right: 0
+		animation: balance-translate 2s ease
 
 	.profile
 		display: flex
@@ -37,6 +46,7 @@
 		height: 56px
 		@include index.border15
 		background-color: index.$c-bg-900
+		animation: opacity 0.6s ease
 
 		&__button
 			display: flex
@@ -45,5 +55,10 @@
 			width: 40px
 			height: 40px
 			@include index.button
+			transition: 0.2s ease
+			cursor: pointer
 			&.active
 				@include index.button-active
+			@media (any-hover:hover)
+				&:hover
+					@include index.button-hover

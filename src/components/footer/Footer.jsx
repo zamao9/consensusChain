@@ -1,22 +1,21 @@
 import { AnswersIcon, QuestionsIcon, TasksIcon } from '../../constants/SvgIcons';
 import './footer.sass';
-import FooterItems from './footerItems/FooterItems';
 
-const Footer = ({ curItem, setItem }) => {
+const Footer = ({ curItem, setItem, setPage }) => {
 	const footerItems = [
 		{
 			key: 1,
-			label: 'questions',
+			label: 'ask-page',
 			svg: <QuestionsIcon />,
 		},
 		{
 			key: 2,
-			label: 'answers',
+			label: 'questions-page',
 			svg: <AnswersIcon />,
 		},
 		{
 			key: 3,
-			label: 'tasks',
+			label: 'tasks-page',
 			svg: <TasksIcon />,
 		},
 	];
@@ -24,17 +23,22 @@ const Footer = ({ curItem, setItem }) => {
 	return (
 		<footer className='footer'>
 			{/* Footer Items */}
-			<ul className='footer__list'>
-				{footerItems.map((element) => (
-					<FooterItems
-						curItem={curItem}
-						setItem={setItem}
-						svg={element.svg}
-						key={element.key}
-						label={element.label}
-					/>
-				))}
-			</ul>
+			<div className='footer__wrapper'>
+				<ul className='footer__list'>
+					{footerItems.map((element) => (
+						<li
+							key={element.key}
+							className={`footer__items ${curItem === element.label ? 'active' : ''}`}
+							onClick={() => {
+								setItem(element.label);
+								setPage(element.label);
+							}}
+						>
+							{element.svg}
+						</li>
+					))}
+				</ul>
+			</div>
 		</footer>
 	);
 };

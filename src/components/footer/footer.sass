@@ -2,19 +2,26 @@
 
 .footer
 	position: fixed
-	bottom: 15px
-	left: 50%
-	transform: translateX(-50%)
-	display: flex
-	align-items: center
-	min-width: 160px
-	width: fit-content
-	height: 56px
-	padding: 0 8px
-	background-color: index.$c-bg-900
-	border-radius: 15px
-	@include index.border15
-	overflow: hidden
+	bottom: 0
+	left: 0
+	width: 100%
+	padding: 15px
+	background-color: index.$c-bg-main
+	box-shadow: 0 0 10px 10px index.$c-bg-main
+	&__wrapper
+		position: relative
+		display: flex
+		align-items: center
+		min-width: 160px
+		width: fit-content
+		height: 56px
+		padding: 0 8px
+		margin: 0 auto
+		background-color: index.$c-bg-900
+		border-radius: 15px
+		@include index.border15
+		overflow: hidden
+		animation: opacity 2s ease
 
 	&__list
 		display: flex
@@ -32,6 +39,11 @@
 		padding: 8px
 		@include index.button
 		transition: 0.2s ease
+		cursor: pointer
+		animation: footer-items 2s ease
 		&.active
 			@include index.button-active
 			color: index.$c-text-active
+		@media (any-hover:hover)
+			&:hover
+				@include index.button-hover

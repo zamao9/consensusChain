@@ -1,12 +1,14 @@
 import Footer from '../footer/Footer';
 import Header from '../header/Header';
 import Marquees from '../marquees/Marquees';
-import QuestionPage from '../questionPage/QuestionPage';
+import AskPage from '../askPage/AskPage';
 import './appScreen.sass';
 import { useState } from 'react';
+import QuestionsPage from '../questionsPage/QuestionsPage';
 
 const AppScreen = () => {
-	const [curItem, setItem] = useState('questions');
+	const [curItem, setItem] = useState('ask-page'); // активный элемент навигации
+	const [curPage, setPage] = useState('ask-page'); // активная страница
 
 	return (
 		<section className='section app-screen'>
@@ -15,13 +17,15 @@ const AppScreen = () => {
 				{/* <Marquees /> */}
 
 				{/* Header */}
-				<Header />
+				<Header curItem={curItem} setItem={setItem} />
 
-				{/* Question Page */}
-				<QuestionPage />
+				{/* Страница Ask */}
+				{curPage === 'ask-page' && <AskPage />}
+				{/* Страница Questions */}
+				{curPage === 'questions-page' && <QuestionsPage />}
 
 				{/* Footer */}
-				<Footer curItem={curItem} setItem={setItem} />
+				<Footer curItem={curItem} setItem={setItem} setPage={setPage} />
 			</div>
 		</section>
 	);

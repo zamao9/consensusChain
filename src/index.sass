@@ -33,6 +33,15 @@ $c-stroke-active: #45442A
 	border: 1px solid $c-stroke-active
 	border-radius: 7px
 	box-shadow: 2px 2px 4px rgba($c-black, 0.32) inset, -2px -2px 4px rgba($c-white, 0.16) inset
+	color: $c-text-active
+	svg
+		stroke: $c-text-active
+
+@mixin button-hover
+	box-shadow: 2px 2px 4px rgba($c-black, 0.32) inset, -2px -2px 4px rgba($c-white, 0.16) inset
+	color: $c-text-active
+	svg
+		stroke: $c-text-active
 
 @mixin border15
 	border-radius: 15px
@@ -46,10 +55,11 @@ body
 	font-size: 16px
 	font-weight: 400
 	color: $c-text
+	user-select: none
 
 .section
 	background-color: $c-bg-main
-	padding-top: 160px
+	padding-top: 130px
 
 .container
 	width: 100%
@@ -67,8 +77,10 @@ body
 
 .title
 	font-size: 18px
+	font-weight: 600
 	font-family: $f-title
 	color: $c-title
+	line-height: 18px
 
 .text
 	line-height: 140%
@@ -88,11 +100,31 @@ svg
 	font-family: $f-global
 	font-size: 16px
 	font-weight: 600
-	&.disabled
-		user-select: none
+	line-height: 16px
+	cursor: pointer
+	user-select: none
+	&:disabled
+		pointer-events: none
 		background: transparent
 		box-shadow: none
 		color: $c-text-disabled
+
+hr
+	box-sizing: border-box
+	width: 100%
+	border: 0
+	border-bottom: 1px solid $c-stroke
+	margin: 0
+
+/* Margin */
+.mt--16
+	margin-top: 16px
+.mt--32
+	margin-top: 32px
+.mb--10
+	margin-bottom: 10px
+.mb--32
+	margin-bottom: 32px
 
 /* Modificators */
 .button--reset
@@ -109,3 +141,29 @@ svg
 	overflow: hidden
 	opacity: 0
 	pointer-events: none
+
+/* Animations */
+@keyframes balance-translate
+	0%
+		right: -100%
+		opacity: 0
+	100%
+		right: 0
+		opacity: 1
+@keyframes opacity
+	0%
+		opacity: 0
+	100%
+		opacity: 1
+@keyframes opacity
+	0%
+		opacity: 0
+	100%
+		opacity: 1
+@keyframes footer-items
+	0%
+		position: relative
+		left: -100%
+	100%
+		position: relative
+		left: 0

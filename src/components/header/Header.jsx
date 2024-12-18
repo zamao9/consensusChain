@@ -7,7 +7,7 @@ const Header = () => {
 
 	return (
 		<header className='header'>
-			<div className='header__wrapper'>
+			<div className='header__profile'>
 				<div className='balance'>
 					<span>293 TON</span>
 				</div>
