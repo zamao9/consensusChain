@@ -3,52 +3,67 @@ import './askPage.sass';
 
 const AskPage = () => {
 	//Массив с тегами для фильтров
-	const filtersItems = [
+	const initialItems = [
 		{
 			key: 1,
 			label: 'Business',
+			active: false,
 		},
 		{
 			key: 2,
 			label: 'Education',
+			active: false,
 		},
 		{
 			key: 3,
 			label: 'Entertainment',
+			active: false,
 		},
 		{
 			key: 4,
 			label: 'Health',
+			active: false,
 		},
 		{
 			key: 5,
 			label: 'History',
+			active: false,
 		},
 		{
 			key: 6,
 			label: 'Lifestyle',
+			active: false,
 		},
 		{
 			key: 7,
 			label: 'Philosophy',
+			active: false,
 		},
 		{
 			key: 8,
 			label: 'Science',
+			active: false,
 		},
 		{
 			key: 9,
 			label: 'Technology',
+			active: false,
 		},
 		{
 			key: 10,
 			label: 'Travel',
+			active: false,
 		},
 		{
 			key: 11,
 			label: 'Other',
+			active: false,
 		},
 	];
+
+	const [filtersItems, setFiltersItems] = useState(initialItems);
+	const [currPrivacyBtn, setPrivacyBtn] = useState(false);
+	const [currSubmitBtn, setSubmitBtn] = useState(false);
 
 	return (
 		<form action='' className='ask-page'>
@@ -62,8 +77,10 @@ const AskPage = () => {
 				{/* Теги */}
 				<ul className='filters__list'>
 					{filtersItems.map((element) => (
-						<li className='button filters__item' key={element.key}>
-							{element.label}
+						<li key={element.key}>
+							<button type='button' className='filters__item'>
+								{element.label}
+							</button>
 						</li>
 					))}
 
@@ -80,26 +97,40 @@ const AskPage = () => {
 				<div className='ask-page__privacy-buttons'>
 					<button
 						type='button'
-						className='button ask-page__privacy-button ask-page__public-button active'
+						className={`ask-page__privacy-button ask-page__public-button ${
+							currPrivacyBtn === false ? 'active' : ''
+						}`}
+						onClick={() => setPrivacyBtn(false)}
 					>
 						Public
 					</button>
 					<button
 						type='button'
-						className='button ask-page__privacy-button ask-page__private-button'
+						className={`ask-page__privacy-button ask-page__private-button ${
+							currPrivacyBtn === true ? 'active' : ''
+						}`}
+						onClick={() => setPrivacyBtn(true)}
 					>
 						Private
 					</button>
 				</div>
 
 				{/* Поле для ввода никнейма для приватного вопроса */}
-				<div className='filters__button filters__private'>
+				<div
+					className={`filters__button filters__private ${
+						currPrivacyBtn === true ? 'active' : false
+					}`}
+				>
 					<input type='text' required placeholder='@nickname' />
 				</div>
 			</div>
+
 			{/* Кнопка для отправки вопроса */}
 			<div className='mt--32 ask-page__button-wrapper'>
-				<button className='button ask-page__button' disabled type='submit'>
+				<button
+					className={`button ask-page__button ${currSubmitBtn === false ? 'disabled' : ''}`}
+					type='submit'
+				>
 					Submit
 				</button>
 			</div>

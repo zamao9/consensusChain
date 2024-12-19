@@ -59,6 +59,9 @@
 			cursor: pointer
 			&.active
 				@include index.button-active
-			@media (any-hover:hover)
-				&:hover
-					@include index.button-hover
+
+@media (any-hover:hover)
+	.header
+		.profile
+			&__button:hover
+				@include index.button-hover

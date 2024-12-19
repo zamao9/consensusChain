@@ -12,12 +12,12 @@ const Header = () => {
 					<span>293 TON</span>
 				</div>
 				<div className='profile'>
-					<div
+					<button
 						className={`profile__button ${curItem ? 'active' : ''}`}
 						onClick={() => setItem('active')}
 					>
 						<ProfileIcon />
-					</div>
+					</button>
 				</div>
 			</div>
 		</header>

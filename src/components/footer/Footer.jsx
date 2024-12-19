@@ -26,15 +26,16 @@ const Footer = ({ curItem, setItem, setPage }) => {
 			<div className='footer__wrapper'>
 				<ul className='footer__list'>
 					{footerItems.map((element) => (
-						<li
-							key={element.key}
-							className={`footer__items ${curItem === element.label ? 'active' : ''}`}
-							onClick={() => {
-								setItem(element.label);
-								setPage(element.label);
-							}}
-						>
-							{element.svg}
+						<li key={element.key}>
+							<button
+								className={`footer__item ${curItem === element.label ? 'active' : ''}`}
+								onClick={() => {
+									setItem(element.label);
+									setPage(element.label);
+								}}
+							>
+								{element.svg}
+							</button>
 						</li>
 					))}
 				</ul>

@@ -4,11 +4,10 @@
 	max-width: 395px
 	margin: 0 auto
 
-	/* Список вопросов */
 	&__list
 		display: grid
 		gap: 15px
-	/* Элементы списка вопросов */
+
 	&__item
 		position: relative
 		display: flex
@@ -17,15 +16,16 @@
 		padding: 14px 20px
 		@include index.border15
 		background-color: index.$c-bg-900
+
 	&__title
-		max-width: 90%
-		line-height: 140%
-	/* Список тэгов */
+		max-width: 85%
+		line-height: 140% !important
+
 	.tags
 		display: flex
 		flex-wrap: wrap
 		gap: 8px
-		/* Тэги */
+
 		&__item
 			display: flex
 			align-items: center
@@ -36,42 +36,36 @@
 			@include index.border7
 			border: 1px solid index.$c-stroke
 
-	/* Обертка кнопок	*/
 	&__buttons-wrapper
 		display: flex
 		justify-content: space-between
-	/* Обертка Репорта, Отсслеживания, Лайков	*/
+
 	&__buttons
 		display: flex
 		gap: 8px
-	/* Кнопка репорт	*/
+
 	&__button
 		@include index.button
-		width: 30px
-		height: 30px
+		width: 30px !important
+		height: 30px !important
 		&.active
 			@include index.button-active
-		@media (any-hover:hover)
-			&:hover
-				@include index.button-hover
-	/* Флажок популярности вопроса	*/
+
 	&__popular
 		position: absolute
 		top: 0
 		right: 20px
 		@include index.button-active
-		border-radius: 0 0 7px 7px
+		border-radius: 0 0 7px 7px !important
 		pointer-events: none
 		&.none
 			display: none
 
-	/* Обертка кнопки лайк	*/
 	&__like-wrapper
 		display: flex
 		align-items: center
 		gap: 8px
 
-	/* Пагинация */
 	.pagination
 		display: flex
 		align-items: center
@@ -80,7 +74,7 @@
 		padding: 8px
 		@include index.border15
 		background-color: index.$c-bg-900
-		/* Стрелки пагинации и счетчик */
+
 		&__button,
 		&__counter
 			display: flex
@@ -94,15 +88,23 @@
 			cursor: pointer
 			transition: 0.2s ease
 			&.disabled
-				background: none
-				box-shadow: none
-				pointer-events: none
+				background: none !important
+				box-shadow: none !important
+				pointer-events: none !important
+				color: index.$c-text-disabled
 				svg
-					stroke: index.$c-text-disabled
-			@media (any-hover:hover)
-				&:hover
-					@include index.button-hover
+					stroke: index.$c-text-disabled !important
+
 		&__counter
 			padding: 0 14px
 			@include index.border7
 			background-color: index.$c-bg-input
+
+@media (any-hover:hover)
+	.questions-page
+		&__button:hover
+			@include index.button-hover
+
+		.pagination
+			&__button:hover
+				@include index.button-hover

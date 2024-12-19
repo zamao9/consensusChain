@@ -5,6 +5,7 @@ import AskPage from '../askPage/AskPage';
 import './appScreen.sass';
 import { useState } from 'react';
 import QuestionsPage from '../questionsPage/QuestionsPage';
+import TasksPage from '../tasksPage/TasksPage';
 
 const AppScreen = () => {
 	const [curItem, setItem] = useState('ask-page'); // активный элемент навигации
@@ -23,6 +24,8 @@ const AppScreen = () => {
 				{curPage === 'ask-page' && <AskPage />}
 				{/* Страница Questions */}
 				{curPage === 'questions-page' && <QuestionsPage />}
+				{/* Страница Tasks */}
+				{curPage === 'tasks-page' && <TasksPage />}
 
 				{/* Footer */}
 				<Footer curItem={curItem} setItem={setItem} setPage={setPage} />

@@ -25,23 +25,24 @@ $c-stroke-active: #45442A
 	background-color: $c-bg-button
 	border: 1px solid $c-stroke
 	border-radius: 7px
+	transition: 0.2s ease
 	box-shadow: 2px 2px 4px rgba($c-black, 0.16), -1px -1px 2px rgba($c-white, 0.06), 2px 2px 4px rgba($c-white, 0.08) inset
 
 @mixin button-active
-	background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(102, 100, 62, 0.4))
-	background-color: $c-bg-button-active
-	border: 1px solid $c-stroke-active
+	background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(102, 100, 62, 0.4)) !important
+	background-color: $c-bg-button-active !important
+	border: 1px solid $c-stroke-active !important
 	border-radius: 7px
-	box-shadow: 2px 2px 4px rgba($c-black, 0.32) inset, -2px -2px 4px rgba($c-white, 0.16) inset
+	box-shadow: 2px 2px 4px rgba($c-black, 0.32) inset, -2px -2px 4px rgba($c-white, 0.16) inset !important
 	color: $c-text-active
 	svg
 		stroke: $c-text-active
 
 @mixin button-hover
-	box-shadow: 2px 2px 4px rgba($c-black, 0.32) inset, -2px -2px 4px rgba($c-white, 0.16) inset
-	color: $c-text-active
+	box-shadow: 0 0 0 rgba($c-black, 0.16), 0 0 0 rgba($c-white, 0.06) ,2px 2px 4px rgba($c-black, 0.32) inset, -2px -2px 4px rgba($c-white, 0.16) inset !important
+	color: $c-text-active !important
 	svg
-		stroke: $c-text-active
+		stroke: $c-text-active !important
 
 @mixin border15
 	border-radius: 15px
@@ -59,19 +60,20 @@ body
 
 .section
 	background-color: $c-bg-main
-	padding-top: 130px
+	padding: 130px 0 0
+	min-height: 100vh
 
 .container
 	width: 100%
 	max-width: 500px
-	height: 100vh
+	height: 100%
 	margin-top: 0
 	margin-right: auto
 	margin-bottom: 0
 	margin-left: auto
 	padding-top: 0
 	padding-right: 15px
-	padding-bottom: 0
+	padding-bottom: 100px
 	padding-left: 15px
 	background-color: $c-bg-main
 
@@ -84,10 +86,6 @@ body
 
 .text
 	line-height: 140%
-
-svg
-	flex-shrink: 0
-	stroke: $c-text
 
 .button
 	display: flex
@@ -103,11 +101,22 @@ svg
 	line-height: 16px
 	cursor: pointer
 	user-select: none
-	&:disabled
+	&.disabled
 		pointer-events: none
-		background: transparent
+		background: none
 		box-shadow: none
 		color: $c-text-disabled
+		svg
+			stroke: $c-text-disabled
+
+svg
+	flex-shrink: 0
+	stroke: $c-text
+
+button:focus-visible
+	outline: 1px solid $c-stroke
+	outline-offset: 2px
+	@include button-hover
 
 hr
 	box-sizing: border-box
