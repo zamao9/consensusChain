@@ -1,11 +1,12 @@
 @use '../../index'
+
 .tasks-page
 	max-width: 395px
 	margin: 0 auto
 	/* Список тасков */
 	&__list
 		display: grid
-		gap: 15px
+		gap: 16px
 
 	/* Список тасков */
 	&__item
@@ -27,7 +28,6 @@
 	&__title
 		width: 100%
 		font-size: 16px
-		line-height: 140%
 
 	/* Цена таска */
 	&__cost
@@ -45,12 +45,12 @@
 		flex-grow: 1
 
 	&__button
-		width: 90px
-		height: 30px
+		width: 90px !important
+		height: 30px !important
 	&__claim
-		background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(102, 100, 62, 0.4))
-		background-color: index.$c-bg-button-active
-		border-color: index.$c-stroke-active
+		background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(102, 100, 62, 0.4)) !important
+		background-color: index.$c-bg-button-active !important
+		border-color: index.$c-stroke-active !important
 
 @media (any-hover:hover)
 	.tasks-page

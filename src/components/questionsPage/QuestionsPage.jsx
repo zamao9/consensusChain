@@ -2,60 +2,13 @@ import { useState } from 'react';
 import {
 	ArrowLeftIcon,
 	ArrowRightIcon,
-	CommentsIcon,
 	DblArrowLeftIcon,
 	DblArrowRightIcon,
-	LikeIcon,
-	NotificationIcon,
-	ReportIcon,
-	StartIcon,
 } from '../../constants/SvgIcons';
 import './questionsPage.sass';
+import QuestionsItem from './questionsItem/QuestionsItem';
 
-const QuestionsPage = () => {
-	const questionsItems = [
-		{
-			key: 1,
-			title: 'How many dicks i can suck?',
-			popular: true,
-			tags: ['Health', 'Coast', 'Nature'],
-			report: false,
-			trace: false,
-			like: false,
-			likeCount: 93,
-		},
-		{
-			key: 2,
-			title: 'How many dicks can fit in my arsehole?',
-			popular: true,
-			tags: ['Education', 'Health', 'Philosophy'],
-			report: false,
-			trace: false,
-			like: false,
-			likeCount: 70,
-		},
-		{
-			key: 3,
-			title: 'Who killed Kenedy?',
-			popular: false,
-			tags: ['Policy', 'Education', 'History'],
-			report: false,
-			trace: false,
-			like: false,
-			likeCount: 10,
-		},
-		{
-			key: 4,
-			title: 'Who can kill Putin?',
-			popular: false,
-			tags: ['Policy', 'Education', 'History'],
-			report: false,
-			trace: false,
-			like: false,
-			likeCount: 0,
-		},
-	];
-
+const QuestionsPage = ({ setItem, setPage, questionsItems, setQuestionsItem }) => {
 	// Задаём стартовое состояние. страница 1
 	const [currentPage, setCurrentPage] = useState(1);
 
@@ -90,75 +43,14 @@ const QuestionsPage = () => {
 			<ul className='mb--32 questions-page__list'>
 				{/* Элементы списка вопросов */}
 				{displayedQuestions.map((element) => (
-					<li className='questions-page__item' key={element.key}>
-						{/* Флажок популярности вопроса */}
-						<div
-							className={`button questions-page__button questions-page__popular ${
-								element.popular === false ? 'none' : ''
-							}`}
-						>
-							<StartIcon />
-						</div>
-						{/* Вопрос */}
-						<h2 className='title questions-page__title'>{element.title}</h2>
-
-						{/* Список тэгов */}
-						<ul className='tags'>
-							{/* Тэги */}
-							{element.tags.map((tag, key) => (
-								<li className='tags__item' key={key}>
-									{tag}
-								</li>
-							))}
-						</ul>
-
-						{/* Обертка кнопок */}
-						<div className='questions-page__buttons-wrapper'>
-							{/* Обертка Репорта, Отсслеживания, Лайков */}
-							<div className='questions-page__buttons'>
-								{/* Кнопка репорт */}
-								<button
-									type='button'
-									className='button questions-page__button questions-page__report'
-								>
-									{element.report}
-									<ReportIcon />
-								</button>
-
-								{/* Кнопка отслеживания */}
-								<button
-									type='button'
-									className='button questions-page__button questions-page__trace'
-								>
-									{element.trace}
-									<NotificationIcon />
-								</button>
-
-								{/* Обертка кнопки лайк */}
-								<div className='questions-page__like-wrapper'>
-									{/* Кнопка лайк */}
-									<button
-										type='button'
-										className='button questions-page__button questions-page__like'
-									>
-										{element.like}
-										<LikeIcon />
-									</button>
-
-									{/* Количество лайков */}
-									<span className='questions-page__likeCount'>{element.likeCount}</span>
-								</div>
-							</div>
-
-							{/* Кнопка комментариев */}
-							<button
-								type='button'
-								className='button questions-page__button questions-page__comments'
-							>
-								<CommentsIcon />
-							</button>
-						</div>
-					</li>
+					<QuestionsItem
+						questionsItem={element}
+						setPage={setPage}
+						setItem={setItem}
+						key={element.key}
+						setQuestionsItem={setQuestionsItem}
+						comments={'questions-page'}
+					/>
 				))}
 			</ul>
 

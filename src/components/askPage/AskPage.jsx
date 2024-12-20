@@ -69,7 +69,7 @@ const AskPage = () => {
 		<form action='' className='ask-page'>
 			<h2 className='title mb--10 ask-page__title'>Ask your question</h2>
 			{/* Текстовое поле для ввода вопроса */}
-			<textarea placeholder='Your question' className='text ask-page__input' required />
+			<textarea placeholder='Your question' className='text lh--140 ask-page__input' required />
 
 			<h2 className='title mb--10 ask-page__title'>Filters</h2>
 			{/* Обертка для фильтров */}

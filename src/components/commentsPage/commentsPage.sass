@@ -1,0 +1,47 @@
+@use '../../index'
+
+.comments-page
+	max-width: 395px
+	margin: 0 auto
+
+	.answers
+		padding: 14px 20px
+		@include index.border15
+		background-color: index.$c-bg-900
+
+		&__title
+			font-size: 16px
+
+	.reactions-counter
+		display: flex
+		gap: 16px
+
+		&__icon-wrapper
+			display: flex
+			align-items: center
+			gap: 4px
+
+	.reactions
+		display: flex
+		justify-content: center
+		gap: 46px
+
+		&__button
+			display: flex
+			justify-content: center
+			align-items: center
+			width: 60px
+			height: 60px
+			@include index.border7
+			border: 1px solid index.$c-stroke
+			cursor: pointer
+			transition: 0.2s ease
+			svg
+				width: 40px
+				height: 40px
+
+@media (any-hover:hover)
+	.comments-page
+		.reactions
+			&__button:hover
+				@include index.button-hover

@@ -2,9 +2,7 @@ import { useState } from 'react';
 import { ProfileIcon } from '../../constants/SvgIcons';
 import './header.sass';
 
-const Header = () => {
-	const [curItem, setItem] = useState('');
-
+const Header = ({ curItem, setItem, setPage }) => {
 	return (
 		<header className='header'>
 			<div className='header__profile'>
@@ -13,8 +11,11 @@ const Header = () => {
 				</div>
 				<div className='profile'>
 					<button
-						className={`profile__button ${curItem ? 'active' : ''}`}
-						onClick={() => setItem('active')}
+						className={`profile__button ${curItem === 'profile-page' ? 'active' : ''}`}
+						onClick={() => {
+							setItem('profile-page');
+							setPage('profile-page');
+						}}
 					>
 						<ProfileIcon />
 					</button>

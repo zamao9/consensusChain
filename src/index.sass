@@ -54,6 +54,7 @@ $c-stroke-active: #45442A
 body
 	font-family: $f-global
 	font-size: 16px
+	line-height: 16px
 	font-weight: 400
 	color: $c-text
 	user-select: none
@@ -84,9 +85,6 @@ body
 	color: $c-title
 	line-height: 18px
 
-.text
-	line-height: 140%
-
 .button
 	display: flex
 	justify-content: center
@@ -108,6 +106,9 @@ body
 		color: $c-text-disabled
 		svg
 			stroke: $c-text-disabled
+		&:focus
+			box-shadow: none !important
+			color: $c-text-disabled !important
 
 svg
 	flex-shrink: 0
@@ -125,6 +126,31 @@ hr
 	border-bottom: 1px solid $c-stroke
 	margin: 0
 
+.tags
+	display: flex
+	flex-wrap: wrap
+	gap: 8px
+
+	&__item
+		display: flex
+		align-items: center
+		justify-content: center
+		padding: 8px
+		font-size: 14px
+		line-height: 14px
+		@include border7
+		border: 1px solid $c-stroke
+
+.user
+	display: flex
+	align-items: center
+	gap: 4px
+	&__name
+		word-break: break-all
+
+.lh--140
+	line-height: 140%
+
 /* Margin */
 .mt--16
 	margin-top: 16px
@@ -132,6 +158,8 @@ hr
 	margin-top: 32px
 .mb--10
 	margin-bottom: 10px
+.mb--16
+	margin-bottom: 16px
 .mb--32
 	margin-bottom: 32px
 

@@ -4,10 +4,12 @@
 	max-width: 395px
 	margin: 0 auto
 
+	/* Список вопросов */
 	&__list
 		display: grid
-		gap: 15px
+		gap: 16px
 
+	/* Элемент вопросов */
 	&__item
 		position: relative
 		display: flex
@@ -17,40 +19,11 @@
 		@include index.border15
 		background-color: index.$c-bg-900
 
+	/* Заголовок вопроса */
 	&__title
 		max-width: 85%
-		line-height: 140% !important
 
-	.tags
-		display: flex
-		flex-wrap: wrap
-		gap: 8px
-
-		&__item
-			display: flex
-			align-items: center
-			justify-content: center
-			padding: 8px
-			font-size: 14px
-			line-height: 14px
-			@include index.border7
-			border: 1px solid index.$c-stroke
-
-	&__buttons-wrapper
-		display: flex
-		justify-content: space-between
-
-	&__buttons
-		display: flex
-		gap: 8px
-
-	&__button
-		@include index.button
-		width: 30px !important
-		height: 30px !important
-		&.active
-			@include index.button-active
-
+	/* Флажок популярности вопроса */
 	&__popular
 		position: absolute
 		top: 0
@@ -61,11 +34,40 @@
 		&.none
 			display: none
 
+	/* Обертка кнопок */
+	&__buttons-wrapper
+		display: flex
+		justify-content: space-between
+
+	/* Обертка Репорта, Отслеживания, Лайков */
+	&__buttons
+		display: flex
+		gap: 8px
+
+	/* Кнопки */
+	&__button
+		@include index.button
+		width: 30px !important
+		height: 30px !important
+		&.active
+			@include index.button-active
+
+	/* Кнопка оставить комментарий */
+	&__leave-a-comment
+		width: fit-content !important
+		padding: 0 20px
+
+	/* Репорт при активном */
+	&__report.active
+		pointer-events: none
+
+	/* Обертка кнопки лайк */
 	&__like-wrapper
 		display: flex
 		align-items: center
 		gap: 8px
 
+	/* Пагинация */
 	.pagination
 		display: flex
 		align-items: center
@@ -95,6 +97,7 @@
 				svg
 					stroke: index.$c-text-disabled !important
 
+		/* Счетчик страниц */
 		&__counter
 			padding: 0 14px
 			@include index.border7

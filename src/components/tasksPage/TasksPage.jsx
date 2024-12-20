@@ -129,7 +129,7 @@ const TasksPage = () => {
 							{/* Обертка Заголовка и Цены */}
 							<div className='tasks-page__header'>
 								{/* Заголовок эелементов таска */}
-								<h2 className='tasks-page__title'>{element.title}</h2>
+								<h2 className='lh--140 tasks-page__title'>{element.title}</h2>
 
 								{/* Цена таска */}
 								<span className='tasks-page__cost'>{element.cost} TON</span>
@@ -153,6 +153,7 @@ const TasksPage = () => {
 										Go
 									</button>
 								)}
+								{/* Кнопка */}
 								{element.isDone && !element.isClaimed && (
 									<button
 										type='button'
