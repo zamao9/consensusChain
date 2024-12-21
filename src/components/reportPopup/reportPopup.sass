@@ -1,0 +1,43 @@
+@use '../../index'
+
+.report-popup
+	width: 100%
+	&__back
+		position: absolute
+		top: 15px
+		left: 20px
+		color: index.$c-text
+		display: flex
+		align-items: center
+		gap: 8px
+		height: 40px
+		padding: 8px 16px 8px 8px
+		@include index.border7
+
+	&__title
+		text-align: center
+
+	/* Список вариантов жалобы */		
+	&__list
+		display: flex
+		flex-direction: column
+		gap: 16px
+		width: 100%
+		& li
+			text-align: center
+
+	&__item
+		width: fit-content
+		padding: 8px 14px
+		text-align: center
+		color: index.$c-text
+		@include index.border7
+		transition: 0.2s ease
+
+	&__textarea
+		min-height: 100px
+
+@media (any-hover:hover)
+	.report-popup
+		&__item:hover
+			@include index.button-hover

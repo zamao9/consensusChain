@@ -28,7 +28,7 @@ const AskPage = () => {
 			return prevItems.map((item) => {
 				if (item.key === key) {
 					// Разрешаем выбор только если тег не активен и активных тегов меньше 5
-					if (!item.active && activeCount >= 5) return item;
+					if (!item.active && activeCount >= 3) return item;
 					return { ...item, active: !item.active };
 				}
 				return item;
@@ -40,7 +40,11 @@ const AskPage = () => {
 		<form action='' className='ask-page'>
 			<h2 className='title mb--10 ask-page__title'>Ask your question</h2>
 			{/* Текстовое поле для ввода вопроса */}
-			<textarea placeholder='Your question' className='text lh--140 ask-page__input' required />
+			<textarea
+				placeholder='Your question'
+				className='text mb--22 lh--140 ask-page__textarea '
+				required
+			/>
 
 			<h2 className='title mb--10 ask-page__title'>Filters</h2>
 			{/* Обертка для фильтров */}
@@ -72,16 +76,18 @@ const AskPage = () => {
 				<div className='ask-page__privacy-buttons'>
 					<button
 						type='button'
-						className={`ask-page__privacy-button ask-page__public-button ${currPrivacyBtn === false ? 'active' : ''
-							}`}
+						className={`ask-page__privacy-button ask-page__public-button ${
+							currPrivacyBtn === false ? 'active' : ''
+						}`}
 						onClick={() => setPrivacyBtn(false)}
 					>
 						Public
 					</button>
 					<button
 						type='button'
-						className={`ask-page__privacy-button ask-page__private-button ${currPrivacyBtn === true ? 'active' : ''
-							}`}
+						className={`ask-page__privacy-button ask-page__private-button ${
+							currPrivacyBtn === true ? 'active' : ''
+						}`}
 						onClick={() => setPrivacyBtn(true)}
 					>
 						Private
@@ -90,8 +96,9 @@ const AskPage = () => {
 
 				{/* Поле для ввода никнейма для приватного вопроса */}
 				<div
-					className={`filters__button filters__private ${currPrivacyBtn === true ? 'active' : false
-						}`}
+					className={`filters__button filters__private ${
+						currPrivacyBtn === true ? 'active' : false
+					}`}
 				>
 					<input type='text' required placeholder='@nickname' />
 				</div>

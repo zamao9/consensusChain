@@ -8,7 +8,7 @@ import {
 import './questionsPage.sass';
 import QuestionsItem from './questionsItem/QuestionsItem';
 
-const QuestionsPage = ({ setItem, setPage, questionsItems, setQuestionsItem }) => {
+const QuestionsPage = ({ setItem, setPage, questionsItems, setQuestionsItem, setPopup }) => {
 	// Задаём стартовое состояние. страница 1
 	const [currentPage, setCurrentPage] = useState(1);
 
@@ -50,6 +50,7 @@ const QuestionsPage = ({ setItem, setPage, questionsItems, setQuestionsItem }) =
 						key={element.key}
 						setQuestionsItem={setQuestionsItem}
 						comments={'questions-page'}
+						setPopup={setPopup}
 					/>
 				))}
 			</ul>

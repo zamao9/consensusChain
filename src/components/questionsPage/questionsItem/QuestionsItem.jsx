@@ -8,7 +8,14 @@ import {
 	StartIcon,
 } from '../../../constants/SvgIcons';
 
-const QuestionsItem = ({ setItem, questionsItem, setPage, setQuestionsItem, comments }) => {
+const QuestionsItem = ({
+	setItem,
+	questionsItem,
+	setPage,
+	setQuestionsItem,
+	comments,
+	setPopup,
+}) => {
 	const [report, setReport] = useState(false);
 	const [trace, setTrace] = useState(false);
 	const [like, setLike] = useState(false);
@@ -17,8 +24,9 @@ const QuestionsItem = ({ setItem, questionsItem, setPage, setQuestionsItem, comm
 		<li className='questions-page__item'>
 			{/* Флажок популярности вопроса */}
 			<div
-				className={`button questions-page__button questions-page__popular ${questionsItem.popular === false ? 'none' : ''
-					}`}
+				className={`button questions-page__button questions-page__popular ${
+					questionsItem.popular === false ? 'none' : ''
+				}`}
 			>
 				<StartIcon />
 			</div>
@@ -49,9 +57,13 @@ const QuestionsItem = ({ setItem, questionsItem, setPage, setQuestionsItem, comm
 					{/* Кнопка репорт */}
 					<button
 						type='button'
-						className={`button questions-page__button questions-page__report ${report ? 'active' : ''
-							}`}
-						onClick={() => setReport(!report)}
+						className={`button questions-page__button questions-page__report ${
+							report ? 'active' : ''
+						}`}
+						onClick={() => {
+							setReport(!report);
+							setPopup(true);
+						}}
 					>
 						<ReportIcon />
 					</button>
@@ -59,8 +71,9 @@ const QuestionsItem = ({ setItem, questionsItem, setPage, setQuestionsItem, comm
 					{/* Кнопка отслеживания */}
 					<button
 						type='button'
-						className={`button questions-page__button questions-page__trace ${trace ? 'active' : ''
-							}`}
+						className={`button questions-page__button questions-page__trace ${
+							trace ? 'active' : ''
+						}`}
 						onClick={() => setTrace(!trace)}
 					>
 						<NotificationIcon />
@@ -71,8 +84,9 @@ const QuestionsItem = ({ setItem, questionsItem, setPage, setQuestionsItem, comm
 						{/* Кнопка лайк */}
 						<button
 							type='button'
-							className={`button questions-page__button questions-page__like ${like ? 'active' : ''
-								}`}
+							className={`button questions-page__button questions-page__like ${
+								like ? 'active' : ''
+							}`}
 							onClick={() => setLike(!like)}
 						>
 							<LikeIcon />
@@ -80,9 +94,7 @@ const QuestionsItem = ({ setItem, questionsItem, setPage, setQuestionsItem, comm
 
 						{/* Количество лайков */}
 						<span className='questions-page__likeCount'>
-							{like
-								? questionsItem.likeCount + 1
-								: questionsItem.likeCount}
+							{like ? questionsItem.likeCount + 1 : questionsItem.likeCount}
 						</span>
 					</div>
 				</div>

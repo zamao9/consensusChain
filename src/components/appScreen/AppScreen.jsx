@@ -8,6 +8,7 @@ import QuestionsPage from '../questionsPage/QuestionsPage';
 import TasksPage from '../tasksPage/TasksPage';
 import CommentsPage from '../commentsPage/CommentsPage';
 import ProfilePage from '../profilePage/ProfilePage';
+import PopupBackground from '../popupBackground/PopupBackground';
 
 const AppScreen = () => {
 	const questionsItems = [
@@ -60,9 +61,13 @@ const AppScreen = () => {
 	const [curItem, setItem] = useState('ask-page'); // активный элемент навигации
 	const [curPage, setPage] = useState('ask-page'); // активная страница
 	const [questionsItem, setQuestionsItem] = useState(null);
+	const [popup, setPopup] = useState(false);
 
 	return (
 		<section className='section app-screen'>
+			{/* Стриница Popup */}
+			{popup === true && <PopupBackground popup={popup} setPopup={setPopup} />}
+
 			<div className='container app-screen__container'>
 				{/* Marquees */}
 				{/* <Marquees /> */}
@@ -83,6 +88,7 @@ const AppScreen = () => {
 						setItem={setItem}
 						questionsItems={questionsItems}
 						setQuestionsItem={setQuestionsItem}
+						setPopup={setPopup}
 					/>
 				)}
 
