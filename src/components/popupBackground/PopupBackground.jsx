@@ -25,7 +25,7 @@ const PopupBackground = ({ setPopup }) => {
 					<button type='button' className='popup-background__close' onClick={() => setPopup(false)}>
 						<CloseIcon />
 					</button>
-					<ReportPopup />
+					<ReportPopup setPopup={setPopup} />
 				</div>
 			</motion.div>
 		</AnimatePresence>

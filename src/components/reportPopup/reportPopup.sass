@@ -13,22 +13,23 @@
 		height: 40px
 		padding: 8px 16px 8px 8px
 		@include index.border7
+		transition: 0.2s ease
 
 	&__title
 		text-align: center
 
 	/* Список вариантов жалобы */		
 	&__list
-		display: flex
-		flex-direction: column
-		gap: 16px
-		width: 100%
 		& li
+			display: flex
+			flex-direction: column
+			gap: 8px
+			width: 100%
 			text-align: center
 
 	&__item
-		width: fit-content
-		padding: 8px 14px
+		width: 100%
+		padding: 10px 14px
 		text-align: center
 		color: index.$c-text
 		@include index.border7
@@ -39,5 +40,7 @@
 
 @media (any-hover:hover)
 	.report-popup
+		&__back:hover
+			@include index.button-hover
 		&__item:hover
 			@include index.button-hover

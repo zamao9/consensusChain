@@ -1,39 +1,28 @@
 import { useState } from 'react';
 import './reportPopup.sass';
 import { ArrowLeftIcon } from '../../constants/SvgIcons';
-import { form } from 'framer-motion/client';
 
-const ReportPopup = () => {
-	const reportData = [
+const ReportPopup = ({ setPopup }) => {
+	const reportFlow = [
 		{
-			key: 'ads',
-			label: 'Restricted advertising',
+			id: 'ads',
+			title: 'Сhoose a problem',
+			tags: ['Advertisement', 'Insults', 'Other'],
 			subcategories: [
 				{
-					key: 'product-type',
-					label: 'Что рекламируется',
-					options: [
-						{ key: 'drugs', label: 'Наркотики' },
-						{ key: 'alcohol', label: 'Алкоголь' },
-						{ key: 'weapons', label: 'Оружие' },
-					],
+					id: 'restricted-products',
+					title: 'What is being sold or advertised?',
+					tags: ['Drugs', 'Alcohol', 'Weapons'],
 					subcategories: [
 						{
-							key: 'drug-types',
-							label: 'Какие наркотики?',
-							options: [
-								{ key: 'addictive-drugs', label: 'Наркотики, вызывающие зависимость' },
-								{ key: 'soft-drugs', label: 'Лёгкие наркотики' },
-							],
+							id: 'drug-types',
+							title: 'What kind of drugs are we talking about?',
+							tags: ['Addictive', 'Light drugs'],
 							subcategories: [
 								{
-									key: 'addictive-drug-details',
-									label: 'Какие именно наркотики вызывают зависимость?',
-									options: [
-										{ key: 'opiokeys', label: 'Опioиды' },
-										{ key: 'stimulants', label: 'Стимуляторы' },
-										{ key: 'hallucinogens', label: 'Галлюциногены' },
-									],
+									id: 'specific-drugs',
+									title: 'What kind of drugs are addictive?',
+									tags: ['Opioids', 'Stimulants', 'Hallucinogens'],
 								},
 							],
 						},
@@ -42,137 +31,141 @@ const ReportPopup = () => {
 			],
 		},
 		{
-			key: 'offensive-content',
-			label: 'Offensive content',
+			id: 'offense',
+			title: 'Сhoose a problem',
+			tags: ['Bullying', 'Harassment', 'Hate speech'],
 			subcategories: [
 				{
-					key: 'type-of-offense',
-					label: 'Какой тип оскорбления?',
-					options: [
-						{ key: 'harassment', label: 'Преследование' },
-						{ key: 'hate-speech', label: 'Речь ненависти' },
-						{ key: 'bullying', label: 'Буллинг' },
-					],
-					subcategories: [
-						{
-							key: 'hate-speech-target',
-							label: 'Кого нацеливает речь ненависти?',
-							options: [
-								{ key: 'race', label: 'По расе' },
-								{ key: 'religion', label: 'По религии' },
-								{ key: 'gender', label: 'По гендеру' },
-							],
-						},
-					],
+					id: 'hate-speech',
+					title: 'Who is the hate speech directed at?',
+					tags: ['Race', 'Religion', 'Gender'],
 				},
 			],
 		},
 		{
-			key: 'misinformation',
-			label: 'Misinformation',
+			id: 'misinformation',
+			title: 'Сhoose a problem',
+			tags: ['Health', 'Politics', 'Finance'],
 			subcategories: [
 				{
-					key: 'type-of-misinformation',
-					label: 'Какой тип дезинформации?',
-					options: [
-						{ key: 'health', label: 'О здоровье' },
-						{ key: 'political', label: 'Политическая' },
-						{ key: 'financial', label: 'Финансовая' },
-					],
-					subcategories: [
-						{
-							key: 'health-misinformation',
-							label: 'Какая дезинформация о здоровье?',
-							options: [
-								{ key: 'anti-vaccine', label: 'Против вакцинации' },
-								{ key: 'miracle-cures', label: 'Чудо-лекарства' },
-							],
-							subcategories: [
-								{
-									key: 'miracle-cures-details',
-									label: 'Какие именно чудо-лекарства?',
-									options: [
-										{ key: 'fake-pills', label: 'Поддельные таблетки' },
-										{ key: 'herbal-remedies', label: 'Травяные средства' },
-									],
-								},
-							],
-						},
-					],
+					id: 'health',
+					title: 'What kind of health misinformation?',
+					tags: ['Against vaccination', 'Miracle cures'],
 				},
 			],
 		},
 	];
 
-	const [selectedPath, setSelectedPath] = useState([]);
+	// Хук состояния для отслеживания текущего пути (вложенности)
+	const [currentPath, setCurrentPath] = useState([]); // Например: ['ads', 'restricted-products']
 
-	// Функция для обработки выбора категории
-	const handleSelect = (levelIndex, selectedOption) => {
-		// Обновляем путь до текущего уровня, заменяя выбранный элемент
-		const newPath = selectedPath.slice(0, levelIndex);
-		newPath.push(selectedOption);
-		setSelectedPath(newPath);
-	};
+	// Хук состояния для хранения текста, введённого пользователем на последнем шаге
+	const [reportText, setReportText] = useState('');
 
-	// Получить текущие подкатегории
-	const getCurrentSubcategories = () => {
-		let currentLevel = reportData;
-		for (const selected of selectedPath) {
-			const foundCategory = currentLevel.find((item) => item.key === selected.key);
-			if (foundCategory?.subcategories) {
-				currentLevel = foundCategory.subcategories;
-			} else {
-				return null;
-			}
+	// Функция для получения текущего уровня данных из структуры
+	const getCurrentCategory = () => {
+		// Начинаем с полной структуры
+		let category = reportFlow;
+
+		// Прогружаем вложенности в соответствии с currentPath
+		for (const id of currentPath) {
+			category = category.find((item) => item.id === id)?.subcategories;
 		}
-		return currentLevel;
+
+		// Если достигли последнего уровня или путь пустой, возвращаем текущую категорию
+		return category || reportFlow;
 	};
 
-	const currentSubcategories = getCurrentSubcategories();
+	// Обработчик клика по тегу
+	const handleTagClick = (tagId) => {
+		// Находим категорию по id
+		const category = getCurrentCategory().find((item) => item.id === tagId);
+
+		// Если у категории есть вложенные подкатегории, добавляем её id в currentPath
+		if (category?.subcategories) {
+			setCurrentPath([...currentPath, tagId]);
+		} else {
+			// Если это последний уровень, подготавливаем поле для текста
+			setReportText('');
+		}
+	};
+
+	// Обработчик для кнопки "Назад"
+	const handleBackClick = () => {
+		// Удаляем последний элемент пути (возвращаемся на уровень выше)
+		setCurrentPath(currentPath.slice(0, -1));
+	};
+
+	// Обработчик отправки репорта. Можно сильно не вникать, чисто опциональная вещь
+	const handleSubmit = () => {
+		console.log('Отправленный репорт:', {
+			path: currentPath,
+			text: reportText,
+		});
+
+		alert('Ваш репорт отправлен!');
+
+		setCurrentPath([]);
+		setReportText('');
+	};
+
+	// Текущий уровень вложенности, вычисленный из currentPath
+	const currentCategory = getCurrentCategory();
 
 	return (
 		<form action='' className='report-popup'>
-			{/* Кнопка Back */}
-			{/* <button type='button' className='report-popup__back'>
-				<ArrowLeftIcon />
-				Back
-			</button> */}
+			{/* Кнопка "Назад", отображается только если мы не на первом уровне */}
+			{currentPath.length > 0 && (
+				<button type='button' className='report-popup__back' onClick={handleBackClick}>
+					<ArrowLeftIcon /> Back
+				</button>
+			)}
 
 			{/* Заголовок репорта */}
-			<h2 className='title mb--16 report-popup__title'>Сhoose a problem</h2>
+			<h2 className='title mb--16 report-popup__title'>
+				{currentCategory[0]?.title || 'Опишите вашу проблему'}
+			</h2>
 
 			{/* Разделительная линия */}
 			<hr className='mb--16' />
 
 			{/* Список вариантов жалобы */}
 			<ul className='report-popup__list'>
-				{currentSubcategories && (
-					<>
-						{currentSubcategories.map((element) => (
-							<li key={element.key}>
-								<button
-									type='button'
-									className='report-popup__item'
-									onClick={() => handleSelect(selectedPath.length, element)}
-								>
-									{element.label}
-								</button>
-							</li>
+				{currentCategory.some((item) => item.subcategories) ? (
+					<li>
+						{/* Если есть подкатегории, отображаем кнопки для тегов */}
+						{currentCategory.map((item) => (
+							<button
+								key={item.id}
+								className='report-popup__item'
+								onClick={() => handleTagClick(item.id)} // Клик по тегу
+							>
+								{item.tags.join(', ')} {/* Отображаем теги для текущей категории */}
+							</button>
 						))}
-					</>
+					</li>
+				) : (
+					<div className='report-popup__textarea-wrapper'>
+						{/* Если вложенность закончилась, отображаем поле для текста */}
+						<textarea
+							className='mb--22 report-popup__textarea'
+							placeholder='Your comment'
+							value={reportText}
+							onChange={(e) => setReportText(e.target.value)}
+						/>
+						{/* Кнопка для отправки репорта */}
+						<button
+							className='button'
+							onClick={() => {
+								handleSubmit();
+								setPopup(false);
+							}}
+						>
+							Отправить
+						</button>
+					</div>
 				)}
 			</ul>
-
-			{/* Ввод комментария в textarea */}
-			{/* <div className='report-popup__textarea-wrapper'>
-				<textarea
-					name=''
-					id=''
-					placeholder='Your comment'
-					className='mb--22 report-popup__textarea'
-				></textarea>
-				<button className='button'>Sumbit</button>
-			</div> */}
 		</form>
 	);
 };
