@@ -118,7 +118,7 @@ const QuestionsItem = ({
 				{comments === 'comments-page' && (
 					<button
 						type='button'
-						className='button questions-page__button questions-page__leave-a-comment disabled'
+						className='questions-page__button questions-page__leave-a-comment'
 						onClick={() => {
 							console.log('click');
 						}}

@@ -32,10 +32,8 @@
 			align-items: center
 			width: 60px
 			height: 60px
-			@include index.border7
-			border: 1px solid index.$c-stroke
 			cursor: pointer
-			transition: 0.2s ease
+			@include index.link
 			svg
 				width: 40px
 				height: 40px
@@ -44,4 +42,4 @@
 	.comments-page
 		.reactions
 			&__button:hover
-				@include index.button-hover
+				@include index.link-hover

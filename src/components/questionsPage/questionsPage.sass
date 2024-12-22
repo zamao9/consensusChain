@@ -47,15 +47,20 @@
 	/* Кнопки */
 	&__button
 		@include index.button
-		width: 30px !important
-		height: 30px !important
+		width: 35px !important
+		height: 35px !important
 		&.active
 			@include index.button-active
+
+	&__comments
+		@include index.link
 
 	/* Кнопка оставить комментарий */
 	&__leave-a-comment
 		width: fit-content !important
 		padding: 0 20px
+		color: index.$c-text
+		@include index.link
 
 	/* Репорт при активном */
 	&__report.active
@@ -85,7 +90,7 @@
 			height: 35px
 			padding: 0
 		&__button
-			width: 35px
+			width: 50px
 			@include index.button
 			cursor: pointer
 			transition: 0.2s ease
@@ -107,6 +112,9 @@
 	.questions-page
 		&__button:hover
 			@include index.button-hover
+
+		&__comments:hover, &__leave-a-comment:hover
+			@include index.link-hover
 
 		.pagination
 			&__button:hover

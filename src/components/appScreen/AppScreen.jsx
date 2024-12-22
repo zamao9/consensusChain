@@ -72,8 +72,10 @@ const AppScreen = () => {
 				{/* Marquees */}
 				{/* <Marquees /> */}
 
-				{/* Header */}
+				{/* Страница Header */}
 				<Header curItem={curItem} setItem={setItem} setPage={setPage} />
+
+				{/* Страница Profile */}
 
 				{/* Страница Profile */}
 				{curPage === 'profile-page' && <ProfilePage />}

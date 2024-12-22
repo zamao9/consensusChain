@@ -12,11 +12,10 @@
 		gap: 8px
 		height: 40px
 		padding: 8px 16px 8px 8px
-		@include index.border7
-		transition: 0.2s ease
+		@include index.link
 
-	&__title
-		text-align: center
+		&__title
+			text-align: center
 
 	/* Список вариантов жалобы */		
 	&__list
@@ -29,11 +28,10 @@
 
 	&__item
 		width: 100%
-		padding: 10px 14px
+		padding: 16px 14px
 		text-align: center
 		color: index.$c-text
-		@include index.border7
-		transition: 0.2s ease
+		@include index.link
 
 	&__textarea
 		min-height: 100px
@@ -41,6 +39,7 @@
 @media (any-hover:hover)
 	.report-popup
 		&__back:hover
-			@include index.button-hover
+			@include index.link-hover
+
 		&__item:hover
-			@include index.button-hover
+			@include index.link-hover

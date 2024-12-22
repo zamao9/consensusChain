@@ -34,11 +34,10 @@
 		justify-content: center
 		width: 40px
 		height: 40px
-		@include index.border7
 		cursor: pointer
-		transition: 0.2s ease
+		@include index.link
 
 @media (any-hover:hover)
 	.popup-background
 		&__close:hover
-			@include index.button-hover
+			@include index.link-hover
