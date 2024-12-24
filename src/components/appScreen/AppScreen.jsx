@@ -61,7 +61,8 @@ const AppScreen = () => {
 	const [curItem, setItem] = useState('ask-page'); // активный элемент навигации
 	const [curPage, setPage] = useState('ask-page'); // активная страница
 	const [questionsItem, setQuestionsItem] = useState(null);
-	const [popup, setPopup] = useState(false);
+	const [popup, setPopup] = useState(false); // активация Popup
+	const [tab, setTab] = useState('first'); // Табы
 
 	return (
 		<section className='section app-screen'>
@@ -78,7 +79,7 @@ const AppScreen = () => {
 				{/* Страница Profile */}
 
 				{/* Страница Profile */}
-				{curPage === 'profile-page' && <ProfilePage />}
+				{curPage === 'profile-page' && <ProfilePage tab={tab} setTab={setTab} setPage={setPage} />}
 
 				{/* Страница Ask */}
 				{curPage === 'ask-page' && <AskPage />}
@@ -91,6 +92,8 @@ const AppScreen = () => {
 						questionsItems={questionsItems}
 						setQuestionsItem={setQuestionsItem}
 						setPopup={setPopup}
+						tab={tab}
+						setTab={setTab}
 					/>
 				)}
 
@@ -98,7 +101,9 @@ const AppScreen = () => {
 				{curPage === 'tasks-page' && <TasksPage />}
 
 				{/* Страница Comments */}
-				{curPage === 'comments-page' && <CommentsPage questionsItem={questionsItem} />}
+				{curPage === 'comments-page' && (
+					<CommentsPage setPopup={setPopup} questionsItem={questionsItem} />
+				)}
 
 				{/* Footer */}
 				<Footer curItem={curItem} setItem={setItem} setPage={setPage} />

@@ -21,12 +21,13 @@
 		border-radius: 15px
 		@include index.border15
 		overflow: hidden
-		animation: opacity 2s ease
 
 	&__list
+		position: relative
 		display: flex
 		align-items: center
 		gap: 12px
+		animation: footer-items 2s ease
 
 	/* Footer Items */
 	&__item
@@ -40,7 +41,6 @@
 		@include index.button
 		transition: 0.2s ease
 		cursor: pointer
-		animation: footer-items 2s ease
 		&.active
 			@include index.button-active
 			color: index.$c-text-active

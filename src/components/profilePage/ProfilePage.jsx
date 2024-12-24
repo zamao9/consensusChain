@@ -2,34 +2,27 @@ import { useState } from 'react';
 import './profilePage.sass';
 import {
 	ArrowRightIcon,
-	NotificationIcon,
 	ProfileIcon,
+	SettingsIcon,
 	SuccessIcon,
 	SupportIcon,
 } from '../../constants/SvgIcons';
 
-const ProfilePage = () => {
+const ProfilePage = ({ tab, setTab, setPage }) => {
 	// Структура Линков
 	const linksData = [
 		{
 			key: 1,
 			svg: <SupportIcon />,
 			handler: () => {
-				console.log('support');
+				console.log('support-page');
 			},
 		},
 		{
 			key: 2,
-			svg: <NotificationIcon />,
+			svg: <SettingsIcon />,
 			handler: () => {
-				console.log('notification');
-			},
-		},
-		{
-			key: 3,
-			svg: <SupportIcon />,
-			handler: () => {
-				console.log("don't know");
+				setPage('settings-page');
 			},
 		},
 	];
@@ -108,24 +101,22 @@ const ProfilePage = () => {
 		},
 	];
 
-	const [tab, setTab] = useState('account');
-
 	return (
 		<div className='profile-page'>
 			{/* Табы */}
 			<ul className='tabs mb--32'>
 				<li>
 					<button
-						className={`button tabs__item ${tab === 'account' ? 'active' : ''}`}
-						onClick={() => setTab('account')}
+						className={`button tabs__item ${tab === 'first' ? 'active' : ''}`}
+						onClick={() => setTab('first')}
 					>
 						Account
 					</button>
 				</li>
 				<li>
 					<button
-						className={`button tabs__item ${tab === 'achievements' ? 'active' : ''}`}
-						onClick={() => setTab('achievements')}
+						className={`button tabs__item ${tab === 'second' ? 'active' : ''}`}
+						onClick={() => setTab('second')}
 					>
 						Achievements
 					</button>
@@ -133,14 +124,14 @@ const ProfilePage = () => {
 			</ul>
 
 			{/* Если Таб Account отображать */}
-			{tab === 'account' && (
+			{tab === 'first' && (
 				<>
 					{/* Обертка Никнейма, Даты регистрации */}
 					<div className='user mb--16'>
 						{/* Никнейм */}
 						<div className='user__name'>
 							<ProfileIcon />
-							<span className='title user__title'>gugugaga</span>
+							<span className='title fw--400 user__title'>gugugaga</span>
 						</div>
 
 						{/* Дата регистрации */}
@@ -186,7 +177,7 @@ const ProfilePage = () => {
 			)}
 
 			{/* Если Таб Achievements */}
-			{tab === 'achievements' && (
+			{tab === 'second' && (
 				<>
 					{/* Список Ачивок */}
 					<ul className='achievements'>

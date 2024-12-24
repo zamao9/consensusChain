@@ -8,7 +8,15 @@ import {
 import './questionsPage.sass';
 import QuestionsItem from './questionsItem/QuestionsItem';
 
-const QuestionsPage = ({ setItem, setPage, questionsItems, setQuestionsItem, setPopup }) => {
+const QuestionsPage = ({
+	tab,
+	setTab,
+	setItem,
+	setPage,
+	questionsItems,
+	setQuestionsItem,
+	setPopup,
+}) => {
 	// Задаём стартовое состояние. страница 1
 	const [currentPage, setCurrentPage] = useState(1);
 
@@ -39,6 +47,34 @@ const QuestionsPage = ({ setItem, setPage, questionsItems, setQuestionsItem, set
 
 	return (
 		<div className='questions-page'>
+			{/* Табы */}
+			<ul className='tabs mb--32'>
+				<li>
+					<button
+						className={`button tabs__item ${tab === 'first' ? 'active' : ''}`}
+						onClick={() => setTab('first')}
+					>
+						All
+					</button>
+				</li>
+				<li>
+					<button
+						className={`button tabs__item ${tab === 'second' ? 'active' : ''}`}
+						onClick={() => setTab('second')}
+					>
+						Private
+					</button>
+				</li>
+				<li>
+					<button
+						className={`button tabs__item ${tab === 'third' ? 'active' : ''}`}
+						onClick={() => setTab('third')}
+					>
+						Yours
+					</button>
+				</li>
+			</ul>
+
 			{/* Список вопросов */}
 			<ul className='mb--32 questions-page__list'>
 				{/* Элементы списка вопросов */}

@@ -45,7 +45,7 @@ const QuestionsItem = ({
 			</ul>
 
 			{/* Имя пользователя */}
-			<div className='user'>
+			<div className='user questions-page__user'>
 				<ProfileIcon />
 				<span className='user__name'>{questionsItem.user}</span>
 			</div>

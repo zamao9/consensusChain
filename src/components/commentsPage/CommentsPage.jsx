@@ -1,13 +1,12 @@
-import { useState } from 'react';
 import { DislikeIcon, LikeIcon } from '../../constants/SvgIcons';
 import QuestionsItem from '../questionsPage/questionsItem/QuestionsItem';
 import './commentsPage.sass';
 
-const CommentsPage = ({ questionsItem }) => {
+const CommentsPage = ({ questionsItem, setPopup }) => {
 	return (
 		<div className='comments-page'>
 			{/* Комментарий */}
-			<QuestionsItem questionsItem={questionsItem} comments={'comments-page'} />
+			<QuestionsItem questionsItem={questionsItem} comments={'comments-page'} setPopup={setPopup} />
 
 			{/* Ответы */}
 			<div className='answers mt--16'>

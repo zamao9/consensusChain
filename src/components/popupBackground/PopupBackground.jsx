@@ -13,6 +13,7 @@ const PopupBackground = ({ setPopup }) => {
 
 	return (
 		<AnimatePresence>
+			{/* Задний фон Popup */}
 			<motion.div
 				className='popup-background'
 				initial='hidden' // Начальное состояние
@@ -21,10 +22,14 @@ const PopupBackground = ({ setPopup }) => {
 				variants={variants}
 				transition={{ duration: 0.2 }} // Время анимации
 			>
+				{/* Блок Popup */}
 				<div className='popup-background__wrapper'>
+					{/* Кнопка закрытия Popup */}
 					<button type='button' className='popup-background__close' onClick={() => setPopup(false)}>
 						<CloseIcon />
 					</button>
+
+					{/* Открыть Report Popup  */}
 					<ReportPopup setPopup={setPopup} />
 				</div>
 			</motion.div>

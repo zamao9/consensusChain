@@ -38,30 +38,34 @@
 		border-right: 0
 		animation: balance-translate 2s ease
 
-	.profile
-		display: flex
-		justify-content: center
-		align-items: center
-		width: 56px
+	&__wrapper
 		height: 56px
 		@include index.border15
 		background-color: index.$c-bg-900
-		animation: opacity 0.6s ease
+		overflow: hidden
 
-		&__button
-			display: flex
-			justify-content: center
-			align-items: center
-			width: 40px
-			height: 40px
-			@include index.button
-			transition: 0.2s ease
-			cursor: pointer
-			&.active
-				@include index.button-active
+	&__buttons
+		display: flex
+		justify-content: center
+		align-items: center
+		height: 100%
+		gap: 12px
+		padding: 0 8px
+		animation: header-items 2s ease
+
+	&__button
+		display: flex
+		justify-content: center
+		align-items: center
+		width: 40px
+		height: 40px
+		@include index.button
+		transition: 0.2s ease
+		cursor: pointer
+		&.active
+			@include index.button-active
 
 @media (any-hover:hover)
 	.header
-		.profile
-			&__button:hover
-				@include index.button-hover
+		&__button:hover
+			@include index.button-hover

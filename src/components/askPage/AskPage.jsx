@@ -63,10 +63,12 @@ const AskPage = () => {
 						</li>
 					))}
 
-					{/* Поле для ввода своего тега */}
-					<div className='mt--16 filters__button filters__other'>
-						<input type='text' required placeholder='Tag' />
-					</div>
+					{/* Если Other активен, то поле для ввода тега показано */}
+					{filtersItems.at(-1).active === true && (
+						<div className='mt--8 filters__button filters__other'>
+							<input type='text' required placeholder='Tag' />
+						</div>
+					)}
 				</ul>
 
 				{/* Разделительная линия */}
@@ -95,13 +97,11 @@ const AskPage = () => {
 				</div>
 
 				{/* Поле для ввода никнейма для приватного вопроса */}
-				<div
-					className={`filters__button filters__private ${
-						currPrivacyBtn === true ? 'active' : false
-					}`}
-				>
-					<input type='text' required placeholder='@nickname' />
-				</div>
+				{currPrivacyBtn === true && (
+					<div className='filters__button filters__private'>
+						<input type='text' required placeholder='@nickname' />
+					</div>
+				)}
 			</div>
 
 			{/* Кнопка для отправки вопроса */}

@@ -103,7 +103,7 @@ const ReportPopup = ({ setPopup }) => {
 			text: reportText,
 		});
 
-		alert('Ваш репорт отправлен!');
+		alert('Your report has been successfully sent!');
 
 		setCurrentPath([]);
 		setReportText('');
@@ -122,8 +122,8 @@ const ReportPopup = ({ setPopup }) => {
 			)}
 
 			{/* Заголовок репорта */}
-			<h2 className='title mb--16 report-popup__title'>
-				{currentCategory[0]?.title || 'Опишите вашу проблему'}
+			<h2 className='title lh--140 mb--16 report-popup__title'>
+				{currentCategory[0]?.title || 'Сhoose a problem'}
 			</h2>
 
 			{/* Разделительная линия */}
@@ -137,7 +137,7 @@ const ReportPopup = ({ setPopup }) => {
 						{currentCategory.map((item) => (
 							<button
 								key={item.id}
-								className='report-popup__item'
+								className='report-popup__item lh--140'
 								onClick={() => handleTagClick(item.id)} // Клик по тегу
 							>
 								{item.tags.join(', ')} {/* Отображаем теги для текущей категории */}
@@ -148,7 +148,7 @@ const ReportPopup = ({ setPopup }) => {
 					<div className='report-popup__textarea-wrapper'>
 						{/* Если вложенность закончилась, отображаем поле для текста */}
 						<textarea
-							className='mb--22 report-popup__textarea'
+							className='mb--16 report-popup__textarea'
 							placeholder='Your comment'
 							value={reportText}
 							onChange={(e) => setReportText(e.target.value)}
@@ -161,7 +161,7 @@ const ReportPopup = ({ setPopup }) => {
 								setPopup(false);
 							}}
 						>
-							Отправить
+							Send report
 						</button>
 					</div>
 				)}
