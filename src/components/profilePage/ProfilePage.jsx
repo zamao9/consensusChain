@@ -8,7 +8,7 @@ import {
 	SupportIcon,
 } from '../../constants/SvgIcons';
 
-const ProfilePage = ({ tab, setTab, setPage }) => {
+const ProfilePage = ({ tab, setTab, setPage, setItem }) => {
 	// Структура Линков
 	const linksData = [
 		{
@@ -65,6 +65,7 @@ const ProfilePage = ({ tab, setTab, setPage }) => {
 			svg: <ArrowRightIcon />,
 			handler: () => {
 				setPage('replies-sent-page');
+				setItem('');
 			},
 		},
 	];

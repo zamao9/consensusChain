@@ -79,7 +79,9 @@ const AppScreen = () => {
 				<Header curItem={curItem} setItem={setItem} setPage={setPage} />
 
 				{/* Страница Profile */}
-				{curPage === 'profile-page' && <ProfilePage tab={tab} setTab={setTab} setPage={setPage} />}
+				{curPage === 'profile-page' && (
+					<ProfilePage tab={tab} setTab={setTab} setPage={setPage} setItem={setItem} />
+				)}
 
 				{/* Страница Replies Sent */}
 				{curPage === 'replies-sent-page' && <RepliesSentPage />}
