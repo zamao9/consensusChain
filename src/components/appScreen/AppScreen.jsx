@@ -10,6 +10,7 @@ import CommentsPage from '../commentsPage/CommentsPage';
 import ProfilePage from '../profilePage/ProfilePage';
 import PopupBackground from '../popupBackground/PopupBackground';
 import NotificationsPage from '../notificationsPage/NotificationsPage';
+import RepliesSentPage from '../repliesSentPage/RepliesSentPage';
 
 const AppScreen = () => {
 	const questionsItems = [
@@ -79,6 +80,9 @@ const AppScreen = () => {
 
 				{/* Страница Profile */}
 				{curPage === 'profile-page' && <ProfilePage tab={tab} setTab={setTab} setPage={setPage} />}
+
+				{/* Страница Replies Sent */}
+				{curPage === 'replies-sent-page' && <RepliesSentPage />}
 
 				{/* Страница Notifications */}
 				{curPage === 'notifications-page' && <NotificationsPage />}

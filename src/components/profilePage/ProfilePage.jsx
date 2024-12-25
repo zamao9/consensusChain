@@ -64,7 +64,7 @@ const ProfilePage = ({ tab, setTab, setPage }) => {
 			count: 205,
 			svg: <ArrowRightIcon />,
 			handler: () => {
-				console.log('Replies sent');
+				setPage('replies-sent-page');
 			},
 		},
 	];
