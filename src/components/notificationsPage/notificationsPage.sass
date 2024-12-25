@@ -1,0 +1,160 @@
+@use '../../index'
+.notifications-page
+	max-width: 395px
+	margin: 0 auto
+
+	/* Обертка Заголовка, Кнопки фильтрации */
+	&__header
+		display: flex
+		align-items: center
+		justify-content: space-between
+
+	/* Заголовок */
+	&__title
+		color: index.$c-text
+		text-align: left
+		overflow: hidden
+		text-overflow: ellipsis
+		display: -webkit-box
+		-webkit-line-clamp: 2
+		-webkit-box-orient: vertical
+
+	/* Кнопка фильтрации */
+	&__button-wrapper
+		flex-shrink: 0
+		display: flex
+		align-items: center
+		justify-content: center
+		width: 56px
+		height: 56px
+		@include index.border15
+		background-color: index.$c-bg-900
+
+	&__button
+		width: 40px
+		height: 40px
+		@include index.button
+
+	/* Список уведомлений */
+	&__list
+		position: relative
+		display: grid
+		gap: 16px
+		& li
+			width: 100%
+
+	/* Элементы списка уведомлений */
+	&__item
+		position: relative
+		display: flex
+		flex-direction: column
+		gap: 16px
+		width: 100%
+		padding: 14px 60px 14px 20px
+		@include index.border15
+		background-color: index.$c-bg-900
+		overflow: hidden
+		transition: 0.2s ease
+		&:focus-visible
+			.notifications-page__title
+				color: index.$c-text-active
+			.notifications-page__date
+				color: index.$c-text-active
+			.notifications-page__icon
+				box-shadow: 2px 2px 4px rgba(index.$c-black, 0.32) inset, -2px -2px 4px rgba(index.$c-white, 0.16) inset
+		&.is-read
+			color: index.$c-text-disabled
+			& svg
+				stroke: index.$c-text-disabled
+			.notifications-page__title
+				color: index.$c-text-disabled
+			.notifications-page__date
+				color: index.$c-text-disabled
+			.notifications-page__icon
+				@include index.bg-button
+			&.is-read:focus-visible
+				.notifications-page__date
+					color: index.$c-text-disabled
+				.notifications-page__icon
+					& svg
+						stroke: index.$c-text-disabled !important
+
+	/* Дата элемента */
+	&__date
+		color: index.$c-text
+
+	/* Тип иконки */
+	&__icon
+		position: absolute
+		top: 0
+		right: 0
+		display: flex
+		align-items: center
+		justify-content: center
+		width: 40px
+		height: 100%
+		pointer-events: none
+		@include index.bg-button-active
+		border-left: 1px solid index.$c-stroke
+		transition: 0.2s ease
+
+	/* Список элементов Фильтрации */
+	.notifications-filter
+		position: absolute
+		top: 0px
+		right: 0
+		display: grid
+		gap: 16px
+		width: 280px
+		padding: 28px 20px
+		@include index.border15
+		background-color: index.$c-bg-900
+		box-shadow: 0 0 10px 4px index.$c-bg-main
+		transition: 0.2s ease
+
+		&__item
+			display: flex
+			align-items: center
+			justify-content: space-between
+
+		.radio
+			position: relative
+			width: 44px
+			height: 24px
+			@include index.border15
+			background-color: index.$c-stroke
+			transition: 0.2s ease
+			&__button
+				position: absolute
+				top: 50%
+				left: 2px
+				transform: translateY(-50%)
+				width: 20px
+				height: 20px
+				@include index.border15
+				border: none
+				background-color: index.$c-text
+				transition: 0.2s ease
+			&.active
+				background-color: index.$c-bg-button-active
+				.radio__button
+					left: 20px
+
+@media (any-hover:hover)
+	.notifications-page
+		&__item:hover
+			@include index.button-hover
+			.notifications-page__title
+				color: index.$c-text-active
+			.notifications-page__date
+				color: index.$c-text-active
+			.notifications-page__icon
+				box-shadow: 2px 2px 4px rgba(index.$c-black, 0.32) inset, -2px -2px 4px rgba(index.$c-white, 0.16) inset
+		&__item.is-read:hover
+			.notifications-page__title
+				color: index.$c-text-disabled
+			.notifications-page__date
+				color: index.$c-text-disabled
+			.notifications-page__icon
+				& svg
+					stroke: index.$c-text-disabled !important

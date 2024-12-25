@@ -9,6 +9,7 @@ import TasksPage from '../tasksPage/TasksPage';
 import CommentsPage from '../commentsPage/CommentsPage';
 import ProfilePage from '../profilePage/ProfilePage';
 import PopupBackground from '../popupBackground/PopupBackground';
+import NotificationsPage from '../notificationsPage/NotificationsPage';
 
 const AppScreen = () => {
 	const questionsItems = [
@@ -77,9 +78,10 @@ const AppScreen = () => {
 				<Header curItem={curItem} setItem={setItem} setPage={setPage} />
 
 				{/* Страница Profile */}
-
-				{/* Страница Profile */}
 				{curPage === 'profile-page' && <ProfilePage tab={tab} setTab={setTab} setPage={setPage} />}
+
+				{/* Страница Notifications */}
+				{curPage === 'notifications-page' && <NotificationsPage />}
 
 				{/* Страница Ask */}
 				{curPage === 'ask-page' && <AskPage />}

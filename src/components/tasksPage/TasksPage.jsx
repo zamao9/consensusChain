@@ -114,6 +114,7 @@ const TasksPage = () => {
 
 	return (
 		<div className='tasks-page'>
+			<h2 className='title mb--22 ask-page__title'>Tasks</h2>
 			{/* Список тасков */}
 			<ul className='tasks-page__list'>
 				<AnimatePresence>

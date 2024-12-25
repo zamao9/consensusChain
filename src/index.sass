@@ -37,6 +37,14 @@ $c-stroke-active: #45442A
 	svg
 		stroke: $c-text-active !important
 
+@mixin bg-button
+	background: linear-gradient(to bottom, rgba(71, 71, 71, 0.4), rgba(26, 25, 15, 0.4))
+	background-color: $c-bg-button
+
+@mixin bg-button-active
+	background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(102, 100, 62, 0.4))
+	background-color: $c-bg-button-active
+
 @mixin button
 	background: linear-gradient(to bottom, rgba(71, 71, 71, 0.4), rgba(26, 25, 15, 0.4))
 	background-color: $c-bg-button
@@ -103,6 +111,7 @@ body
 	color: $c-title
 	line-height: 18px
 
+/* Кнопка */
 .button
 	display: flex
 	justify-content: center
@@ -133,6 +142,7 @@ body
 		&:hover
 			@include button-hover
 
+/* Тэги */
 .tags
 	display: flex
 	flex-wrap: wrap
@@ -148,6 +158,7 @@ body
 		@include border7
 		border: 1px solid $c-stroke
 
+/* Юзер */
 .user
 	display: flex
 	align-items: center
@@ -155,6 +166,7 @@ body
 	&__name
 		word-break: break-all
 
+/* Табы */
 .tabs
 	display: flex
 	gap: 8px
@@ -165,6 +177,45 @@ body
 		width: 100%
 	&__item
 		font-weight: 400
+
+/* Пагинация */
+.pagination
+	display: flex
+	align-items: center
+	justify-content: center
+	gap: 8px
+	padding: 8px
+	@include border15
+	background-color: $c-bg-900
+
+	&__button,
+	&__counter
+		display: flex
+		align-items: center
+		justify-content: center
+		height: 35px
+		padding: 0
+	&__button
+		width: 50px
+		@include button
+		cursor: pointer
+		transition: 0.2s ease
+		&.disabled
+			background: none !important
+			box-shadow: none !important
+			pointer-events: none !important
+			color: $c-text-disabled
+			svg
+				stroke: $c-text-disabled !important
+	@media(any-hover:hover)
+		&__button:hover
+			@include button-hover
+
+	/* Счетчик страниц */
+	&__counter
+		padding: 0 14px
+		@include border7
+		background-color: $c-bg-input
 
 svg
 	flex-shrink: 0
@@ -213,6 +264,8 @@ hr
 	margin-top: 32px
 .mb--10
 	margin-bottom: 10px
+.mb--12
+	margin-bottom: 12px
 .mb--16
 	margin-bottom: 16px
 .mb--22

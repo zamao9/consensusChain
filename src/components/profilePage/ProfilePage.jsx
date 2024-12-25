@@ -18,13 +18,6 @@ const ProfilePage = ({ tab, setTab, setPage }) => {
 				console.log('support-page');
 			},
 		},
-		{
-			key: 2,
-			svg: <SettingsIcon />,
-			handler: () => {
-				setPage('settings-page');
-			},
-		},
 	];
 
 	// Структура Статистики
