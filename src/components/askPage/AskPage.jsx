@@ -19,7 +19,6 @@ const AskPage = () => {
 
 	const [filtersItems, setFiltersItems] = useState(initialItems);
 	const [currPrivacyBtn, setPrivacyBtn] = useState(false);
-	const [currSubmitBtn, setSubmitBtn] = useState(false);
 
 	// Функция для обработки выбора тегов
 	const handleTagClick = (key) => {
@@ -40,11 +39,7 @@ const AskPage = () => {
 		<form action='' className='ask-page'>
 			<h2 className='title mb--22 ask-page__title'>Ask your question</h2>
 			{/* Текстовое поле для ввода вопроса */}
-			<textarea
-				placeholder='Your question'
-				className='text mb--22 lh--140 ask-page__textarea '
-				required
-			/>
+			<textarea placeholder='. . .' className='text mb--22 lh--140 ask-page__textarea ' required />
 
 			<h2 className='title mb--22 ask-page__title'>Filters</h2>
 			{/* Обертка для фильтров */}
@@ -106,10 +101,7 @@ const AskPage = () => {
 
 			{/* Кнопка для отправки вопроса */}
 			<div className='mt--32 ask-page__button-wrapper'>
-				<button
-					className={`button ask-page__button ${currSubmitBtn === false ? 'disabled' : ''}`}
-					type='submit'
-				>
+				<button className='button ask-page__button' type='submit' disabled>
 					Submit
 				</button>
 			</div>

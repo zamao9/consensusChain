@@ -8,6 +8,8 @@ $c-white: #ffffff
 $c-bg-main: #1C1C1C
 $c-bg-900: #272727
 $c-bg-input: #121212
+$c-green: #3E9444
+$c-red: #7D2222
 
 $c-text: #CECECE
 $c-text-active: #B3B3B3
@@ -200,13 +202,7 @@ body
 		@include button
 		cursor: pointer
 		transition: 0.2s ease
-		&.disabled
-			background: none !important
-			box-shadow: none !important
-			pointer-events: none !important
-			color: $c-text-disabled
-			svg
-				stroke: $c-text-disabled !important
+
 	@media(any-hover:hover)
 		&__button:hover
 			@include button-hover
@@ -228,10 +224,18 @@ button:focus-visible
 	outline: 1px solid $c-stroke
 	outline-offset: 2px
 	@include button-hover
+button:disabled
+	background: none !important
+	box-shadow: none !important
+	pointer-events: none !important
+	color: $c-text-disabled
+	svg
+		stroke: $c-text-active !important
 
 textarea
 	width: 100%
 	padding: 14px 20px
+	min-height: 150px
 	resize: none
 	color: $c-text
 	font-size: 16px

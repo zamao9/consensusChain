@@ -13,33 +13,33 @@ import {
 import './notificationsPage.sass';
 import { AnimatePresence, motion } from 'framer-motion';
 
-const NotificationsPage = () => {
+const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource }) => {
 	// Стриктура списка уведомлений
 	const notificationsData = [
 		{
 			key: 1,
-			title: 'Blabla left a comment on your question.',
+			text: 'Blabla left a comment on your question.',
 			type: 'comment',
 			date: '23.01.2025',
 			isRead: false,
 		},
 		{
 			key: 2,
-			title: 'Your report ... was accept and ...',
+			text: 'Your report ... was accept and ...',
 			type: 'report',
 			date: '23.01.2025',
 			isRead: false,
 		},
 		{
 			key: 3,
-			title: 'System update 12.0.1 v.',
+			text: 'System update 12.0.1 v.',
 			type: 'system',
 			date: '23.01.2025',
 			isRead: false,
 		},
 		{
 			key: 4,
-			title: 'Gugugaga liked your question.',
+			text: 'Gugugaga liked your question.',
 			type: 'like',
 			date: '23.01.2025',
 			isRead: false,
@@ -138,11 +138,20 @@ const NotificationsPage = () => {
 							className={`notifications-page__item ${element.isRead === true ? 'is-read' : ''}`}
 							onClick={() => {
 								updateNotifications(element.key, status, setStatus);
-								console.log(element.title);
+								console.log(element.text);
+								setPopup(true);
+								setPopupSvg(
+									(element.type === 'system' && <SettingsIcon />) ||
+										(element.type === 'comment' && <CommentsIcon />) ||
+										(element.type === 'report' && <ReportIcon />) ||
+										(element.type === 'like' && <LikeIcon />)
+								);
+								setPopupText(element.text);
+								setPopupSource('notifications-page');
 							}}
 						>
 							{/* Описание элемента */}
-							<h2 className='title lh--140 fw--400 notifications-page__title'>{element.title}</h2>
+							<h2 className='title lh--140 fw--400 notifications-page__title'>{element.text}</h2>
 
 							{/* Разделительная линия */}
 							<hr />

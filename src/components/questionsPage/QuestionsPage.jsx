@@ -16,6 +16,9 @@ const QuestionsPage = ({
 	questionsItems,
 	setQuestionsItem,
 	setPopup,
+	setPopupText,
+	currSubmitBtn,
+	setPopupSource,
 }) => {
 	// Задаём стартовое состояние. страница 1
 	const [currentPage, setCurrentPage] = useState(1);
@@ -87,6 +90,9 @@ const QuestionsPage = ({
 						setQuestionsItem={setQuestionsItem}
 						comments={'questions-page'}
 						setPopup={setPopup}
+						setPopupText={setPopupText}
+						setPopupSource={setPopupSource}
+						currSubmitBtn={currSubmitBtn}
 					/>
 				))}
 			</ul>

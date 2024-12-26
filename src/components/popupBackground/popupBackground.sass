@@ -13,6 +13,7 @@
 	backdrop-filter: blur(10px)
 	-webkit-backdrop-filter: blur(10px)
 
+	/* Обертка контента */
 	&__wrapper
 		position: relative
 		display: flex
@@ -23,8 +24,9 @@
 		margin: 0 auto
 		@include index.border15
 		background-color: index.$c-bg-900
-		padding: 80px 20px 15px
+		padding: 80px 20px
 
+	/* Кнопка закрытия */
 	&__close
 		position: absolute
 		top: 15px
@@ -36,6 +38,22 @@
 		height: 40px
 		cursor: pointer
 		@include index.link
+
+	/* Иконка */
+	&__svg
+		& svg
+			width: 100px
+			height: 100px
+	&__success
+		& svg
+			stroke: index.$c-green
+	&__error
+		& svg
+			stroke: index.$c-red
+
+	/* Текст */
+	&__text
+		text-align: center
 
 @media (any-hover:hover)
 	.popup-background

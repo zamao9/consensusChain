@@ -64,12 +64,28 @@ const AppScreen = () => {
 	const [curPage, setPage] = useState('ask-page'); // активная страница
 	const [questionsItem, setQuestionsItem] = useState(null);
 	const [popup, setPopup] = useState(false); // активация Popup
-	const [tab, setTab] = useState('first'); // Табы
+	const [tab, setTab] = useState('first'); // табы
+	const [popupSvg, setPopupSvg] = useState(''); // svg в Popup
+	const [popupText, setPopupText] = useState(''); // текст в Popup
+	const [popupSource, setPopupSource] = useState(null);
+	const [answer, setAnswer] = useState(false);
+	const [reportSubmit, setReportSubmit] = useState(false);
 
 	return (
 		<section className='section app-screen'>
 			{/* Стриница Popup */}
-			{popup === true && <PopupBackground popup={popup} setPopup={setPopup} />}
+			{popup === true && (
+				<PopupBackground
+					popup={popup}
+					setPopup={setPopup}
+					popupSvg={popupSvg}
+					popupText={popupText}
+					setPopupText={setPopupText}
+					popupSource={popupSource}
+					setPopupSource={setPopupSource}
+					setAnswer={setAnswer}
+				/>
+			)}
 
 			<div className='container app-screen__container'>
 				{/* Marquees */}
@@ -87,7 +103,14 @@ const AppScreen = () => {
 				{curPage === 'replies-sent-page' && <RepliesSentPage />}
 
 				{/* Страница Notifications */}
-				{curPage === 'notifications-page' && <NotificationsPage />}
+				{curPage === 'notifications-page' && (
+					<NotificationsPage
+						setPopup={setPopup}
+						setPopupSvg={setPopupSvg}
+						setPopupText={setPopupText}
+						setPopupSource={setPopupSource}
+					/>
+				)}
 
 				{/* Страница Ask */}
 				{curPage === 'ask-page' && <AskPage />}
@@ -100,6 +123,8 @@ const AppScreen = () => {
 						questionsItems={questionsItems}
 						setQuestionsItem={setQuestionsItem}
 						setPopup={setPopup}
+						setPopupText={setPopupText}
+						setPopupSource={setPopupSource}
 						tab={tab}
 						setTab={setTab}
 					/>
@@ -110,7 +135,13 @@ const AppScreen = () => {
 
 				{/* Страница Comments */}
 				{curPage === 'comments-page' && (
-					<CommentsPage setPopup={setPopup} questionsItem={questionsItem} />
+					<CommentsPage
+						setPopup={setPopup}
+						setPopupText={setPopupText}
+						setPopupSource={setPopupSource}
+						questionsItem={questionsItem}
+						answer={answer}
+					/>
 				)}
 
 				{/* Footer */}

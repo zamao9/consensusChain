@@ -5,7 +5,7 @@ import {
 	NotificationIcon,
 	ProfileIcon,
 	ReportIcon,
-	StartIcon,
+	StarIcon,
 } from '../../../constants/SvgIcons';
 
 const QuestionsItem = ({
@@ -15,6 +15,9 @@ const QuestionsItem = ({
 	setQuestionsItem,
 	comments,
 	setPopup,
+	setPopupText,
+	setPopupSource,
+	answer,
 }) => {
 	const [report, setReport] = useState(false);
 	const [trace, setTrace] = useState(false);
@@ -23,13 +26,15 @@ const QuestionsItem = ({
 	return (
 		<li className='questions-page__item'>
 			{/* Флажок популярности вопроса */}
-			<div
-				className={`button questions-page__button questions-page__popular ${
-					questionsItem.popular === false ? 'none' : ''
-				}`}
-			>
-				<StartIcon />
-			</div>
+			{comments === 'questions-page' && (
+				<div
+					className={`button questions-page__button questions-page__popular ${
+						questionsItem.popular === false ? 'none' : ''
+					}`}
+				>
+					<StarIcon />
+				</div>
+			)}
 
 			{/* Вопрос */}
 			<h2 className='title lh--140 questions-page__title'>{questionsItem.title}</h2>
@@ -63,6 +68,8 @@ const QuestionsItem = ({
 						onClick={() => {
 							setReport(!report);
 							setPopup(true);
+							setPopupText('Your report has been successfully sent.');
+							setPopupSource('report-page');
 						}}
 					>
 						<ReportIcon />
@@ -119,8 +126,11 @@ const QuestionsItem = ({
 					<button
 						type='button'
 						className='questions-page__button questions-page__leave-a-comment'
+						disabled={answer}
 						onClick={() => {
-							console.log('click');
+							setPopup(true);
+							setPopupText('Your reply was successfully sent.');
+							setPopupSource('answer');
 						}}
 					>
 						Answer

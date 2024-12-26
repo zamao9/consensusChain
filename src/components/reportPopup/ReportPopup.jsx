@@ -2,7 +2,7 @@ import { useState } from 'react';
 import './reportPopup.sass';
 import { ArrowLeftIcon } from '../../constants/SvgIcons';
 
-const ReportPopup = ({ setPopup }) => {
+const ReportPopup = ({ setPopupSource }) => {
 	const reportFlow = [
 		{
 			id: 'ads',
@@ -149,7 +149,7 @@ const ReportPopup = ({ setPopup }) => {
 						{/* Если вложенность закончилась, отображаем поле для текста */}
 						<textarea
 							className='mb--16 report-popup__textarea'
-							placeholder='Your comment'
+							placeholder='. . .'
 							value={reportText}
 							onChange={(e) => setReportText(e.target.value)}
 						/>
@@ -157,8 +157,7 @@ const ReportPopup = ({ setPopup }) => {
 						<button
 							className='button'
 							onClick={() => {
-								handleSubmit();
-								setPopup(false);
+								setPopupSource('success');
 							}}
 						>
 							Send report
