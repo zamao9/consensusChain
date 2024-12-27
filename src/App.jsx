@@ -1,8 +1,12 @@
 import './App.sass';
 import AppScreen from './components/appScreen/AppScreen';
+import { Provider } from 'react-redux';
+import { store } from './store';
 
 function App() {
-	return <AppScreen />;
+	return <Provider store={store}>
+		<AppScreen />
+	</Provider>;
 }
 
 export default App;
