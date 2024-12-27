@@ -12,23 +12,23 @@
 	width: 100%
 	max-width: 470px
 	padding: 15px
-	background-color: index.$c-bg-main
-	box-shadow: 0 0 10px 10px index.$c-bg-main
 
 	&__profile
+		position: relative
 		display: flex
 		align-items: center
 		justify-content: center
-		overflow: hidden
+		box-shadow: 0 0 4px 2px index.$c-bg-main
+		border-radius: 15px
 
 	.balance
-		position: relative
+		position: absolute
+		left: -100px
 		z-index: -1
 		display: flex
 		align-items: center
 		justify-content: center
-		min-width: 60px
-		width: fit-content
+		width: 100px
 		height: 30px
 		padding: 0 12px
 		background-color: index.$c-bg-input
@@ -36,22 +36,19 @@
 		border-radius: 7px 0 0 7px
 		border: 1px solid index.$c-stroke
 		border-right: 0
-		animation: balance-translate 2s ease
-
-	&__wrapper
-		height: 56px
-		@include index.border15
-		background-color: index.$c-bg-900
-		overflow: hidden
+		animation: balance-translate 1.4s ease
+		box-shadow: 0 0 4px 2px index.$c-bg-main
 
 	&__buttons
 		display: flex
 		justify-content: center
 		align-items: center
-		height: 100%
 		gap: 12px
+		height: 56px
 		padding: 0 8px
-		animation: header-items 2s ease
+		background-color: index.$c-bg-900
+		overflow: hidden
+		@include index.border15
 
 	&__button
 		display: flex
@@ -64,6 +61,10 @@
 		cursor: pointer
 		&.active
 			@include index.button-active
+	.header-item1
+		animation: header-item1 0.8s ease
+	.header-item2
+		animation: header-item2 0.8s ease
 
 @media (any-hover:hover)
 	.header

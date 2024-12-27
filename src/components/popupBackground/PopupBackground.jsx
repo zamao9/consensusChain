@@ -62,7 +62,13 @@ const PopupBackground = ({
 					{popupSource === 'notifications-page' && (
 						<>
 							{/* Иконка */}
-							<div className='popup-background__svg popup-background__svg mb--10'>{popupSvg}</div>
+							<div className='popup-background__svg popup-background__notifications-svg mb--16 '>
+								{popupSvg}
+							</div>
+
+							{/* Разделительная линия */}
+							<hr className='mb--22' />
+
 							<p className='lh--140 popup-background__text'>{popupText}</p>
 						</>
 					)}

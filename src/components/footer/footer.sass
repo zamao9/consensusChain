@@ -6,8 +6,6 @@
 	left: 0
 	width: 100%
 	padding: 15px
-	background-color: index.$c-bg-main
-	box-shadow: 0 0 10px 10px index.$c-bg-main
 	&__wrapper
 		position: relative
 		display: flex
@@ -21,13 +19,13 @@
 		border-radius: 15px
 		@include index.border15
 		overflow: hidden
+		box-shadow: 0 0 4px 2px index.$c-bg-main
 
 	&__list
 		position: relative
 		display: flex
 		align-items: center
 		gap: 12px
-		animation: footer-items 2s ease
 
 	/* Footer Items */
 	&__item
@@ -44,6 +42,12 @@
 		&.active
 			@include index.button-active
 			color: index.$c-text-active
+	.footer-item1
+		animation: footer-item1 0.8s ease
+	.footer-item2
+		animation: footer-item2 0.8s ease
+	.footer-item3
+		animation: footer-item3 0.8s ease
 
 @media (any-hover:hover)
 	.footer

@@ -6,16 +6,19 @@ const Footer = ({ curItem, setItem, setPage }) => {
 		{
 			key: 1,
 			label: 'ask-page',
+			className: 'footer-item1',
 			svg: <QuestionsIcon />,
 		},
 		{
 			key: 2,
 			label: 'questions-page',
+			className: 'footer-item2',
 			svg: <AnswersIcon />,
 		},
 		{
 			key: 3,
 			label: 'tasks-page',
+			className: 'footer-item3',
 			svg: <TasksIcon />,
 		},
 	];
@@ -28,7 +31,9 @@ const Footer = ({ curItem, setItem, setPage }) => {
 					{footerItems.map((element) => (
 						<li key={element.key}>
 							<button
-								className={`footer__item ${curItem === element.label ? 'active' : ''}`}
+								className={`footer__item ${element.className} ${
+									curItem === element.label ? 'active' : ''
+								}`}
 								onClick={() => {
 									setItem(element.label);
 									setPage(element.label);

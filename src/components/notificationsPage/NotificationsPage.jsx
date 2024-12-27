@@ -121,7 +121,9 @@ const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource
 				<div className='notifications-page__button-wrapper'>
 					<button
 						className={`button notifications-page__button ${curItem === true ? 'active' : ''}`}
-						onClick={() => setItem(!curItem)}
+						onClick={() => {
+							setItem(!curItem);
+						}}
 					>
 						<FilterIcon />
 					</button>

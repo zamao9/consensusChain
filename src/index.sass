@@ -179,6 +179,7 @@ body
 		width: 100%
 	&__item
 		font-weight: 400
+		height: 35px
 
 /* Пагинация */
 .pagination
@@ -235,7 +236,7 @@ button:disabled
 textarea
 	width: 100%
 	padding: 14px 20px
-	min-height: 150px
+	min-height: 100px
 	resize: none
 	color: $c-text
 	font-size: 16px
@@ -284,25 +285,58 @@ hr
 /* Animations */
 @keyframes balance-translate
 	0%
-		right: -100%
+		left: 0
+	50%
+		left: 0
 	100%
-		right: 0
+		left: -100px
 @keyframes opacity
 	0%
 		opacity: 0
 	100%
 		opacity: 1
-@keyframes header-items
+@keyframes header-item1
 	0%
 		position: relative
-		right: -100%
+		top: -70px
 	100%
 		position: relative
-		right: 0
-@keyframes footer-items
+		top: 0
+@keyframes header-item2
 	0%
-		position: absolute
-		left: -100%
+		position: relative
+		top: -70px
+	30%
+		position: relative
+		top: -70px
 	100%
-		position: absolute
-		left: 8px
+		position: relative
+		top: 0
+
+@keyframes footer-item1
+	0%
+		position: relative
+		bottom: -70px
+	100%
+		position: relative
+		bottom: 0px
+@keyframes footer-item2
+	0%
+		position: relative
+		bottom: -70px
+	30%
+		position: relative
+		bottom: -70px
+	100%
+		position: relative
+		bottom: 0px
+@keyframes footer-item3
+	0%
+		position: relative
+		bottom: -70px
+	60%
+		position: relative
+		bottom: -70px
+	100%
+		position: relative
+		bottom: 0px
