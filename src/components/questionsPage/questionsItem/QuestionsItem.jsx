@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
 	CommentsIcon,
 	LikeIcon,
@@ -7,110 +7,131 @@ import {
 	ReportIcon,
 	StarIcon,
 } from '../../../constants/SvgIcons';
+import { useAppDispatch } from '../../../hooks/store';
+import { updateQuestion } from '../../../feature/questions/questionsSlice';
 
 const QuestionsItem = ({
-	setItem,
 	questionsItem,
-	setPage,
-	setQuestionsItem,
 	comments,
 	setPopup,
 	setPopupText,
 	setPopupSource,
 	answer,
+	setPage,
+	setQuestionsItem,
+	setItem,
 }) => {
-	const [report, setReport] = useState(false);
-	const [trace, setTrace] = useState(false);
-	const [like, setLike] = useState(false);
+	const dispatch = useAppDispatch();
+
+	// Обработчики событий
+	const handleReport = () => {
+		dispatch(
+			updateQuestion({
+				id: questionsItem.id,
+				updates: { report: !questionsItem.report },
+			})
+		);
+		setPopup(true);
+		setPopupText('Your report has been successfully sent.');
+		setPopupSource('report-page');
+	};
+
+	const handleTrace = () => {
+		dispatch(
+			updateQuestion({
+				id: questionsItem.id,
+				updates: { trace: !questionsItem.trace },
+			})
+		);
+	};
+
+	const handleLike = () => {
+		dispatch(
+			updateQuestion({
+				id: questionsItem.id,
+				updates: {
+					like: !questionsItem.like,
+					likeCount: questionsItem.like
+						? questionsItem.likeCount - 1
+						: questionsItem.likeCount + 1,
+				},
+			})
+		);
+	};
 
 	return (
-		<li className='questions-page__item'>
+		<li className="questions-page__item">
 			{/* Флажок популярности вопроса */}
 			{comments === 'questions-page' && (
 				<div
-					className={`button questions-page__button questions-page__popular ${
-						questionsItem.popular === false ? 'none' : ''
-					}`}
+					className={`button questions-page__button questions-page__popular ${questionsItem.popular === false ? 'none' : ''
+						}`}
 				>
 					<StarIcon />
 				</div>
 			)}
 
 			{/* Вопрос */}
-			<h2 className='title lh--140 questions-page__title'>{questionsItem.title}</h2>
+			<h2 className="title lh--140 questions-page__title">{questionsItem.title}</h2>
 
 			{/* Список тэгов */}
-			<ul className='tags'>
-				{/* Тэги */}
-				{questionsItem.tags.map((tag, key) => (
-					<li className='tags__item' key={key}>
+			<ul className="tags">
+				{questionsItem.tags.map((tag, id) => (
+					<li className="tags__item" id={id}>
 						{tag}
 					</li>
 				))}
 			</ul>
 
 			{/* Имя пользователя */}
-			<div className='user questions-page__user'>
+			<div className="user questions-page__user">
 				<ProfileIcon />
-				<span className='user__name'>{questionsItem.user}</span>
+				<span className="user__name">{questionsItem.user}</span>
 			</div>
 
 			{/* Обертка кнопок */}
-			<div className='questions-page__buttons-wrapper'>
+			<div className="questions-page__buttons-wrapper">
 				{/* Обертка Репорта, Отслеживания, Лайков */}
-				<div className='questions-page__buttons'>
+				<div className="questions-page__buttons">
 					{/* Кнопка репорт */}
 					<button
-						type='button'
-						className={`button questions-page__button questions-page__report ${
-							report ? 'active' : ''
-						}`}
-						onClick={() => {
-							setReport(!report);
-							setPopup(true);
-							setPopupText('Your report has been successfully sent.');
-							setPopupSource('report-page');
-						}}
+						type="button"
+						className={`button questions-page__button questions-page__report ${questionsItem.report ? 'active' : ''
+							}`}
+						onClick={handleReport}
 					>
 						<ReportIcon />
 					</button>
 
 					{/* Кнопка отслеживания */}
 					<button
-						type='button'
-						className={`button questions-page__button questions-page__trace ${
-							trace ? 'active' : ''
-						}`}
-						onClick={() => setTrace(!trace)}
+						type="button"
+						className={`button questions-page__button questions-page__trace ${questionsItem.trace ? 'active' : ''
+							}`}
+						onClick={handleTrace}
 					>
 						<NotificationIcon />
 					</button>
 
 					{/* Обертка кнопки лайк */}
-					<div className='questions-page__like-wrapper'>
-						{/* Кнопка лайк */}
+					<div className="questions-page__like-wrapper">
 						<button
-							type='button'
-							className={`button questions-page__button questions-page__like ${
-								like ? 'active' : ''
-							}`}
-							onClick={() => setLike(!like)}
+							type="button"
+							className={`button questions-page__button questions-page__like ${questionsItem.like ? 'active' : ''
+								}`}
+							onClick={handleLike}
 						>
 							<LikeIcon />
 						</button>
-
-						{/* Количество лайков */}
-						<span className='questions-page__likeCount'>
-							{like ? questionsItem.likeCount + 1 : questionsItem.likeCount}
-						</span>
+						<span className="questions-page__likeCount">{questionsItem.likeCount}</span>
 					</div>
 				</div>
 
 				{/* Кнопка комментариев */}
 				{comments === 'questions-page' && (
 					<button
-						type='button'
-						className='button questions-page__button questions-page__comments'
+						type="button"
+						className="button questions-page__button questions-page__comments"
 						onClick={() => {
 							setPage('comments-page');
 							setQuestionsItem(questionsItem);
@@ -124,8 +145,8 @@ const QuestionsItem = ({
 				{/* Кнопка оставить комментарий */}
 				{comments === 'comments-page' && (
 					<button
-						type='button'
-						className='questions-page__button questions-page__leave-a-comment'
+						type="button"
+						className="questions-page__button questions-page__leave-a-comment"
 						disabled={answer}
 						onClick={() => {
 							setPopup(true);
