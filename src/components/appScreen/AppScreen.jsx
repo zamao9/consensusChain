@@ -84,6 +84,7 @@ const AppScreen = () => {
 					popupSource={popupSource}
 					setPopupSource={setPopupSource}
 					setAnswer={setAnswer}
+					questionsItem={questionsItem}
 				/>
 			)}
 

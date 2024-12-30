@@ -3,6 +3,8 @@ import ReportPopup from '../reportPopup/ReportPopup';
 import { CloseIcon, SuccessIcon } from '../../constants/SvgIcons';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
+import { useAppDispatch } from '../../hooks/store';
+import { addComment } from '../../feature/comments/commentsSlice';
 
 const PopupBackground = ({
 	setPopup,
@@ -11,12 +13,17 @@ const PopupBackground = ({
 	popupSource,
 	setPopupSource,
 	setAnswer,
+	questionsItem,
 }) => {
 	const variants = {
 		hidden: { opacity: 0 }, // Начальное состояние (скрыто)
 		visible: { opacity: 1 }, // Конечное состояние (видимо)
 	};
 	const [active, setActive] = useState(true); // активировать попап или нет
+
+	const dispatch = useAppDispatch();
+	const questionId = questionsItem !== null ? questionsItem.id : '0';
+	const questionText = 'fsasfasfasafsf';
 
 	return (
 		<AnimatePresence>
@@ -91,6 +98,7 @@ const PopupBackground = ({
 								type='submit'
 								className='button'
 								onClick={() => {
+									dispatch(addComment({ questionId, questionText }));
 									setPopupSource('success'); // меняет popup на success
 									setAnswer(true);
 								}}

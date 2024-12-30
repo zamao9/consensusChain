@@ -33,13 +33,15 @@
 			width: 60px
 			height: 60px
 			cursor: pointer
-			@include index.link
+			@include index.button
 			svg
 				width: 40px
 				height: 40px
+			&.active
+				@include index.button-active
 
 @media (any-hover:hover)
 	.comments-page
 		.reactions
 			&__button:hover
-				@include index.link-hover
+				@include index.button-hover

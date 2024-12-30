@@ -62,23 +62,17 @@ const CommentsPage = ({ questionsItem, setPopup, setPopupText, setPopupSource, a
 				{comments.length > 0 ? (
 					<>
 						{/* Текст ответа */}
-						<h2 className='answers__title lh--140 mb--16'>
-							{comments[currentIndex].text}
-						</h2>
+						<h2 className='answers__title lh--140 mb--16'>{comments[currentIndex].text}</h2>
 
 						{/* Обертка Лайков и Дизлайков */}
 						<div className='reactions-counter mb--32'>
 							<div className='reactions-counter__icon-wrapper'>
 								<LikeIcon />
-								<span className='reactions-counter__count'>
-									{comments[currentIndex].likes}
-								</span>
+								<span className='reactions-counter__count'>{comments[currentIndex].likes}</span>
 							</div>
 							<div className='reactions-counter__icon-wrapper'>
 								<DislikeIcon />
-								<span className='reactions-counter__count'>
-									{comments[currentIndex].dislikes}
-								</span>
+								<span className='reactions-counter__count'>{comments[currentIndex].dislikes}</span>
 							</div>
 						</div>
 
