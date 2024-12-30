@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid'; // Генерация уникальных 
 const initialState = {
     questions: [
         {
-            id: uuidv4(),
+            id: "123",
             title: 'How many pupupupupu?',
             popular: true,
             tags: ['Health', 'Coast', 'Nature'],
@@ -20,7 +20,7 @@ const initialState = {
             likeCount: 93,
         },
         {
-            id: uuidv4(),
+            id: "1234",
             title: 'How many?',
             popular: true,
             tags: ['Education', 'Health', 'Philosophy'],
@@ -31,7 +31,7 @@ const initialState = {
             likeCount: 70,
         },
         {
-            id: uuidv4(),
+            id: "12345",
             title: 'Who killed Kennedy?',
             popular: false,
             tags: ['Policy', 'Education', 'History'],
@@ -42,7 +42,7 @@ const initialState = {
             likeCount: 10,
         },
         {
-            id: uuidv4(),
+            id: "123456",
             title: 'Who can kill Putin?',
             popular: false,
             tags: ['Policy', 'Education', 'History'],

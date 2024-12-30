@@ -1,31 +1,19 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useSwipeable } from 'react-swipeable';
+import { useAppDispatch, useAppSelector } from '../../hooks/store';
 import { DislikeIcon, LikeIcon } from '../../constants/SvgIcons';
 import QuestionsItem from '../questionsPage/questionsItem/QuestionsItem';
 import './commentsPage.sass';
+import { toggleDislike, toggleLike } from '../../feature/comments/commentsSlice';
+import { selectCommentsByQuestionId } from '../../feature/comments/commentsSelector';
 
 const CommentsPage = ({ questionsItem, setPopup, setPopupText, setPopupSource, answer }) => {
-	const [answers, setAnswers] = useState([
-		{
-			id: 1,
-			text: 'One guy shoves exactly one can into his rectum.',
-			likes: 7,
-			dislikes: 9,
-		},
-		{
-			id: 2,
-			text: 'A human anus can stretch up to 7 inches. A raccoon can squeeze into a 4 inch hole, which means you can put two raccoons up your arse.',
-			likes: 16,
-			dislikes: 4,
-		},
-		{
-			id: 3,
-			text: 'I guess, we’ll never know.',
-			likes: 30,
-			dislikes: 6,
-		},
-	]);
+	const dispatch = useAppDispatch();
+	const questionId = questionsItem.id;
+	// Получаем комментарии для конкретного вопроса
+	const comments = useAppSelector(selectCommentsByQuestionId(questionId));
 
+	// Текущий индекс комментария
 	const [currentIndex, setCurrentIndex] = useState(0);
 
 	// Обработчики свайпов
@@ -35,21 +23,20 @@ const CommentsPage = ({ questionsItem, setPopup, setPopupText, setPopupSource, a
 	});
 
 	const handleReaction = (type) => {
-		setAnswers((prevAnswers) => {
-			const updatedAnswers = [...prevAnswers];
-			if (type === 'like') {
-				updatedAnswers[currentIndex].likes += 1;
-			} else if (type === 'dislike') {
-				updatedAnswers[currentIndex].dislikes += 1;
-			}
-			return updatedAnswers;
-		});
+		if (comments.length === 0) return;
 
-		// Переход к следующему ответу
-		if (currentIndex < answers.length - 1) {
+		const currentComment = comments[currentIndex];
+		if (type === 'like') {
+			dispatch(toggleLike({ commentId: currentComment.id }));
+		} else if (type === 'dislike') {
+			dispatch(toggleDislike({ commentId: currentComment.id }));
+		}
+
+		// Переход к следующему комментарию
+		if (currentIndex < comments.length - 1) {
 			setCurrentIndex(currentIndex + 1);
 		} else {
-			// Если ответы закончились
+			// Возврат к началу, если закончились комментарии
 			setCurrentIndex(0);
 		}
 	};
@@ -72,38 +59,50 @@ const CommentsPage = ({ questionsItem, setPopup, setPopupText, setPopupSource, a
 
 			{/* Ответы */}
 			<div {...handlers} className='answers mt--16'>
-				{/* Текст ответа */}
-				<h2 className='answers__title lh--140 mb--16'>{answers[currentIndex].text}</h2>
+				{comments.length > 0 ? (
+					<>
+						{/* Текст ответа */}
+						<h2 className='answers__title lh--140 mb--16'>
+							{comments[currentIndex].text}
+						</h2>
 
-				{/* Обертка Лайков и Дизлайков */}
-				<div className='reactions-counter mb--32'>
-					<div className='reactions-counter__icon-wrapper'>
-						<LikeIcon />
-						<span className='reactions-counter__count'>{answers[currentIndex].likes}</span>
-					</div>
-					<div className='reactions-counter__icon-wrapper'>
-						<DislikeIcon />
-						<span className='reactions-counter__count'>{answers[currentIndex].dislikes}</span>
-					</div>
-				</div>
+						{/* Обертка Лайков и Дизлайков */}
+						<div className='reactions-counter mb--32'>
+							<div className='reactions-counter__icon-wrapper'>
+								<LikeIcon />
+								<span className='reactions-counter__count'>
+									{comments[currentIndex].likes}
+								</span>
+							</div>
+							<div className='reactions-counter__icon-wrapper'>
+								<DislikeIcon />
+								<span className='reactions-counter__count'>
+									{comments[currentIndex].dislikes}
+								</span>
+							</div>
+						</div>
 
-				{/* Свайпер Лайка и Дизлайка */}
-				<div className='reactions'>
-					<button
-						type='button'
-						className='reactions__button'
-						onClick={() => handleReaction('like')}
-					>
-						<LikeIcon />
-					</button>
-					<button
-						type='button'
-						className='reactions__button'
-						onClick={() => handleReaction('dislike')}
-					>
-						<DislikeIcon />
-					</button>
-				</div>
+						{/* Свайпер Лайка и Дизлайка */}
+						<div className='reactions'>
+							<button
+								type='button'
+								className='reactions__button'
+								onClick={() => handleReaction('like')}
+							>
+								<LikeIcon />
+							</button>
+							<button
+								type='button'
+								className='reactions__button'
+								onClick={() => handleReaction('dislike')}
+							>
+								<DislikeIcon />
+							</button>
+						</div>
+					</>
+				) : (
+					<p>No comments available for this question.</p>
+				)}
 			</div>
 		</div>
 	);
