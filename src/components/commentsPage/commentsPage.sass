@@ -20,6 +20,10 @@
 			display: flex
 			align-items: center
 			gap: 4px
+			&.active
+				color: index.$c-text-disabled
+				& svg
+					stroke: index.$c-text-disabled
 
 	.reactions
 		display: flex
@@ -33,15 +37,13 @@
 			width: 60px
 			height: 60px
 			cursor: pointer
-			@include index.button
+			@include index.link
 			svg
 				width: 40px
 				height: 40px
-			&.active
-				@include index.button-active
 
 @media (any-hover:hover)
 	.comments-page
 		.reactions
 			&__button:hover
-				@include index.button-hover
+				@include index.link-hover
