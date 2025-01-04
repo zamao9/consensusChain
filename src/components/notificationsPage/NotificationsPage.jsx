@@ -132,6 +132,27 @@ const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource
 
 			{/* Список уведомлений */}
 			<ul className='mb--32 notifications-page__list'>
+				{/* Список элементов Фильтрации */}
+				{curItem === true && (
+					<AnimatePresence>
+						<motion.ul className='notifications-filter'>
+							{/* Элементы списка фильтрации */}
+							{radio.map((element) => (
+								<li className='notifications-filter__item' key={element.key}>
+									<span>{element.text}</span>
+									<button
+										type='button'
+										className={`radio ${element.status === true ? 'active' : ''}`}
+										onClick={() => radioHandler(element.key, radio, setRadio)}
+									>
+										<div className='radio__button'></div>
+									</button>
+								</li>
+							))}
+						</motion.ul>
+					</AnimatePresence>
+				)}
+
 				{/* Элементы списка уведомлений */}
 				{filteredNotifications.map((element) => (
 					<li key={element.key}>
@@ -171,27 +192,6 @@ const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource
 						</button>
 					</li>
 				))}
-
-				{/* Список элементов Фильтрации */}
-				{curItem === true && (
-					<AnimatePresence>
-						<motion.ul className='notifications-filter'>
-							{/* Элементы списка фильтрации */}
-							{radio.map((element) => (
-								<li className='notifications-filter__item' key={element.key}>
-									<span>{element.text}</span>
-									<button
-										type='button'
-										className={`radio ${element.status === true ? 'active' : ''}`}
-										onClick={() => radioHandler(element.key, radio, setRadio)}
-									>
-										<div className='radio__button'></div>
-									</button>
-								</li>
-							))}
-						</motion.ul>
-					</AnimatePresence>
-				)}
 			</ul>
 
 			{/* Пагинация */}

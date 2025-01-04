@@ -76,7 +76,7 @@ const QuestionsItem = ({
 			{/* Список тэгов */}
 			<ul className='tags'>
 				{questionsItem.tags.map((tag, id) => (
-					<li className='tags__item' id={id}>
+					<li className='tags__item' key={id} id={id}>
 						{tag}
 					</li>
 				))}

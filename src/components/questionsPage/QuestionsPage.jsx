@@ -8,9 +8,13 @@ import {
 import './questionsPage.sass';
 import QuestionsItem from './questionsItem/QuestionsItem';
 import { useAppDispatch, useAppSelector } from '../../hooks/store';
-import { selectCurrentPage, selectCurrentQuestionPageList, selectQuestions, selectTotalPages } from '../../feature/questions/questionsSelector';
+import {
+	selectCurrentPage,
+	selectCurrentQuestionPageList,
+	selectQuestions,
+	selectTotalPages,
+} from '../../feature/questions/questionsSelector';
 import { setCurrentPage } from '../../feature/questions/questionsSlice';
-
 
 const QuestionsPage = ({
 	tab,
@@ -32,19 +36,16 @@ const QuestionsPage = ({
 	// Функции для перехода между страницами
 	const goToFirstPage = () => dispatch(setCurrentPage(1));
 	const goToLastPage = () => dispatch(setCurrentPage(totalPages));
-	const goToNextPage = () =>
-		dispatch(setCurrentPage(Math.min(currentPage + 1, totalPages)));
-	const goToPreviousPage = () =>
-		dispatch(setCurrentPage(Math.max(currentPage - 1, 1)));
+	const goToNextPage = () => dispatch(setCurrentPage(Math.min(currentPage + 1, totalPages)));
+	const goToPreviousPage = () => dispatch(setCurrentPage(Math.max(currentPage - 1, 1)));
 
 	return (
-		<div className="questions-page">
+		<div className='questions-page'>
 			{/* Табы */}
-			<ul className="tabs mb--32">
+			<ul className='tabs mb--32'>
 				<li>
 					<button
-						className={`button tabs__item ${tab === 'first' ? 'active' : ''
-							}`}
+						className={`button tabs__item ${tab === 'first' ? 'active' : ''}`}
 						onClick={() => setTab('first')}
 					>
 						All
@@ -52,8 +53,7 @@ const QuestionsPage = ({
 				</li>
 				<li>
 					<button
-						className={`button tabs__item ${tab === 'second' ? 'active' : ''
-							}`}
+						className={`button tabs__item ${tab === 'second' ? 'active' : ''}`}
 						onClick={() => setTab('second')}
 					>
 						Private
@@ -61,8 +61,7 @@ const QuestionsPage = ({
 				</li>
 				<li>
 					<button
-						className={`button tabs__item ${tab === 'third' ? 'active' : ''
-							}`}
+						className={`button tabs__item ${tab === 'third' ? 'active' : ''}`}
 						onClick={() => setTab('third')}
 					>
 						Yours
@@ -71,13 +70,13 @@ const QuestionsPage = ({
 			</ul>
 
 			{/* Список вопросов */}
-			<ul className="mb--32 questions-page__list">
+			<ul className='mb--32 questions-page__list'>
 				{displayedQuestions.map((element) => (
 					<QuestionsItem
 						questionsItem={element}
 						setPage={setPage}
 						setItem={setItem}
-						key={element.key}
+						key={element.id}
 						setQuestionsItem={setQuestionsItem}
 						comments={'questions-page'}
 						setPopup={setPopup}
@@ -89,37 +88,33 @@ const QuestionsPage = ({
 			</ul>
 
 			{/* Пагинация */}
-			<div className="pagination">
+			<div className='pagination'>
 				<button
-					className={`pagination__button ${currentPage === 1 ? 'disabled' : ''
-						}`}
+					className={`pagination__button ${currentPage === 1 ? 'disabled' : ''}`}
 					onClick={goToFirstPage}
 				>
 					<DblArrowLeftIcon />
 				</button>
 				<button
-					className={`pagination__button ${currentPage === 1 ? 'disabled' : ''
-						}`}
+					className={`pagination__button ${currentPage === 1 ? 'disabled' : ''}`}
 					onClick={goToPreviousPage}
 				>
 					<ArrowLeftIcon />
 				</button>
 
 				{/* Счетчик страниц */}
-				<div className="pagination__counter">
+				<div className='pagination__counter'>
 					{currentPage} / {totalPages}
 				</div>
 
 				<button
-					className={`pagination__button ${currentPage === totalPages ? 'disabled' : ''
-						}`}
+					className={`pagination__button ${currentPage === totalPages ? 'disabled' : ''}`}
 					onClick={goToNextPage}
 				>
 					<ArrowRightIcon />
 				</button>
 				<button
-					className={`pagination__button ${currentPage === totalPages ? 'disabled' : ''
-						}`}
+					className={`pagination__button ${currentPage === totalPages ? 'disabled' : ''}`}
 					onClick={goToLastPage}
 				>
 					<DblArrowRightIcon />
