@@ -7,8 +7,23 @@ import {
 	SuccessIcon,
 	SupportIcon,
 } from '../../constants/SvgIcons';
+import { useAppDispatch, useAppSelector } from '../../hooks/store';
+import {
+	selectAnswersCount,
+	selectLikesReceived,
+	selectQuestionsCount,
+	selectReceivedAnswersCount,
+	selectRegistrationDate,
+	selectUserName,
+	selectUserRating,
+} from '../../feature/profile/profileSelector';
+import { incrementRating, setName, setRating } from '../../feature/profile/profileSlice';
 
 const ProfilePage = ({ tab, setTab, setPage, setItem }) => {
+	const dispatch = useAppDispatch();
+	const profileName = useAppSelector(selectUserName);
+	const profileRegistrationDate = useAppSelector(selectRegistrationDate);
+
 	// Структура Линков
 	const linksData = [
 		{
@@ -25,16 +40,17 @@ const ProfilePage = ({ tab, setTab, setPage, setItem }) => {
 		{
 			key: 1,
 			name: 'Rating:',
-			count: 12013,
+			count: useAppSelector(selectUserRating),
 			svg: <ArrowRightIcon />,
 			handler: () => {
 				console.log('Rating');
+				dispatch(incrementRating(1));
 			},
 		},
 		{
 			key: 2,
 			name: 'Likes:',
-			count: 105,
+			count: useAppSelector(selectLikesReceived),
 			svg: <ArrowRightIcon />,
 			handler: () => {
 				console.log('Likes');
@@ -43,7 +59,7 @@ const ProfilePage = ({ tab, setTab, setPage, setItem }) => {
 		{
 			key: 3,
 			name: 'Questions:',
-			count: 301,
+			count: useAppSelector(selectQuestionsCount),
 			svg: <ArrowRightIcon />,
 			handler: () => {
 				console.log('Questions');
@@ -52,7 +68,7 @@ const ProfilePage = ({ tab, setTab, setPage, setItem }) => {
 		{
 			key: 4,
 			name: 'Responses received:',
-			count: 109,
+			count: useAppSelector(selectReceivedAnswersCount),
 			svg: <ArrowRightIcon />,
 			handler: () => {
 				console.log('Responses received');
@@ -61,7 +77,7 @@ const ProfilePage = ({ tab, setTab, setPage, setItem }) => {
 		{
 			key: 5,
 			name: 'Replies sent:',
-			count: 205,
+			count: useAppSelector(selectAnswersCount),
 			svg: <ArrowRightIcon />,
 			handler: () => {
 				setPage('replies-sent-page');
@@ -125,12 +141,12 @@ const ProfilePage = ({ tab, setTab, setPage, setItem }) => {
 						{/* Никнейм */}
 						<div className='user__name'>
 							<ProfileIcon />
-							<span className='title fw--400 user__title'>gugugaga</span>
+							<span className='title fw--400 user__title'>{profileName}</span>
 						</div>
 
 						{/* Дата регистрации */}
 						<div>
-							Registered: <span>12.01.2025</span>
+							Registered: <span>{profileRegistrationDate}</span>
 						</div>
 					</div>
 

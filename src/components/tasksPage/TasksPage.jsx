@@ -2,6 +2,7 @@ import { useState } from 'react';
 import './tasksPage.sass';
 import { AnimatePresence } from 'motion/react';
 import { motion } from 'framer-motion';
+import { useAppDispatch } from '../../hooks/store';
 
 const TasksPage = () => {
 	const tasksData = [
@@ -99,7 +100,7 @@ const TasksPage = () => {
 						: task
 				)
 			);
-		}, 1000); // Задержка 10 секунд
+		}, 1000); // Задержка 1 секунд
 	};
 	// Обработка кнопки Claim
 	const handleClaim = (taskKey) => {

@@ -1,13 +1,17 @@
 import { useState } from 'react';
 import { NotificationIcon, ProfileIcon } from '../../constants/SvgIcons';
 import './header.sass';
+import { useAppSelector } from '../../hooks/store';
+import { selectUserBalance } from '../../feature/profile/profileSelector';
 
 const Header = ({ curItem, setItem, setPage }) => {
+	const userBalance = useAppSelector(selectUserBalance);
+
 	return (
 		<header className='header'>
 			<div className='header__profile'>
 				<div className='balance'>
-					<span>999 TON</span>
+					<span>{userBalance} TON</span>
 				</div>
 				<div className='header__buttons'>
 					<button
