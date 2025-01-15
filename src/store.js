@@ -4,6 +4,7 @@ import notificationsReducer from './feature/notifications/notificationsSlice';
 import questionsReducer from './feature/questions/questionsSlice';
 import commentsReducer from './feature/comments/commentsSlice';
 import profileReducer from './feature/profile/profileSlice';
+import achievementsReducer from './feature/achievements/achievementsSlice';
 
 export const store = configureStore({
 	reducer: {
@@ -11,5 +12,6 @@ export const store = configureStore({
 		questions: questionsReducer,
 		comments: commentsReducer,
 		profile: profileReducer,
+		achievements: achievementsReducer,
 	},
 });

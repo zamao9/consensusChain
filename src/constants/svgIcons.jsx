@@ -108,6 +108,25 @@ export const LikeIcon = () => (
 	</svg>
 );
 
+export const Logo = () => (
+	<svg width='32' height='40' viewBox='0 0 32 40' fill='none' xmlns='http://www.w3.org/2000/svg'>
+		<path
+			fillRule='evenodd'
+			clipRule='evenodd'
+			d='M17.4616 0L18.1993 0.417909L30.5553 7.41791C31.2761 7.82626 31.5294 8.74161 31.1211 9.4624C30.7127 10.1832 29.7974 10.4365 29.0766 10.0281L17.4582 3.44605L6.87032 9.41669L3.7813 11.1586L3 11.5992V27.8468L17.4582 36L29.0766 29.4179C29.7974 29.0096 30.7127 29.2628 31.1211 29.9836C31.5294 30.7044 31.2761 31.6198 30.5553 32.0281L18.1993 39.0281L17.4616 39.446L16.7231 39.0296L0.763206 30.0296L0 29.5992V28.723V10.723V9.84683L0.763206 9.41645L2.30771 8.54548L5.39673 6.80354L16.7231 0.416449L17.4616 0Z'
+			fill='#66643E'
+			className='svg-elem-1'
+		></path>
+		<path
+			d='M23.242 11.9499L17.487 8.72302L7.67804 14.223V25.223L17.487 30.723L23.242 27.4961'
+			stroke='#CECECE'
+			strokeWidth='3'
+			strokeLinecap='round'
+			className='svg-elem-2'
+		></path>
+	</svg>
+);
+
 export const NotificationIcon = () => (
 	<svg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
 		<path

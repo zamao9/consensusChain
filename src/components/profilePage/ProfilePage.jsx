@@ -18,11 +18,16 @@ import {
 	selectUserRating,
 } from '../../feature/profile/profileSelector';
 import { incrementRating, setName, setRating } from '../../feature/profile/profileSlice';
+import {
+	selectAchievements,
+	selectAchievementsWithProgress,
+} from '../../feature/achievements/achievementsSelector';
 
 const ProfilePage = ({ tab, setTab, setPage, setItem }) => {
 	const dispatch = useAppDispatch();
 	const profileName = useAppSelector(selectUserName);
 	const profileRegistrationDate = useAppSelector(selectRegistrationDate);
+	const achievementsData = useAppSelector(selectAchievementsWithProgress);
 
 	// Структура Линков
 	const linksData = [
@@ -83,31 +88,6 @@ const ProfilePage = ({ tab, setTab, setPage, setItem }) => {
 				setPage('replies-sent-page');
 				setItem('');
 			},
-		},
-	];
-
-	// Структура Ачивок
-	const achievementsData = [
-		{
-			key: 1,
-			title: 'Bla bla bla',
-			text: 'Submit more than 3 questions.',
-			icon: <SuccessIcon />,
-			done: true,
-		},
-		{
-			key: 2,
-			title: 'Bla bla bla 2',
-			text: 'Submit more than 10 questions.',
-			icon: <SuccessIcon />,
-			done: false,
-		},
-		{
-			key: 3,
-			title: 'Bla bla bla 3',
-			text: 'Submit more than 20 questions.',
-			icon: <SuccessIcon />,
-			done: false,
 		},
 	];
 
@@ -195,7 +175,7 @@ const ProfilePage = ({ tab, setTab, setPage, setItem }) => {
 						{achievementsData.map((element) => (
 							<li
 								className={`achievements__item ${element.done === true ? 'done' : ''}`}
-								key={element.key}
+								key={element.id}
 							>
 								{/* Контент элемента*/}
 								<div className='achievements__content'>
@@ -204,7 +184,16 @@ const ProfilePage = ({ tab, setTab, setPage, setItem }) => {
 								</div>
 
 								{/* Иконка выполненой ачивки */}
-								{element.done === true && <div className='achievements__icon'>{element.icon}</div>}
+								{element.done === true && (
+									<div className='achievements__icon'>
+										<SuccessIcon />
+									</div>
+								)}
+								{element.done !== true && (
+									<div className='achievements__progress'>
+										{element.progress + ' / ' + element.goal}
+									</div>
+								)}
 							</li>
 						))}
 					</ul>
