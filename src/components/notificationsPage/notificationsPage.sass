@@ -5,9 +5,22 @@
 
 	/* Обертка Заголовка, Кнопки фильтрации */
 	&__header
+		position: fixed
+		top: 120px
+		left: 50%
+		z-index: 1
+		transform: translateX(-50%)
+		width: 100%
+		max-width: 395px
+
+	&__header-wrapper
 		display: flex
 		align-items: center
 		justify-content: space-between
+		@include index.border15
+		background-color: index.$c-bg-900
+		padding: 8px
+		box-shadow: 0 0 4px 2px index.$c-bg-main
 
 	/* Заголовок */
 	&__title
@@ -26,21 +39,17 @@
 		display: flex
 		align-items: center
 		justify-content: center
-		width: 56px
-		height: 56px
-		@include index.border15
-		background-color: index.$c-bg-900
 
 	&__button
 		width: 40px !important
 		height: 40px !important
-		@include index.button
 
 	/* Список уведомлений */
 	&__list
 		position: relative
 		display: grid
 		gap: 16px
+		margin-top: 80px
 		& li
 			width: 100%
 
@@ -104,7 +113,7 @@
 	.notifications-filter
 		position: absolute
 		z-index: 1
-		top: 0px
+		top: calc(100% + 22px)
 		right: 0
 		display: grid
 		gap: 16px

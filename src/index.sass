@@ -93,9 +93,11 @@ body
 	min-height: 100vh
 
 .container
+	position: relative
 	width: 100%
 	max-width: 500px
 	height: 100%
+	min-height: auto
 	margin-top: 0
 	margin-right: auto
 	margin-bottom: 0
@@ -104,7 +106,6 @@ body
 	padding-right: 15px
 	padding-bottom: 100px
 	padding-left: 15px
-	background-color: $c-bg-main
 
 .title
 	font-size: 18px
@@ -170,11 +171,24 @@ body
 
 /* Табы */
 .tabs
-	display: flex
-	gap: 8px
-	padding: 8px
-	@include border15
-	background-color: $c-bg-900
+	position: fixed
+	top: 120px
+	left: 50%
+	transform: translateX(-50%)
+	z-index: 1
+	width: 100%
+	max-width: 470px
+	padding: 0 15px
+	background-color: $c-bg-main
+	&__list
+		z-index: 1
+		display: flex
+		gap: 8px
+		width: 100%
+		padding: 8px
+		@include border15
+		background-color: $c-bg-900
+		box-shadow: 0 0 4px 2px $c-bg-main
 	& li
 		width: 100%
 	&__item
@@ -213,6 +227,15 @@ body
 		padding: 0 14px
 		@include border7
 		background-color: $c-bg-input
+
+/* Прелоадер */
+.preloader
+	display: flex
+	flex-direction: column
+	align-items: center
+	justify-content: center
+	gap: 16px
+	height: calc(100vh - 240px)
 
 svg
 	flex-shrink: 0
@@ -286,29 +309,24 @@ hr
 /* Лого Анимация */
 @keyframes animate-svg-stroke-1
 	0%
-		stroke-dashoffset: 177.5210723876953px
-		stroke-dasharray: 177.5210723876953px
+		stroke-dashoffset: 100.71009826660156px
+		stroke-dasharray: 100.71009826660156px
 	100%
 		stroke-dashoffset: 0
-		stroke-dasharray: 177.5210723876953px
-@keyframes animate-svg-fill-1
-	0%
-		fill: transparent
-	100%
-		fill: rgb(102, 100, 62)
-.svg-elem-1
-	-webkit-animation: animate-svg-stroke-1 1.4s ease 0s both, animate-svg-fill-1 0.7s cubic-bezier(0.47, 0, 0.745, 0.715) 0.8s both
-	animation: animate-svg-stroke-1 1.4s ease 0s both, animate-svg-fill-1 0.7s cubic-bezier(0.47, 0, 0.745, 0.715) 0.8s both
+		stroke-dasharray: 100.71009826660156px
+.logo-elem-1
+	-webkit-animation: animate-svg-stroke-1 1.4s ease 0s both
+	animation: animate-svg-stroke-1 1.4s ease 0s both
 @keyframes animate-svg-stroke-2
 	0%
-		stroke-dashoffset: 48.68727111816406px
-		stroke-dasharray: 48.68727111816406px
+		stroke-dashoffset: 65.71021270751953px
+		stroke-dasharray: 65.71021270751953px
 	100%
-		stroke-dashoffset: 0
-		stroke-dasharray: 48.68727111816406px
-.svg-elem-2
-	-webkit-animation: animate-svg-stroke-2 1.4s ease 0.12s both,animate-svg-fill-2 0.7s cubic-bezier(0.47, 0, 0.745, 0.715) 0.9s both
-	animation: animate-svg-stroke-2 1.4s ease 0.12s both, animate-svg-fill-2 0.7s cubic-bezier(0.47, 0, 0.745, 0.715) 0.9s both
+		stroke-dashoffset: 131.42042541503906px
+		stroke-dasharray: 65.71021270751953px
+.logo-elem-2
+	-webkit-animation: animate-svg-stroke-2 1.4s ease 0s both
+	animation: animate-svg-stroke-2 1.4s ease 0s both
 
 @keyframes balance-translate
 	0%

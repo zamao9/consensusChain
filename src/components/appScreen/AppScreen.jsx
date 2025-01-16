@@ -11,6 +11,7 @@ import ProfilePage from '../profilePage/ProfilePage';
 import PopupBackground from '../popupBackground/PopupBackground';
 import NotificationsPage from '../notificationsPage/NotificationsPage';
 import RepliesSentPage from '../repliesSentPage/RepliesSentPage';
+import Preloader from '../preloader/Preloader';
 
 const AppScreen = () => {
 	const questionsItems = [
@@ -73,6 +74,9 @@ const AppScreen = () => {
 
 	return (
 		<section className='section app-screen'>
+			{/* Страница Header */}
+			<Header curItem={curItem} setItem={setItem} setPage={setPage} />
+
 			{/* Стриница Popup */}
 			{popup === true && (
 				<PopupBackground
@@ -92,8 +96,15 @@ const AppScreen = () => {
 				{/* Marquees */}
 				{/* <Marquees /> */}
 
-				{/* Страница Header */}
-				<Header curItem={curItem} setItem={setItem} setPage={setPage} />
+				{/*  Preloader */}
+				{curPage === 'loader' && (
+					<Preloader
+						isVisible={true}
+						color='#FF5733'
+						size={60}
+						message='Please wait, fetching data...'
+					/>
+				)}
 
 				{/* Страница Profile */}
 				{curPage === 'profile-page' && (
@@ -144,10 +155,10 @@ const AppScreen = () => {
 						answer={answer}
 					/>
 				)}
-
-				{/* Footer */}
-				<Footer curItem={curItem} setItem={setItem} setPage={setPage} />
 			</div>
+
+			{/* Footer */}
+			<Footer curItem={curItem} setItem={setItem} setPage={setPage} />
 		</section>
 	);
 };

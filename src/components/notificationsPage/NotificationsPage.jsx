@@ -113,46 +113,48 @@ const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource
 	return (
 		<div className='notifications-page'>
 			{/* Обертка Заголовка, Кнопки фильтрации */}
-			<div className='notifications-page__header  mb--22'>
-				{/* Заголовок */}
-				<h2 className='title lh--140 notifications-page__title'>Notifications</h2>
+			<div className='notifications-page__header'>
+				<div className='notifications-page__header-wrapper'>
+					{/* Заголовок */}
+					<h2 className='title lh--140 notifications-page__title'>Notifications</h2>
 
-				{/* Кнопка фильтрации */}
-				<div className='notifications-page__button-wrapper'>
-					<button
-						className={`button notifications-page__button ${curItem === true ? 'active' : ''}`}
-						onClick={() => {
-							setItem(!curItem);
-						}}
-					>
-						<FilterIcon />
-					</button>
+					{/* Кнопка фильтрации */}
+					<div className='notifications-page__button-wrapper'>
+						<button
+							className={`button notifications-page__button ${curItem === true ? 'active' : ''}`}
+							onClick={() => {
+								setItem(!curItem);
+							}}
+						>
+							<FilterIcon />
+						</button>
+					</div>
+
+					{/* Список элементов Фильтрации */}
+					{curItem === true && (
+						<AnimatePresence>
+							<motion.ul className='notifications-filter'>
+								{/* Элементы списка фильтрации */}
+								{radio.map((element) => (
+									<li className='notifications-filter__item' key={element.key}>
+										<span>{element.text}</span>
+										<button
+											type='button'
+											className={`radio ${element.status === true ? 'active' : ''}`}
+											onClick={() => radioHandler(element.key, radio, setRadio)}
+										>
+											<div className='radio__button'></div>
+										</button>
+									</li>
+								))}
+							</motion.ul>
+						</AnimatePresence>
+					)}
 				</div>
 			</div>
 
 			{/* Список уведомлений */}
 			<ul className='mb--32 notifications-page__list'>
-				{/* Список элементов Фильтрации */}
-				{curItem === true && (
-					<AnimatePresence>
-						<motion.ul className='notifications-filter'>
-							{/* Элементы списка фильтрации */}
-							{radio.map((element) => (
-								<li className='notifications-filter__item' key={element.key}>
-									<span>{element.text}</span>
-									<button
-										type='button'
-										className={`radio ${element.status === true ? 'active' : ''}`}
-										onClick={() => radioHandler(element.key, radio, setRadio)}
-									>
-										<div className='radio__button'></div>
-									</button>
-								</li>
-							))}
-						</motion.ul>
-					</AnimatePresence>
-				)}
-
 				{/* Элементы списка уведомлений */}
 				{filteredNotifications.map((element) => (
 					<li key={element.key}>

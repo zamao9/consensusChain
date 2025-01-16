@@ -13,7 +13,6 @@ const Header = ({ curItem, setItem, setPage }) => {
 			<div className='header__logo'>
 				<Logo />
 			</div>
-
 			{/* Обертка Баланса, Уведомлений, Профиля */}
 			<div className='header__profile'>
 				{/* Баланс */}
