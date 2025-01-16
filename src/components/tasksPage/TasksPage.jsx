@@ -2,115 +2,24 @@ import { useState } from 'react';
 import './tasksPage.sass';
 import { AnimatePresence } from 'motion/react';
 import { motion } from 'framer-motion';
-import { useAppDispatch } from '../../hooks/store';
+import { useAppDispatch, useAppSelector } from '../../hooks/store';
+import { selectVisibleTasks } from '../../feature/tasks/tasksSelector';
+import { claimTask, markTaskDone } from '../../feature/tasks/tasksSlice';
 
 const TasksPage = () => {
-	const tasksData = [
-		{
-			key: 1,
-			title: 'Subscribe our discord channel.',
-			isClaimed: false,
-			isDone: false,
-			cost: 1000,
-			timer: '10:23:15',
-		},
-		{
-			key: 2,
-			title: 'Subscribe our telegram channel.',
-			isClaimed: false,
-			isDone: false,
-			cost: 100,
-			timer: '10:23:15',
-		},
-		{
-			key: 3,
-			title: 'Post your first public question.',
-			isClaimed: false,
-			isDone: false,
-			cost: 300,
-			timer: '10:23:15',
-		},
-		{
-			key: 4,
-			title: 'Post your first private question.',
-			isClaimed: false,
-			isDone: false,
-			cost: 400,
-			timer: '10:23:15',
-		},
-		{
-			key: 5,
-			title: 'Answer your first public question.',
-			isClaimed: false,
-			isDone: false,
-			cost: 400,
-			timer: '10:23:15',
-		},
-		{
-			key: 6,
-			title: 'Answer your first private question.',
-			isClaimed: false,
-			isDone: false,
-			cost: 400,
-			timer: '10:23:15',
-		},
-		{
-			key: 7,
-			title: 'Add three tags to your question.',
-			isClaimed: false,
-			isDone: false,
-			cost: 400,
-			timer: '10:23:15',
-		},
-		{
-			key: 8,
-			title: 'Put a reaction to the question.',
-			isClaimed: false,
-			isDone: false,
-			cost: 400,
-			timer: '10:23:15',
-		},
-		{
-			key: 9,
-			title: 'Put a report to the question.',
-			isClaimed: false,
-			isDone: false,
-			cost: 400,
-			timer: '10:23:15',
-		},
-		{
-			key: 10,
-			title: 'Add your first comment.',
-			isClaimed: false,
-			isDone: false,
-			cost: 400,
-			timer: '10:23:15',
-		},
-	];
+	const dispatch = useAppDispatch();
 
-	const [tasks, setTasks] = useState(tasksData);
-	const visibleTasks = tasks.filter((task) => !task.isClaimed);
+	const visibleTasks = useAppSelector(selectVisibleTasks);
+
 	// Обработка кнопки GO
 	const handleGo = (taskKey) => {
 		setTimeout(() => {
-			setTasks((prevTasks) =>
-				prevTasks.map((task) =>
-					task.key === taskKey
-						? { ...task, isDone: true } // Устанавливаем isDone в true через 10 секунд
-						: task
-				)
-			);
+			dispatch(markTaskDone(taskKey));
 		}, 1000); // Задержка 1 секунд
 	};
 	// Обработка кнопки Claim
 	const handleClaim = (taskKey) => {
-		setTasks((prevTasks) =>
-			prevTasks.map((task) =>
-				task.key === taskKey
-					? { ...task, isClaimed: true } // Устанавливаем isClaimed в true
-					: task
-			)
-		);
+		dispatch(claimTask(taskKey));
 	};
 
 	return (

@@ -39,14 +39,3 @@ const achievementsSlice = createSlice({
 // Экспортируем actions и редуктор
 export const { setAchievements } = achievementsSlice.actions;
 export default achievementsSlice.reducer;
-
-// Структура Ачивок
-// const achievementsData = [
-// 	{
-// 		key: 1,
-// 		title: 'Bla bla bla',
-// 		text: 'Submit more than 3 questions.',
-// 		icon: <SuccessIcon />,
-// 		done: true,
-// 	},
-// ];
