@@ -75,7 +75,7 @@ const AppScreen = () => {
 	return (
 		<section className='section app-screen'>
 			{/* Страница Header */}
-			<Header curItem={curItem} setItem={setItem} setPage={setPage} />
+			<Header curItem={curItem} setItem={setItem} setPage={setPage} setTab={setTab} />
 
 			{/* Стриница Popup */}
 			{popup === true && (
@@ -97,7 +97,7 @@ const AppScreen = () => {
 				{/* <Marquees /> */}
 
 				{/*  Preloader */}
-				{curPage === 'loader' && (
+				{curPage === 'preloader' && (
 					<Preloader
 						isVisible={true}
 						color='#FF5733'

@@ -24,7 +24,7 @@ const TasksPage = () => {
 
 	return (
 		<div className='tasks-page'>
-			<h2 className='title mb--22 ask-page__title'>Tasks</h2>
+			<h2 className='title mb--22 tasks-page__title'>Tasks</h2>
 			{/* Список тасков */}
 			<ul className='tasks-page__list'>
 				<AnimatePresence>
@@ -40,7 +40,7 @@ const TasksPage = () => {
 							{/* Обертка Заголовка и Цены */}
 							<div className='tasks-page__header'>
 								{/* Заголовок эелементов таска */}
-								<h2 className='lh--140 tasks-page__title'>{element.title}</h2>
+								<h2 className='lh--140 tasks-page__item-title'>{element.title}</h2>
 
 								{/* Цена таска */}
 								<span className='tasks-page__cost'>{element.cost} TON</span>

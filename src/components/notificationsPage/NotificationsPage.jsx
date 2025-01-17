@@ -129,7 +129,6 @@ const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource
 							<FilterIcon />
 						</button>
 					</div>
-
 					{/* Список элементов Фильтрации */}
 					{curItem === true && (
 						<AnimatePresence>

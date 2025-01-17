@@ -96,16 +96,16 @@ body
 	position: relative
 	width: 100%
 	max-width: 500px
-	height: 100%
-	min-height: auto
+	height: calc(100vh - 120px)
 	margin-top: 0
 	margin-right: auto
 	margin-bottom: 0
 	margin-left: auto
 	padding-top: 0
 	padding-right: 15px
-	padding-bottom: 100px
+	padding-bottom: 0
 	padding-left: 15px
+	overflow-y: scroll
 
 .title
 	font-size: 18px
@@ -179,7 +179,6 @@ body
 	width: 100%
 	max-width: 470px
 	padding: 0 15px
-	background-color: $c-bg-main
 	&__list
 		z-index: 1
 		display: flex
@@ -188,7 +187,7 @@ body
 		padding: 8px
 		@include border15
 		background-color: $c-bg-900
-		box-shadow: 0 0 4px 2px $c-bg-main
+		box-shadow: 0 0 4px 4px $c-bg-main
 	& li
 		width: 100%
 	&__item

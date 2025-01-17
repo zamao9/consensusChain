@@ -4,7 +4,7 @@ import './header.sass';
 import { useAppSelector } from '../../hooks/store';
 import { selectUserBalance } from '../../feature/profile/profileSelector';
 
-const Header = ({ curItem, setItem, setPage }) => {
+const Header = ({ curItem, setItem, setPage, setTab }) => {
 	const userBalance = useAppSelector(selectUserBalance);
 
 	return (
@@ -17,7 +17,7 @@ const Header = ({ curItem, setItem, setPage }) => {
 			<div className='header__profile'>
 				{/* Баланс */}
 				<div className='balance'>
-					<span>{userBalance} TON</span>
+					<span>{userBalance} CT</span>
 				</div>
 
 				{/* Обертка Уведомлений, Профиля */}
@@ -37,6 +37,7 @@ const Header = ({ curItem, setItem, setPage }) => {
 						className={`header__button header-item2 ${curItem === 'profile-page' ? 'active' : ''}`}
 						onClick={() => {
 							setItem('profile-page');
+							setTab('first');
 							setPage('profile-page');
 						}}
 					>
