@@ -6,25 +6,10 @@
 
 	/* Обертка Заголовка, Кнопки фильтрации */
 	&__header
-		position: fixed
-		top: 120px
-		left: 50%
-		z-index: 1
-		transform: translateX(-50%)
-		width: 100%
-		max-width: 470px
-		padding: 0 15px
-
-	&__header-wrapper
 		display: flex
 		align-items: center
 		justify-content: space-between
 		width: 100%
-		padding: 8px 8px 8px 12px
-		height: 56px
-		background-color: index.$c-bg-900
-		@include index.border15
-		box-shadow: 0 0 4px 4px index.$c-bg-main
 
 	/* Заголовок */
 	&__title
@@ -43,6 +28,10 @@
 		display: flex
 		align-items: center
 		justify-content: center
+		@include index.border15
+		background-color: index.$c-bg-900
+		width: 56px
+		height: 56px
 
 	&__button
 		width: 40px !important
@@ -53,7 +42,6 @@
 		position: relative
 		display: grid
 		gap: 16px
-		margin-top: 88px
 		& li
 			width: 100%
 
@@ -117,7 +105,7 @@
 	.notifications-filter
 		position: absolute
 		z-index: 1
-		top: calc(100% + 22px)
+		top: 78px
 		right: 15px
 		display: grid
 		gap: 16px

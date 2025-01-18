@@ -12,8 +12,12 @@ import {
 } from '../../constants/SvgIcons';
 import './notificationsPage.sass';
 import { AnimatePresence, motion } from 'framer-motion';
+import { selectCurrentPage } from '../../feature/questions/questionsSelector';
+import { useAppSelector } from '../../hooks/store';
 
 const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource }) => {
+	const currentPage = useAppSelector(selectCurrentPage);
+
 	// Стриктура списка уведомлений
 	const notificationsData = [
 		{
@@ -113,44 +117,43 @@ const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource
 	return (
 		<div className='notifications-page'>
 			{/* Обертка Заголовка, Кнопки фильтрации */}
-			<div className='notifications-page__header'>
-				<div className='notifications-page__header-wrapper'>
-					{/* Заголовок */}
-					<h2 className='title lh--140 notifications-page__title'>Notifications</h2>
+			<div className='notifications-page__header  mb--32'>
+				{/* Заголовок */}
+				<h2 className='title lh--140 notifications-page__title'>Notifications</h2>
 
-					{/* Кнопка фильтрации */}
-					<div className='notifications-page__button-wrapper'>
-						<button
-							className={`button notifications-page__button ${curItem === true ? 'active' : ''}`}
-							onClick={() => {
-								setItem(!curItem);
-							}}
-						>
-							<FilterIcon />
-						</button>
-					</div>
-					{/* Список элементов Фильтрации */}
-					{curItem === true && (
-						<AnimatePresence>
-							<motion.ul className='notifications-filter'>
-								{/* Элементы списка фильтрации */}
-								{radio.map((element) => (
-									<li className='notifications-filter__item' key={element.key}>
-										<span>{element.text}</span>
-										<button
-											type='button'
-											className={`radio ${element.status === true ? 'active' : ''}`}
-											onClick={() => radioHandler(element.key, radio, setRadio)}
-										>
-											<div className='radio__button'></div>
-										</button>
-									</li>
-								))}
-							</motion.ul>
-						</AnimatePresence>
-					)}
+				{/* Кнопка фильтрации */}
+				<div className='notifications-page__button-wrapper'>
+					<button
+						className={`button notifications-page__button ${curItem === true ? 'active' : ''}`}
+						onClick={() => {
+							setItem(!curItem);
+						}}
+					>
+						<FilterIcon />
+					</button>
 				</div>
 			</div>
+
+			{/* Список элементов Фильтрации */}
+			{curItem === true && (
+				<AnimatePresence>
+					<motion.ul className='notifications-filter'>
+						{/* Элементы списка фильтрации */}
+						{radio.map((element) => (
+							<li className='notifications-filter__item' key={element.key}>
+								<span>{element.text}</span>
+								<button
+									type='button'
+									className={`radio ${element.status === true ? 'active' : ''}`}
+									onClick={() => radioHandler(element.key, radio, setRadio)}
+								>
+									<div className='radio__button'></div>
+								</button>
+							</li>
+						))}
+					</motion.ul>
+				</AnimatePresence>
+			)}
 
 			{/* Список уведомлений */}
 			<ul className='mb--32 notifications-page__list'>
@@ -197,10 +200,16 @@ const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource
 
 			{/* Пагинация */}
 			<div className='pagination'>
-				<button className={`pagination__button`} onClick={() => console.log('first')}>
+				<button
+					className={`pagination__button ${currentPage === 1 ? 'disabled' : ''}`}
+					onClick={() => console.log('first')}
+				>
 					<DblArrowLeftIcon />
 				</button>
-				<button className={`pagination__button`} onClick={() => console.log('prev')}>
+				<button
+					className={`pagination__button ${currentPage === 1 ? 'disabled' : ''}`}
+					onClick={() => console.log('prev')}
+				>
 					<ArrowLeftIcon />
 				</button>
 

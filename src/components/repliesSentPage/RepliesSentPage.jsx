@@ -8,8 +8,12 @@ import {
 	LikeIcon,
 } from '../../constants/SvgIcons';
 import './repliesSentPage.sass';
+import { useAppSelector } from '../../hooks/store';
+import { selectCurrentPage } from '../../feature/questions/questionsSelector';
 
 const RepliesSentPage = () => {
+	const currentPage = useAppSelector(selectCurrentPage);
+
 	// структура отправленных ответов
 	const RepliesSentData = [
 		{
@@ -79,10 +83,16 @@ const RepliesSentPage = () => {
 
 			{/* Пагинация */}
 			<div className='pagination'>
-				<button className={`pagination__button`} onClick={() => console.log('first')}>
+				<button
+					className={`pagination__button ${currentPage === 1 ? 'disabled' : ''}`}
+					onClick={() => console.log('first')}
+				>
 					<DblArrowLeftIcon />
 				</button>
-				<button className={`pagination__button`} onClick={() => console.log('prev')}>
+				<button
+					className={`pagination__button ${currentPage === 1 ? 'disabled' : ''}`}
+					onClick={() => console.log('prev')}
+				>
 					<ArrowLeftIcon />
 				</button>
 

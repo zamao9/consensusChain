@@ -86,9 +86,9 @@ body
 	color: $c-text
 	user-select: none
 	word-break: break-word
+	background-color: $c-bg-main
 
 .section
-	background-color: $c-bg-main
 	padding: 120px 0 0
 	min-height: 100vh
 
@@ -96,7 +96,7 @@ body
 	position: relative
 	width: 100%
 	max-width: 500px
-	height: calc(100vh - 120px)
+	height: 100%
 	margin-top: 0
 	margin-right: auto
 	margin-bottom: 0
@@ -105,7 +105,8 @@ body
 	padding-right: 15px
 	padding-bottom: 0
 	padding-left: 15px
-	overflow-y: scroll
+	&::-webkit-scrollbar
+		width: 0
 
 .title
 	font-size: 18px
@@ -131,16 +132,6 @@ body
 	user-select: none
 	&.active
 		@include button-active
-	&.disabled
-		pointer-events: none
-		background: none
-		box-shadow: none
-		color: $c-text-disabled
-		svg
-			stroke: $c-text-disabled
-		&:focus
-			box-shadow: none !important
-			color: $c-text-disabled !important
 	@media (any-hover:hover)
 		&:hover
 			@include button-hover
@@ -171,23 +162,13 @@ body
 
 /* Табы */
 .tabs
-	position: fixed
-	top: 120px
-	left: 50%
-	transform: translateX(-50%)
-	z-index: 1
+	display: flex
+	gap: 8px
 	width: 100%
-	max-width: 470px
-	padding: 0 15px
-	&__list
-		z-index: 1
-		display: flex
-		gap: 8px
-		width: 100%
-		padding: 8px
-		@include border15
-		background-color: $c-bg-900
-		box-shadow: 0 0 4px 4px $c-bg-main
+	padding: 8px
+	@include border15
+	background-color: $c-bg-900
+	box-shadow: 0 0 4px 2px $c-bg-main
 	& li
 		width: 100%
 	&__item
@@ -242,6 +223,16 @@ svg
 
 button
 	cursor: pointer
+	&.disabled
+		pointer-events: none
+		background: none
+		box-shadow: none
+		color: $c-text-disabled
+		svg
+			stroke: $c-text-disabled
+		&:focus
+			box-shadow: none !important
+			color: $c-text-disabled !important
 
 button:focus-visible
 	outline: 1px solid $c-stroke

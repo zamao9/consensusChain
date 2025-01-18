@@ -37,80 +37,86 @@ const PopupBackground = ({
 				transition={{ duration: 0.2 }} // Время анимации
 			>
 				{/* Блок Popup */}
-				<div className='popup-background__wrapper'>
-					{/* Кнопка закрытия Popup */}
-					<button type='button' className='popup-background__close' onClick={() => setPopup(false)}>
-						<CloseIcon />
-					</button>
-					{/* Иконка и Текст если popup success */}
-					{popupSource === 'success' && (
-						<>
-							{/* Иконка */}
-							<div className='popup-background__svg popup-background__success mb--10'>
-								<SuccessIcon />
-							</div>
-							{/* Текст */}
-							<p className='lh--140 popup-background__text'>{popupText}</p>
-						</>
-					)}
+				<div className='popup-background__frame'>
+					<div className='popup-background__wrapper'>
+						{/* Кнопка закрытия Popup */}
+						<button
+							type='button'
+							className='popup-background__close'
+							onClick={() => setPopup(false)}
+						>
+							<CloseIcon />
+						</button>
+						{/* Иконка и Текст если popup success */}
+						{popupSource === 'success' && (
+							<>
+								{/* Иконка */}
+								<div className='popup-background__svg popup-background__success mb--10'>
+									<SuccessIcon />
+								</div>
+								{/* Текст */}
+								<p className='lh--140 popup-background__text'>{popupText}</p>
+							</>
+						)}
 
-					{/* Иконка и Текст если popup error */}
-					{popupSource === 'error' && (
-						<>
-							{/* Иконка */}
-							<div className='popup-background__svg popup-background__error mb--10'>
-								<SuccessIcon />
-							</div>
-							{/* Текст */}
-							<p className='lh--140 popup-background__text'>{popupText}</p>
-						</>
-					)}
-					{/* Иконка и Текст если popup notifications */}
-					{popupSource === 'notifications-page' && (
-						<>
-							{/* Иконка */}
-							<div className='popup-background__svg popup-background__notifications-svg mb--16 '>
-								{popupSvg}
-							</div>
+						{/* Иконка и Текст если popup error */}
+						{popupSource === 'error' && (
+							<>
+								{/* Иконка */}
+								<div className='popup-background__svg popup-background__error mb--10'>
+									<SuccessIcon />
+								</div>
+								{/* Текст */}
+								<p className='lh--140 popup-background__text'>{popupText}</p>
+							</>
+						)}
+						{/* Иконка и Текст если popup notifications */}
+						{popupSource === 'notifications-page' && (
+							<>
+								{/* Иконка */}
+								<div className='popup-background__svg popup-background__notifications-svg mb--16 '>
+									{popupSvg}
+								</div>
 
-							{/* Разделительная линия */}
-							<hr className='mb--22' />
+								{/* Разделительная линия */}
+								<hr className='mb--22' />
 
-							<p className='lh--140 popup-background__text'>{popupText}</p>
-						</>
-					)}
-					{/* Заголовок, Текстареа, Кнопка если popup comments */}
-					{popupSource === 'answer' && (
-						<>
-							{/* Заголовок */}
-							<h2 className='title mb--16 lh--140 popup-background__title'>Your answer</h2>
+								<p className='lh--140 popup-background__text'>{popupText}</p>
+							</>
+						)}
+						{/* Заголовок, Текстареа, Кнопка если popup comments */}
+						{popupSource === 'answer' && (
+							<>
+								{/* Заголовок */}
+								<h2 className='title mb--16 lh--140 popup-background__title'>Your answer</h2>
 
-							{/* Разделительная линия */}
-							<hr className='mb--16' />
+								{/* Разделительная линия */}
+								<hr className='mb--16' />
 
-							{/* Текстареа */}
-							<textarea
-								placeholder='. . .'
-								className='text mb--16 lh--140 popup-background__textarea '
-								required
-							/>
-							<button
-								type='submit'
-								className='button'
-								onClick={() => {
-									dispatch(addComment({ questionId, questionText }));
-									setPopupSource('success'); // меняет popup на success
-									setAnswer(true);
-								}}
-							>
-								Submit
-							</button>
-						</>
-					)}
-					{/* Открыть Report Popup  */}
-					{popupSource === 'report-page' && (
-						<ReportPopup setPopup={setPopup} setPopupSource={setPopupSource} />
-					)}
+								{/* Текстареа */}
+								<textarea
+									placeholder='. . .'
+									className='text mb--16 lh--140 popup-background__textarea '
+									required
+								/>
+								<button
+									type='submit'
+									className='button'
+									onClick={() => {
+										dispatch(addComment({ questionId, questionText }));
+										setPopupSource('success'); // меняет popup на success
+										setAnswer(true);
+									}}
+								>
+									Submit
+								</button>
+							</>
+						)}
+						{/* Открыть Report Popup  */}
+						{popupSource === 'report-page' && (
+							<ReportPopup setPopup={setPopup} setPopupSource={setPopupSource} />
+						)}
+					</div>
 				</div>
 			</motion.div>
 		</AnimatePresence>

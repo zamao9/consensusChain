@@ -67,34 +67,32 @@ const QuestionsPage = ({
 			) : (
 				// Если загрузка завершена (`isLoading` стало false), показываем загруженные данные.
 				<>
-					<div className='tabs'>
-						<ul className='tabs__list'>
-							<li>
-								<button
-									className={`button tabs__item ${tab === 'first' ? 'active' : ''}`}
-									onClick={() => setTab('first')}
-								>
-									All
-								</button>
-							</li>
-							<li>
-								<button
-									className={`button tabs__item ${tab === 'second' ? 'active' : ''}`}
-									onClick={() => setTab('second')}
-								>
-									Private
-								</button>
-							</li>
-							<li>
-								<button
-									className={`button tabs__item ${tab === 'third' ? 'active' : ''}`}
-									onClick={() => setTab('third')}
-								>
-									Yours
-								</button>
-							</li>
-						</ul>
-					</div>
+					<ul className='tabs mb--32'>
+						<li>
+							<button
+								className={`button tabs__item ${tab === 'first' ? 'active' : ''}`}
+								onClick={() => setTab('first')}
+							>
+								All
+							</button>
+						</li>
+						<li>
+							<button
+								className={`button tabs__item ${tab === 'second' ? 'active' : ''}`}
+								onClick={() => setTab('second')}
+							>
+								Private
+							</button>
+						</li>
+						<li>
+							<button
+								className={`button tabs__item ${tab === 'third' ? 'active' : ''}`}
+								onClick={() => setTab('third')}
+							>
+								Yours
+							</button>
+						</li>
+					</ul>
 
 					{/* Список вопросов */}
 					<ul className=' mb--32 questions-page__list'>

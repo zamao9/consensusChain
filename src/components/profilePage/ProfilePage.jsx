@@ -94,26 +94,24 @@ const ProfilePage = ({ tab, setTab, setPage, setItem }) => {
 	return (
 		<div className='profile-page'>
 			{/* Табы */}
-			<div className='tabs'>
-				<ul className='tabs__list'>
-					<li>
-						<button
-							className={`button tabs__item ${tab === 'first' ? 'active' : ''}`}
-							onClick={() => setTab('first')}
-						>
-							Account
-						</button>
-					</li>
-					<li>
-						<button
-							className={`button tabs__item ${tab === 'second' ? 'active' : ''}`}
-							onClick={() => setTab('second')}
-						>
-							Achievements
-						</button>
-					</li>
-				</ul>
-			</div>
+			<ul className='tabs mb--32'>
+				<li>
+					<button
+						className={`button tabs__item ${tab === 'first' ? 'active' : ''}`}
+						onClick={() => setTab('first')}
+					>
+						Account
+					</button>
+				</li>
+				<li>
+					<button
+						className={`button tabs__item ${tab === 'second' ? 'active' : ''}`}
+						onClick={() => setTab('second')}
+					>
+						Achievements
+					</button>
+				</li>
+			</ul>
 
 			{/* Если Таб Account отображать */}
 			{tab === 'first' && (
