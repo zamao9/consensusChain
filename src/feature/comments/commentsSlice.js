@@ -3,33 +3,6 @@ import { createSlice } from '@reduxjs/toolkit';
 // Начальное состояние хранилища. Здесь мы храним массив комментариев.
 const initialState = {
 	comments: [
-		{
-			id: '1', // Уникальный идентификатор комментария
-			questionId: '123', // ID вопроса, к которому относится комментарий
-			text: 'I believe this question opens up a fascinating discussion!', // Текст комментария
-			likes: 7, // Количество лайков у комментария
-			dislikes: 2, // Количество дизлайков у комментария
-			likedByUser: false, // Лайкнут ли комментарий текущим пользователем
-			dislikedByUser: false, // Дизлайкнут ли комментарий текущим пользователем
-		},
-		{
-			id: '2',
-			questionId: '1234',
-			text: 'This is an insightful take on the topic!',
-			likes: 15,
-			dislikes: 1,
-			likedByUser: false,
-			dislikedByUser: false,
-		},
-		{
-			id: '3',
-			questionId: '12345',
-			text: 'There might never be a definitive answer to this mystery.',
-			likes: 10,
-			dislikes: 0,
-			likedByUser: false,
-			dislikedByUser: false,
-		},
 	],
 };
 
@@ -42,7 +15,7 @@ const commentsSlice = createSlice({
 		// Редьюсер для переключения лайка на комментарий
 		toggleLike: (state, action) => {
 			const { commentId } = action.payload; // Извлекаем ID комментария из действия
-			const comment = state.comments.find((c) => c.id === commentId); // Ищем комментарий по ID
+			const comment = state.comments.find((c) => c.commentsId === commentId); // Ищем комментарий по ID
 			if (comment) {
 				if (comment.likedByUser) {
 					// Если пользователь уже лайкнул, отменяем лайк
@@ -63,7 +36,7 @@ const commentsSlice = createSlice({
 		// Редьюсер для переключения дизлайка на комментарий
 		toggleDislike: (state, action) => {
 			const { commentId } = action.payload; // Извлекаем ID комментария из действия
-			const comment = state.comments.find((c) => c.id === commentId); // Ищем комментарий по ID
+			const comment = state.comments.find((c) => c.commentsId === commentId); // Ищем комментарий по ID
 			if (comment) {
 				if (comment.dislikedByUser) {
 					// Если пользователь уже дизлайкнул, отменяем дизлайк

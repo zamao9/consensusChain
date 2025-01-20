@@ -11,11 +11,11 @@ import { useAppDispatch, useAppSelector } from '../../hooks/store';
 import {
 	selectCurrentPage,
 	selectCurrentQuestionPageList,
-	selectQuestions,
 	selectTotalPages,
 } from '../../feature/questions/questionsSelector';
-import { setCurrentPage } from '../../feature/questions/questionsSlice';
+import { setCurrentPage, setQuestions } from '../../feature/questions/questionsSlice';
 import Preloader from '../preloader/Preloader';
+import { selectUserId } from '../../feature/profile/profileSelector';
 
 const QuestionsPage = ({
 	tab,
@@ -29,6 +29,36 @@ const QuestionsPage = ({
 	setPopupSource,
 }) => {
 	const dispatch = useAppDispatch();
+	const userId = useAppSelector(selectUserId);
+	const [isLoading, setIsLoading] = useState(true);
+	const [data, setData] = useState(null);
+
+	// Функция для получения вопросов пользователя
+	const fetchQuestions = async (userId) => {
+		try {
+			const response = await fetch(`http://localhost:8000/questions/${userId}`);
+			if (!response.ok) throw new Error('Failed to fetch questions');
+			const questions = await response.json();
+
+			// Устанавливаем вопросы в Redux
+			dispatch(setQuestions(questions));
+
+			setData(questions); // Сохраняем вопросы в локальном состоянии
+		} catch (error) {
+			console.error('Error fetching questions:', error);
+		} finally {
+			setIsLoading(false); // Заканчиваем загрузку
+		}
+	};
+
+	// Получаем вопросы при изменении userId
+	useEffect(() => {
+		if (userId) {
+			setIsLoading(true);
+			fetchQuestions(userId); // Вызываем функцию для получения вопросов
+		}
+	}, [userId]);
+
 	// Получение данных из хранилища
 	const currentPage = useAppSelector(selectCurrentPage);
 	const displayedQuestions = useAppSelector(selectCurrentQuestionPageList);
@@ -39,21 +69,6 @@ const QuestionsPage = ({
 	const goToLastPage = () => dispatch(setCurrentPage(totalPages));
 	const goToNextPage = () => dispatch(setCurrentPage(Math.min(currentPage + 1, totalPages)));
 	const goToPreviousPage = () => dispatch(setCurrentPage(Math.max(currentPage - 1, 1)));
-
-	const [isLoading, setIsLoading] = useState(true);
-	const [data, setData] = useState(null);
-
-	useEffect(() => {
-		const fetchData = async () => {
-			setIsLoading(true);
-			const response = await new Promise((resolve) =>
-				setTimeout(() => resolve({ message: 'Data loaded successfully!' }), 2000)
-			);
-			setData(response);
-			setIsLoading(false);
-		};
-		fetchData();
-	}, []);
 
 	return (
 		<div className='questions-page'>
@@ -98,6 +113,7 @@ const QuestionsPage = ({
 					<ul className=' mb--32 questions-page__list'>
 						{displayedQuestions.map((element) => (
 							<QuestionsItem
+								userId={userId}
 								questionsItem={element}
 								setPage={setPage}
 								setItem={setItem}

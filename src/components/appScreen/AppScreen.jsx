@@ -3,7 +3,7 @@ import Header from '../header/Header';
 import Marquees from '../marquees/Marquees';
 import AskPage from '../askPage/AskPage';
 import './appScreen.sass';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import QuestionsPage from '../questionsPage/QuestionsPage';
 import TasksPage from '../tasksPage/TasksPage';
 import CommentsPage from '../commentsPage/CommentsPage';
@@ -12,54 +12,76 @@ import PopupBackground from '../popupBackground/PopupBackground';
 import NotificationsPage from '../notificationsPage/NotificationsPage';
 import RepliesSentPage from '../repliesSentPage/RepliesSentPage';
 import Preloader from '../preloader/Preloader';
+import { useAppDispatch, useAppSelector } from '../../hooks/store';
+import { setAnswersCount, setBalance, setId, setLikesReceived, setName, setQuestionsCount, setRating, setReceivedAnswersCount, setRegistrationDate } from '../../feature/profile/profileSlice';
 
 const AppScreen = () => {
-	const questionsItems = [
-		{
-			key: 1,
-			title: 'How many dicks i can suck?',
-			popular: true,
-			tags: ['Health', 'Coast', 'Nature'],
-			user: 'gugugaga',
-			report: false,
-			trace: false,
-			like: false,
-			likeCount: 93,
-		},
-		{
-			key: 2,
-			title: 'How many dicks can fit in my arsehole?',
-			popular: true,
-			tags: ['Education', 'Health', 'Philosophy'],
-			user: 'jimineitron',
-			report: false,
-			trace: false,
-			like: false,
-			likeCount: 70,
-		},
-		{
-			key: 3,
-			title: 'Who killed Kenedy?',
-			popular: false,
-			tags: ['Policy', 'Education', 'History'],
-			user: 'timbeam',
-			report: false,
-			trace: false,
-			like: false,
-			likeCount: 10,
-		},
-		{
-			key: 4,
-			title: 'Who can kill Putin?',
-			popular: false,
-			tags: ['Policy', 'Education', 'History'],
-			user: 'foxy',
-			report: false,
-			trace: false,
-			like: false,
-			likeCount: 0,
-		},
-	];
+	const dispatch = useAppDispatch();
+	const [userData, setUserData] = useState(null);
+	const [userStats, setUserStats] = useState(null);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState('');
+
+	// Получаем userId из URL
+	const urlWindow = window.location.href;
+	const url = new URL(urlWindow);
+	const params = new URLSearchParams(url.search);
+	//const userIdFromUrl = params.get('user_id');
+	const userIdFromUrl = "5499493097"
+	useEffect(() => {
+		// Запрос для получения данных пользователя
+		const fetchUserData = async () => {
+			try {
+				const response = await fetch(`http://localhost:8000/users/${userIdFromUrl}`);
+				if (!response.ok) throw new Error('Failed to fetch user data');
+				const data = await response.json();
+				setUserData(data); // Сохраняем данные пользователя в локальном состоянии
+
+				// Устанавливаем данные в Redux
+				dispatch(setId(data.user_id));
+				dispatch(setName(data.fullName));
+				dispatch(setRegistrationDate(data.registrationDate));
+				dispatch(setBalance(data.balance));
+				dispatch(setRating(data.rating));
+			} catch (error) {
+				setError('Error fetching user data');
+				console.error('Error fetching user data:', error);
+			}
+		};
+
+		// Запрос для получения статистики пользователя
+		const fetchUserStatistics = async () => {
+			try {
+				const response = await fetch(`http://localhost:8000/users/${userIdFromUrl}/statistics`);
+				if (!response.ok) throw new Error('Failed to fetch statistics');
+				const data = await response.json();
+				setUserStats(data); // Сохраняем статистику в локальном состоянии
+
+				// Устанавливаем статистику в Redux
+				dispatch(setLikesReceived(data.likesReceived));
+				dispatch(setQuestionsCount(data.questionsCount));
+				dispatch(setAnswersCount(data.answersCount));
+				dispatch(setReceivedAnswersCount(data.receivedAnswersCount));
+			} catch (error) {
+				setError('Error fetching user statistics');
+				console.error('Error fetching user statistics:', error);
+			}
+		};
+
+		// Выполняем оба запроса
+		fetchUserData();
+		fetchUserStatistics();
+	}, [userIdFromUrl, dispatch]);
+
+	useEffect(() => {
+		if (userData && userStats) {
+			setLoading(false); // Если данные загружены, меняем состояние
+		}
+	}, [userData, userStats]);
+
+	if (error) {
+		return <div>{error}</div>; // Отображаем ошибки, если они есть
+	}
 
 	const [curItem, setItem] = useState('ask-page'); // активный элемент навигации
 	const [curPage, setPage] = useState('ask-page'); // активная страница
@@ -71,6 +93,7 @@ const AppScreen = () => {
 	const [popupSource, setPopupSource] = useState(null);
 	const [answer, setAnswer] = useState(false);
 	const [reportSubmit, setReportSubmit] = useState(false);
+
 
 	return (
 		<section className='section app-screen'>
@@ -132,7 +155,6 @@ const AppScreen = () => {
 					<QuestionsPage
 						setPage={setPage}
 						setItem={setItem}
-						questionsItems={questionsItems}
 						setQuestionsItem={setQuestionsItem}
 						setPopup={setPopup}
 						setPopupText={setPopupText}
