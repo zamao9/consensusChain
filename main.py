@@ -8,7 +8,8 @@ from models import CommentRequest, GetCommentsRequest, LikeDislikeRequest, Quest
 from services import create_comment, create_question, dislike_comment, get_comments, get_questions, get_user_data, get_user_statistics, like_comment, like_question, report_question, trace_question
 
 # MongoDB settings
-mongo_uri = "mongodb://localhost:27017"
+#mongo_uri = "mongodb://localhost:27017"
+mongo_uri = "mongodb://mongo:eGXKsXnRVStuhEuYYkbAXrYhPNgtWbfr@mongodb.railway.internal:27017"
 client = AsyncIOMotorClient(mongo_uri)
 db = client.consensusChainDB
 
