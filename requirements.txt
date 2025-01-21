@@ -1,0 +1,10 @@
+python-telegram-bot=
+pymongo
+pydantic
+motor
+python-telegram-bot[webhooks]
+fastapi
+uvicorn
+pytz
+solana 
+solders 
