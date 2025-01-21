@@ -9,7 +9,7 @@ from services import create_comment, create_question, dislike_comment, get_comme
 
 # MongoDB settings
 #mongo_uri = "mongodb://localhost:27017"
-mongo_uri = "mongodb://mongo:eGXKsXnRVStuhEuYYkbAXrYhPNgtWbfr@mongodb.railway.internal:27017"
+mongo_uri = "mongodb://mongo:HeyufqSNrHrUOvoBEKdJAVANABdfytPb@autorack.proxy.rlwy.net:51943"
 client = AsyncIOMotorClient(mongo_uri)
 db = client.consensusChainDB
 
