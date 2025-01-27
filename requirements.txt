@@ -9,3 +9,4 @@ pytz
 solana 
 solders 
 redis
+asyncpg
