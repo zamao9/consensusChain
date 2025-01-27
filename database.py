@@ -1,8 +1,48 @@
-import redis.asyncio as redis
-from motor.motor_asyncio import AsyncIOMotorClient
+import asyncpg
+# Настройки PostgreSQL
+DATABASE_URL = "postgresql://postgres:lUvaDDNjFgjUXEVJGArTQTUzfEoUrxqc@roundhouse.proxy.rlwy.net:15873/railway"
 
-# Настройки MongoDB
-mongo_uri = "mongodb://mongo:HeyufqSNrHrUOvoBEKdJAVANABdfytPb@autorack.proxy.rlwy.net:51943"
-#mongo_uri = "mongodb://localhost:27017"
-client = AsyncIOMotorClient(mongo_uri)
-db = client.consensusChainDB
+# Подключение к PostgreSQL
+async def get_db_connection():
+    return await asyncpg.connect(DATABASE_URL)
+
+async def ensure_tables_exist():
+    conn = await get_db_connection()
+    try:
+        # Создаем таблицы, если их нет
+        await conn.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            user_id BIGINT PRIMARY KEY,
+            full_name TEXT,
+            username TEXT,
+            registration_date DATE DEFAULT CURRENT_DATE,
+            tasks JSONB DEFAULT '[]',
+            achievements JSONB DEFAULT '[]',
+            notifications JSONB DEFAULT '[]',
+            balance NUMERIC DEFAULT 0,
+            rating INT DEFAULT 0,
+            questions_per_day INT DEFAULT 3
+        );
+        """)
+        await conn.execute("""
+        CREATE TABLE IF NOT EXISTS questions (
+            question_id SERIAL PRIMARY KEY,
+            user_id BIGINT REFERENCES users(user_id),
+            title TEXT NOT NULL,
+            tags JSONB DEFAULT '[]',
+            likes INT DEFAULT 0,
+            popular BOOLEAN DEFAULT FALSE
+        );
+        """)
+        await conn.execute("""
+        CREATE TABLE IF NOT EXISTS comments (
+            comment_id SERIAL PRIMARY KEY,
+            question_id INT REFERENCES questions(question_id),
+            user_id BIGINT REFERENCES users(user_id),
+            text TEXT NOT NULL,
+            likes INT DEFAULT 0,
+            dislikes INT DEFAULT 0
+        );
+        """)
+    finally:
+        await conn.close()

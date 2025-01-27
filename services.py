@@ -1,408 +1,408 @@
+import json
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from bson import ObjectId
-from database import db
+from database import ensure_tables_exist, get_db_connection
 from typing import List, Optional, Dict
 
-COLLECTION_USERS = "users"
-
-# Функция для преобразования данных MongoDB в JSON-совместимый формат
-def mongo_obj_to_dict(obj):
-    """Преобразование MongoDB объекта в Python словарь с заменой ObjectId на строку"""
-    if isinstance(obj, ObjectId):
-        return str(obj)
-    elif isinstance(obj, dict):
-        return {k: mongo_obj_to_dict(v) for k, v in obj.items()}
-    elif isinstance(obj, list):
-        return [mongo_obj_to_dict(v) for v in obj]
-    else:
-        return obj
 
 #Fetch user data from the database and format the registration date."""
 async def get_user_data(user_id: int) -> Optional[Dict]:
-    users_collection = db.get_collection(COLLECTION_USERS)
-    
-    # Запрашиваем только нужные поля
-    projection = {
-        "_id": 0,                # Исключаем поле `_id`
-        "user_id": 1,
-        "fullName": 1,
-        "userName": 1,
-        "registrationDate": 1,
-        "tasks": 1,
-        "achievements": 1,
-        "notifications": 1,
-        "balance": 1,
-        "rating": 1,
-        "questionsPerDay": 1
-    }
-
-    user = await users_collection.find_one({"user_id": str(user_id)}, projection)
-
-    if user:
-        # Форматируем дату
-        if "registrationDate" in user:
-            original_date = user["registrationDate"]
-            user["registrationDate"] = original_date.split("T")[0].replace("-", ".")
-
-        return user
-
+    conn = await get_db_connection()
+    try:
+        query = """
+        SELECT 
+            user_id,
+            full_name AS "fullName",
+            username AS "userName",
+            TO_CHAR(registration_date, 'YYYY.MM.DD') AS "registrationDate",
+            tasks,
+            achievements,
+            notifications,
+            balance,
+            rating,
+            questions_per_day AS "questionsPerDay"
+        FROM users
+        WHERE user_id = $1;
+        """
+        user = await conn.fetchrow(query, user_id)
+        if user:
+            # Преобразуем JSON-строки обратно в словари
+            user = dict(user)
+            user["tasks"] = json.loads(user["tasks"]) if user["tasks"] else []
+            user["achievements"] = json.loads(user["achievements"]) if user["achievements"] else []
+            user["notifications"] = json.loads(user["notifications"]) if user["notifications"] else []
+            return user
+    finally:
+        await conn.close()
     return None
 """Fetch user data from the database and format the registration date."""
 
+#Fetch Statistics Data for User"""
+async def get_user_statistics(user_id: int) -> Dict:
+    conn = await get_db_connection()
+    try:
+        # Проверяем, существует ли пользователь
+        user = await conn.fetchval("SELECT user_id FROM users WHERE user_id = $1;", user_id)
+        if not user:
+            return {"error": "User not found"}
+        
+        # Получаем количество лайков, вопросов и комментариев
+        likes_query = """
+        SELECT 
+            COALESCE(SUM(likes), 0) 
+        FROM (
+            SELECT likes FROM questions WHERE user_id = $1
+            UNION ALL
+            SELECT likes FROM comments WHERE user_id = $1
+        ) subquery;
+        """
+        likes_received = await conn.fetchval(likes_query, user_id)
+
+        questions_count = await conn.fetchval("SELECT COUNT(*) FROM questions WHERE user_id = $1;", user_id)
+        answers_count = await conn.fetchval("SELECT COUNT(*) FROM comments WHERE user_id = $1;", user_id)
+        received_answers_count = await conn.fetchval("""
+        SELECT COUNT(*) 
+        FROM comments 
+        WHERE question_id IN (SELECT question_id FROM questions WHERE user_id = $1);
+        """, user_id)
+
+        return {
+            "likesReceived": likes_received,
+            "questionsCount": questions_count,
+            "answersCount": answers_count,
+            "receivedAnswersCount": received_answers_count
+        }
+    finally:
+        await conn.close()
+"""Fetch Statistics Data for User"""
+
 #Create a new question and update user's questionsPerDay counter."""
-async def create_question(user_id: str, title: str, tags: list) -> Dict:
-    users_collection = db.get_collection("users")
-    questions_collection = db.get_collection("questions")
-    question_id = str(len(await questions_collection.find().to_list(None)) + 1)
-    # Проверяем, существует ли пользователь в базе
-    user = await users_collection.find_one({"user_id": user_id})
-    
-    if not user:
-        return {"error": "User not found"}
-    
-    # Проверяем, есть ли поле questionsPerDay у пользователя, если нет - создаем
-    if "questionsPerDay" not in user:
-        user["questionsPerDay"] = 3  # Даем значение по умолчанию
+async def create_question(user_id: int, title: str, tags: list) -> Dict:
+    conn = await get_db_connection()
+    await ensure_tables_exist()
+    try:
+        # Проверяем, существует ли пользователь
+        user = await conn.fetchrow("SELECT user_id, questions_per_day FROM users WHERE user_id = $1;", user_id)
+        if not user:
+            return {"error": "User not found"}
+        
+        # Проверяем, доступно ли создание вопроса
+        if user["questions_per_day"] <= 0:
+            return {"error": "You have reached the limit of questions for today"}
 
-    # Проверяем, есть ли еще доступные вопросы для создания
-    if user["questionsPerDay"] <= 0:
-        return {"error": "You have reached the limit of questions for today"}
+        # Создаем вопрос
+        query = """
+        INSERT INTO questions (user_id, title, tags) 
+        VALUES ($1, $2, $3) RETURNING question_id;
+        """
+        question_id = await conn.fetchval(query, user_id, title, json.dumps(tags))
 
-    # Создаем новый вопрос
-    question_data = {
-        "user_id": user_id,
-        "question_id":question_id,
-        "user": user.get("userName", "Unknown"),
-        "title": title,
-        "tags": tags,
-        "likeCount": 0,
-        "popular": False  # Начальный статус вопроса
-    }
+        # Уменьшаем счетчик вопросов
+        await conn.execute("""
+        UPDATE users SET questions_per_day = questions_per_day - 1 WHERE user_id = $1;
+        """, user_id)
 
-    # Сохраняем вопрос в базе данных
-    result = await questions_collection.insert_one(question_data)
-
-    # Уменьшаем количество доступных вопросов для пользователя
-    user["questionsPerDay"] -= 1
-    await users_collection.update_one({"user_id": user_id}, {"$set": {"questionsPerDay": user["questionsPerDay"]}})
-
-    return {"message": "Question created successfully", "question_id": str(result.inserted_id)}
+        return {"message": "Question created successfully", "question_id": question_id}
+    finally:
+        await conn.close()
 """Create a new question and update user's questionsPerDay counter."""
 
 #Like or dislike a question by user."""
 async def like_question(user_id: int, question_id: str) -> Dict:
-    users_collection = db.get_collection("users")
-    questions_collection = db.get_collection("questions")
-
-    user = await users_collection.find_one({"user_id": str(user_id)})
-    question = await questions_collection.find_one({"question_id": question_id})
-
-    if not user:
-        return {"error": "User not found"}
-    if not question:
-        return {"error": "Question not found"}
-
-    # Инициализация likedQuestions, если его нет в документе пользователя
-    if "likedQuestions" not in user:
-        user["likedQuestions"] = []
-
-    # Лайк или дизлайк
-    if question_id not in user.get("likedQuestions", []):
-        user["likedQuestions"].append(question_id)
-        question["likeCount"] += 1  # Увеличиваем счетчик лайков
-    else:
-        user["likedQuestions"].remove(question_id)
-        question["likeCount"] -= 1  # Уменьшаем счетчик лайков
-
-    # Обновляем данные в базе
-    await users_collection.update_one({"user_id": str(user_id)}, {"$set": {"likedQuestions": user["likedQuestions"]}})
-    await questions_collection.update_one({"question_id": question_id}, {"$set": {"likeCount": question["likeCount"]}})
-
-    return {"message": "Like status updated"}
+    conn = await get_db_connection()
+    try:
+        # Проверяем, существует ли пользователь
+        user = await conn.fetchrow("SELECT liked_questions FROM users WHERE user_id = $1;", user_id)
+        if not user:
+            return {"error": "User not found"}
+        
+        # Проверяем, существует ли вопрос
+        question = await conn.fetchrow("SELECT likes FROM questions WHERE question_id = $1;", question_id)
+        if not question:
+            return {"error": "Question not found"}
+        
+        liked_questions = json.loads(user["liked_questions"]) if user["liked_questions"] else []
+        
+        # Лайк/дизлайк логика
+        if question_id not in liked_questions:
+            liked_questions.append(question_id)
+            new_likes = question["likes"] + 1
+        else:
+            liked_questions.remove(question_id)
+            new_likes = question["likes"] - 1
+        
+        # Обновляем базу данных
+        await conn.execute("""
+            UPDATE users SET liked_questions = $1 WHERE user_id = $2;
+        """, json.dumps(liked_questions), user_id)
+        await conn.execute("""
+            UPDATE questions SET likes = $1 WHERE question_id = $2;
+        """, new_likes, question_id)
+        
+        return {"message": "Like status updated"}
+    finally:
+        await conn.close()
 """Like or dislike a question by user."""
 
 #Track or untrack a question."""
 async def trace_question(user_id: int, question_id: str) -> Dict:
-    users_collection = db.get_collection("users")
-    questions_collection = db.get_collection("questions")
-
-    user = await users_collection.find_one({"user_id": str(user_id)})
-    question = await questions_collection.find_one({"question_id": question_id})
-
-    if not user:
-        return {"error": "User not found"}
-    if not question:
-        return {"error": "Question not found"}
-    
-    if "traceQuestions" not in user:
-        user["traceQuestions"] = []
-
-    # Добавляем или удаляем вопрос из списка отслеживаемых
-    if question_id not in user.get("traceQuestions", []):
-        user["traceQuestions"].append(question_id)
-    else:
-        user["traceQuestions"].remove(question_id)
-
-    # Обновляем данные в базе
-    await users_collection.update_one({"user_id": str(user_id)}, {"$set": {"traceQuestions": user["traceQuestions"]}})
-
-    return {"message": "Trace status updated"}
+    conn = await get_db_connection()
+    try:
+        # Проверяем, существует ли пользователь
+        user = await conn.fetchrow("SELECT trace_questions FROM users WHERE user_id = $1;", user_id)
+        if not user:
+            return {"error": "User not found"}
+        
+        trace_questions = json.loads(user["trace_questions"]) if user["trace_questions"] else []
+        
+        # Добавляем или удаляем вопрос из отслеживаемых
+        if question_id not in trace_questions:
+            trace_questions.append(question_id)
+        else:
+            trace_questions.remove(question_id)
+        
+        # Обновляем базу данных
+        await conn.execute("""
+            UPDATE users SET trace_questions = $1 WHERE user_id = $2;
+        """, json.dumps(trace_questions), user_id)
+        
+        return {"message": "Trace status updated"}
+    finally:
+        await conn.close()
 """Track or untrack a question."""
 
 #Report or unreport a question."""
 async def report_question(user_id: int, question_id: str) -> Dict:
-    users_collection = db.get_collection("users")
-    questions_collection = db.get_collection("questions")
-
-    user = await users_collection.find_one({"user_id": str(user_id)})
-    question = await questions_collection.find_one({"question_id": question_id})
-
-    if not user:
-        return {"error": "User not found"}
-    if not question:
-        return {"error": "Question not found"}
-
-    if "reportQuestions" not in user:
-        user["reportQuestions"] = []
-
-    # Добавляем или удаляем вопрос из списка репортнутых
-    if question_id not in user.get("reportQuestions", []):
-        user["reportQuestions"].append(question_id)
-    else:
-        user["reportQuestions"].remove(question_id)
-
-    # Обновляем данные в базе
-    await users_collection.update_one({"user_id": str(user_id)}, {"$set": {"reportQuestions": user["reportQuestions"]}})
-
-    return {"message": "Report status updated"}
+    conn = await get_db_connection()
+    try:
+        # Проверяем, существует ли пользователь
+        user = await conn.fetchrow("SELECT reported_questions FROM users WHERE user_id = $1;", user_id)
+        if not user:
+            return {"error": "User not found"}
+        
+        reported_questions = json.loads(user["reported_questions"]) if user["reported_questions"] else []
+        
+        # Добавляем или удаляем вопрос из списка репортов
+        if question_id not in reported_questions:
+            reported_questions.append(question_id)
+        else:
+            reported_questions.remove(question_id)
+        
+        # Обновляем базу данных
+        await conn.execute("""
+            UPDATE users SET reported_questions = $1 WHERE user_id = $2;
+        """, json.dumps(reported_questions), user_id)
+        
+        return {"message": "Report status updated"}
+    finally:
+        await conn.close()
 """Report or unreport a question."""
 
 #Fetch Questions Data or User Questions Data"""
-async def get_questions(user_id: str, allQuestions: bool = True) -> List[Dict]:
-    """
-    Получает данные всех вопросов или только вопросов пользователя.
+async def get_questions(user_id: int, allQuestions: bool = True) -> List[Dict]:
+    conn = await get_db_connection()
 
-    Args:
-        user_id (str): ID пользователя.
-        allQuestions (bool): Если True, возвращает все вопросы, иначе только вопросы пользователя.
+    try:
+        # Получаем данные пользователя
+        user = await conn.fetchrow("""
+            SELECT liked_questions, reported_questions, trace_questions 
+            FROM users WHERE user_id = $1;
+        """, user_id)
+        
+        if not user:
+            return {"error": "User not found"}
+        
+        liked_questions = json.loads(user["liked_questions"]) if user["liked_questions"] else []
+        reported_questions = json.loads(user["reported_questions"]) if user["reported_questions"] else []
+        trace_questions = json.loads(user["trace_questions"]) if user["trace_questions"] else []
+        
+        # Определяем запрос для выборки вопросов
+        query = "" if allQuestions else "WHERE user_id = $1"
+        
+        # Получаем вопросы из базы данных
+        questions = await conn.fetch(f"""
+            SELECT q.question_id, q.user_id, u.username, q.title, q.likes, q.popular, q.tags 
+            FROM questions q
+            LEFT JOIN users u ON q.user_id = u.user_id
+            {query};
+        """, *([user_id] if not allQuestions else []))  # Используем *для передачи параметров
 
-    Returns:
-        List[Dict]: Список вопросов с дополнительной информацией о статусах (лайк, репорт, отслеживание).
-    """
-    users_collection = db.get_collection("users")
-    questions_collection = db.get_collection("questions")
-    
-    # Получаем данные пользователя
-    user = await users_collection.find_one(
-        {"user_id": user_id},
-        {"_id": 0, "likedQuestions": 1, "reportedQuestions": 1, "traceQuestions": 1}
-    )
-    if not user:
-        return {"error": "User not found"}
-    
-    liked_questions = user.get("likedQuestions", [])
-    reported_questions = user.get("reportedQuestions", [])
-    trace_questions = user.get("traceQuestions", [])
-    
-    # Определяем запрос для выборки вопросов
-    query = {} if allQuestions else {"user_id": user_id}
-    questions = await questions_collection.find(query).to_list(None)
-    
-    # Формируем список вопросов
-    result = []
-    for question in questions:
-        result.append({
-            "question_id": question["question_id"],
-            "user_id": question["user_id"],
-            "user_name": question.get("user", "Unknown"),
-            "title": question["title"],
-            "likeCount": question.get("likeCount", 0),
-            "popular": question.get("popular", False),
-            "tags": question.get("tags", []),
-            "report": question["question_id"] in reported_questions,
-            "trace": question["question_id"] in trace_questions,
-            "like": question["question_id"] in liked_questions
-        })
-    
-    return result
+        # Формируем список вопросов
+        result = []
+        for question in questions:
+            result.append({
+                "question_id": question["question_id"],
+                "user_id": question["user_id"],
+                "user_name": question.get("username", "Unknown"),
+                "title": question["title"],
+                "likeCount": question["likes"],  # Заменили на 'likes'
+                "popular": question["popular"],
+                "tags": question["tags"],
+                "report": question["question_id"] in reported_questions,
+                "trace": question["question_id"] in trace_questions,
+                "like": question["question_id"] in liked_questions
+            })
+
+        return result
+    finally:
+        await conn.close()
 """Fetch Questions Data or User Questions Data"""
 
 #Create a new comments"""
-async def create_comment(user_id: str, question_id: str, text: str) -> Dict:
-    users_collection = db.get_collection("users")
-    questions_collection = db.get_collection("questions")
-    comments_collection = db.get_collection("comments")
+async def create_comment(user_id: int, question_id: int, text: str) -> Dict:
+    conn = await get_db_connection()
+    await ensure_tables_exist()
+    try:
+        # Проверяем, существует ли пользователь
+        user = await conn.fetchval("SELECT user_id FROM users WHERE user_id = $1;", user_id)
+        if not user:
+            return {"error": "User not found"}
 
-    # Проверяем, существует ли пользователь
-    user = await users_collection.find_one({"user_id": user_id})
-    if not user:
-        return {"error": "User not found"}
+        # Проверяем, существует ли вопрос
+        question = await conn.fetchval("SELECT question_id FROM questions WHERE question_id = $1;", question_id)
+        if not question:
+            return {"error": "Question not found"}
 
-    # Проверяем, существует ли вопрос
-    question = await questions_collection.find_one({"question_id": question_id})
-    if not question:
-        return {"error": "Question not found"}
+        # Создаем комментарий
+        query = """
+        INSERT INTO comments (user_id, question_id, text) 
+        VALUES ($1, $2, $3) RETURNING comment_id;
+        """
+        comment_id = await conn.fetchval(query, user_id, question_id, text)
 
-    # Генерация ID комментария
-    comments_id = str(len(await comments_collection.find().to_list(None)) + 1)
-
-    # Создаем комментарий
-    comment_data = {
-        "comments_id": comments_id,
-        "question_id": question_id,
-        "user_id": user_id,
-        "text": text,
-        "likes": 0,
-        "dislikes": 0
-    }
-    await comments_collection.insert_one(comment_data)
-
-    return {"message": "Comment created successfully", "comments_id": comments_id}
+        return {"message": "Comment created successfully", "comment_id": comment_id}
+    finally:
+        await conn.close()
 """Create a new comments"""
 
 #Like a comments by user."""
-async def like_comment(user_id: str, comment_id: str) -> Dict:
-    users_collection = db.get_collection("users")
-    comments_collection = db.get_collection("comments")
+async def like_comment(user_id: int, comment_id: int) -> Dict:
+    conn = await get_db_connection()
+    
+    try:
+        # Получаем данные пользователя и комментария
+        user = await conn.fetchrow("SELECT liked_comments, disliked_comments FROM users WHERE user_id = $1;", user_id)
+        comment = await conn.fetchrow("SELECT likes, dislikes FROM comments WHERE comment_id = $1;", comment_id)
 
-    user = await users_collection.find_one({"user_id": user_id})
-    comment = await comments_collection.find_one({"comments_id": comment_id})
+        if not user:
+            return {"error": "User not found"}
+        if not comment:
+            return {"error": "Comment not found"}
 
-    if not user:
-        return {"error": "User not found"}
-    if not comment:
-        return {"error": "Comment not found"}
+        liked_comments = json.loads(user["liked_comments"]) if user["liked_comments"] else []
+        disliked_comments = json.loads(user["disliked_comments"]) if user["disliked_comments"] else []
 
-    # Инициализация likedComments, если его нет в документе пользователя
-    if "likedComments" not in user:
-        user["likedComments"] = []
+        # Извлекаем значения likes и dislikes из записи комментария
+        likes = comment["likes"]
+        dislikes = comment["dislikes"]
 
-    # Лайк или отмена лайка
-    if comment_id not in user["likedComments"]:
-        user["likedComments"].append(comment_id)
-        comment["likes"] += 1
-        # Убираем дизлайк, если он есть
-        if comment_id in user.get("dislikedComments", []):
-            user["dislikedComments"].remove(comment_id)
-            comment["dislikes"] -= 1
-    else:
-        user["likedComments"].remove(comment_id)
-        comment["likes"] -= 1
+        # Лайк или отмена лайка
+        if comment_id not in liked_comments:
+            liked_comments.append(comment_id)
+            likes += 1
+            # Убираем дизлайк, если он есть
+            if comment_id in disliked_comments:
+                disliked_comments.remove(comment_id)
+                dislikes -= 1
+        else:
+            liked_comments.remove(comment_id)
+            likes -= 1
 
-    # Обновляем данные в базе
-    await users_collection.update_one({"user_id": user_id}, {"$set": {"likedComments": user["likedComments"], "dislikedComments": user.get("dislikedComments", [])}})
-    await comments_collection.update_one({"comments_id": comment_id}, {"$set": {"likes": comment["likes"], "dislikes": comment["dislikes"]}})
+        # Обновляем данные в базе
+        await conn.execute(""" 
+            UPDATE users SET liked_comments = $1, disliked_comments = $2 WHERE user_id = $3;
+        """, json.dumps(liked_comments), json.dumps(disliked_comments), user_id)
+        await conn.execute(""" 
+            UPDATE comments SET likes = $1, dislikes = $2 WHERE comment_id = $3;
+        """, likes, dislikes, comment_id)
 
-    return {"message": "Like status updated"}
-"""Like or dislike a comments by user."""
+        return {"message": "Like status updated"}
+    finally:
+        await conn.close()
 
-#Dislike a comments by user."""
-async def dislike_comment(user_id: str, comment_id: str) -> Dict:
-    users_collection = db.get_collection("users")
-    comments_collection = db.get_collection("comments")
+# Dislike a comment by user
+async def dislike_comment(user_id: int, comment_id: int) -> Dict:
+    conn = await get_db_connection()
+    
+    try:
+        # Получаем данные пользователя и комментария
+        user = await conn.fetchrow("SELECT liked_comments, disliked_comments FROM users WHERE user_id = $1;", user_id)
+        comment = await conn.fetchrow("SELECT likes, dislikes FROM comments WHERE comment_id = $1;", comment_id)
 
-    user = await users_collection.find_one({"user_id": user_id})
-    comment = await comments_collection.find_one({"comments_id": comment_id})
+        if not user:
+            return {"error": "User not found"}
+        if not comment:
+            return {"error": "Comment not found"}
 
-    if not user:
-        return {"error": "User not found"}
-    if not comment:
-        return {"error": "Comment not found"}
+        liked_comments = json.loads(user["liked_comments"]) if user["liked_comments"] else []
+        disliked_comments = json.loads(user["disliked_comments"]) if user["disliked_comments"] else []
 
-    # Инициализация dislikedComments, если его нет в документе пользователя
-    if "dislikedComments" not in user:
-        user["dislikedComments"] = []
+        # Извлекаем значения likes и dislikes из записи комментария
+        likes = comment["likes"]
+        dislikes = comment["dislikes"]
 
-    # Дизлайк или отмена дизлайка
-    if comment_id not in user["dislikedComments"]:
-        user["dislikedComments"].append(comment_id)
-        comment["dislikes"] += 1
-        # Убираем лайк, если он есть
-        if comment_id in user.get("likedComments", []):
-            user["likedComments"].remove(comment_id)
-            comment["likes"] -= 1
-    else:
-        user["dislikedComments"].remove(comment_id)
-        comment["dislikes"] -= 1
+        # Дизлайк или отмена дизлайка
+        if comment_id not in disliked_comments:
+            disliked_comments.append(comment_id)
+            dislikes += 1
+            # Убираем лайк, если он есть
+            if comment_id in liked_comments:
+                liked_comments.remove(comment_id)
+                likes -= 1
+        else:
+            disliked_comments.remove(comment_id)
+            dislikes -= 1
 
-    # Обновляем данные в базе
-    await users_collection.update_one({"user_id": user_id}, {"$set": {"dislikedComments": user["dislikedComments"], "likedComments": user.get("likedComments", [])}})
-    await comments_collection.update_one({"comments_id": comment_id}, {"$set": {"likes": comment["likes"], "dislikes": comment["dislikes"]}})
+        # Обновляем данные в базе
+        await conn.execute(""" 
+            UPDATE users SET liked_comments = $1, disliked_comments = $2 WHERE user_id = $3;
+        """, json.dumps(liked_comments), json.dumps(disliked_comments), user_id)
+        await conn.execute(""" 
+            UPDATE comments SET likes = $1, dislikes = $2 WHERE comment_id = $3;
+        """, likes, dislikes, comment_id)
 
-    return {"message": "Dislike status updated"}
-"""Dislike a comments by user."""
+        return {"message": "Dislike status updated"}
+    finally:
+        await conn.close()
 
-#Fetch Comments Data for QuestionId"""
-async def get_comments(question_id: str, user_id: str) -> List[Dict]:
-    users_collection = db.get_collection("users")
-    comments_collection = db.get_collection("comments")
+# Fetch Comments Data for QuestionId
+async def get_comments(question_id: int, user_id: int) -> List[Dict]:
+    conn = await get_db_connection()
+    
+    try:
+        # Получаем данные пользователя
+        user = await conn.fetchrow("""
+            SELECT liked_comments, disliked_comments FROM users WHERE user_id = $1;
+        """, user_id)
+        if not user:
+            return {"error": "User not found"}
 
-    # Получаем данные пользователя
-    user = await users_collection.find_one({"user_id": user_id}, {"_id": 0, "likedComments": 1, "dislikedComments": 1})
-    if not user:
-        return {"error": "User not found"}
+        liked_comments = json.loads(user["liked_comments"]) if user["liked_comments"] else []
+        disliked_comments = json.loads(user["disliked_comments"]) if user["disliked_comments"] else []
 
-    liked_comments = user.get("likedComments", [])
-    disliked_comments = user.get("dislikedComments", [])
+        # Получаем список комментариев для указанного вопроса
+        comments = await conn.fetch("""
+            SELECT comment_id, user_id, text, likes, dislikes 
+            FROM comments WHERE question_id = $1;
+        """, question_id)
 
-    # Получаем список комментариев для указанного вопроса
-    comments = await comments_collection.find({"question_id": question_id}).to_list(None)
-    if not comments:
-        return []
+        if not comments:
+            return []
 
-    # Формируем список комментариев с учетом пользовательских лайков/дизлайков
-    result = []
-    for comment in comments:
-        result.append({
-            "commentsId": comment["comments_id"],
-            "questionId": comment["question_id"],
-            "user_id": comment["user_id"],
-            "text": comment["text"],
-            "likes": comment.get("likes", 0),
-            "dislikes": comment.get("dislikes", 0),
-            "likedByUser": comment["comments_id"] in liked_comments,
-            "dislikedByUser": comment["comments_id"] in disliked_comments
-        })
+        # Формируем список комментариев с учетом пользовательских лайков/дизлайков
+        result = []
+        for comment in comments:
+            result.append({
+                "commentId": comment["comment_id"],
+                "questionId": question_id,
+                "user_id": comment["user_id"],
+                "text": comment["text"],
+                "likes": comment["likes"],
+                "dislikes": comment["dislikes"],
+                "likedByUser": comment["comment_id"] in liked_comments,
+                "dislikedByUser": comment["comment_id"] in disliked_comments
+            })
 
-    return result
-"""Fetch Comments Data for QuestionId"""
-
-#Fetch Statistics Data for User"""
-async def get_user_statistics(user_id: str) -> Dict:
-    # Получаем данные пользователя
-    users_collection = db.get_collection("users")
-    questions_collection = db.get_collection("questions")
-    comments_collection = db.get_collection("comments")
-
-    user = await users_collection.find_one({"user_id": user_id})
-    if not user:
-        return {"error": "User not found"}
-
-    # Подсчитаем количество лайков
-    questions = await questions_collection.find({"user_id": user_id}).to_list(None)
-    comments = await comments_collection.find({"user_id": user_id}).to_list(None)
-
-    likes_received = 0
-    for question in questions:
-        likes_received += question.get("likes", 0)
-    for comment in comments:
-        likes_received += comment.get("likes", 0)
-
-    # Подсчитаем количество созданных вопросов
-    questions_count = len(questions)
-
-    # Подсчитаем количество данных ответов
-    answers_count = len(comments)
-
-    # Подсчитаем количество полученных ответов на вопросы пользователя
-    received_answers_count = 0
-    for question in questions:
-        received_answers_count += await comments_collection.count_documents({"question_id": question["question_id"]})
-
-    return {
-        "likesReceived": likes_received,
-        "questionsCount": questions_count,
-        "answersCount": answers_count,
-        "receivedAnswersCount": received_answers_count
-    }
-"""Fetch Statistics Data for User"""
+        return result
+    finally:
+        await conn.close()
