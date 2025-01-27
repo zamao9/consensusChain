@@ -13,7 +13,17 @@ import NotificationsPage from '../notificationsPage/NotificationsPage';
 import RepliesSentPage from '../repliesSentPage/RepliesSentPage';
 import Preloader from '../preloader/Preloader';
 import { useAppDispatch, useAppSelector } from '../../hooks/store';
-import { setAnswersCount, setBalance, setId, setLikesReceived, setName, setQuestionsCount, setRating, setReceivedAnswersCount, setRegistrationDate } from '../../feature/profile/profileSlice';
+import {
+	setAnswersCount,
+	setBalance,
+	setId,
+	setLikesReceived,
+	setName,
+	setQuestionsCount,
+	setRating,
+	setReceivedAnswersCount,
+	setRegistrationDate,
+} from '../../feature/profile/profileSlice';
 
 const AppScreen = () => {
 	const dispatch = useAppDispatch();
@@ -27,12 +37,14 @@ const AppScreen = () => {
 	const url = new URL(urlWindow);
 	const params = new URLSearchParams(url.search);
 	//const userIdFromUrl = params.get('user_id');
-	const userIdFromUrl = "5499493097"
+	const userIdFromUrl = '5499493097';
 	useEffect(() => {
 		// Запрос для получения данных пользователя
 		const fetchUserData = async () => {
 			try {
-				const response = await fetch(`http://localhost:8000/users/${userIdFromUrl}`);
+				const response = await fetch(
+					`https://web-production-c0b1.up.railway.app/users/${userIdFromUrl}`
+				);
 				if (!response.ok) throw new Error('Failed to fetch user data');
 				const data = await response.json();
 				setUserData(data); // Сохраняем данные пользователя в локальном состоянии
@@ -52,7 +64,9 @@ const AppScreen = () => {
 		// Запрос для получения статистики пользователя
 		const fetchUserStatistics = async () => {
 			try {
-				const response = await fetch(`http://localhost:8000/users/${userIdFromUrl}/statistics`);
+				const response = await fetch(
+					`https://web-production-c0b1.up.railway.app/users/${userIdFromUrl}/statistics`
+				);
 				if (!response.ok) throw new Error('Failed to fetch statistics');
 				const data = await response.json();
 				setUserStats(data); // Сохраняем статистику в локальном состоянии
@@ -93,7 +107,6 @@ const AppScreen = () => {
 	const [popupSource, setPopupSource] = useState(null);
 	const [answer, setAnswer] = useState(false);
 	const [reportSubmit, setReportSubmit] = useState(false);
-
 
 	return (
 		<section className='section app-screen'>

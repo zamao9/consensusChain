@@ -6,9 +6,7 @@ import { v4 as uuidv4 } from 'uuid'; // Генерация уникальных 
 // 2. Текущую страницу (currentPage) для пагинации.
 // 3. Количество вопросов на странице (questionsPerPage).
 const initialState = {
-	questions: [
-
-	],
+	questions: [],
 	currentPage: 1,
 	questionsPerPage: 3,
 };
@@ -17,7 +15,6 @@ const questionsSlice = createSlice({
 	name: 'questions',
 	initialState,
 	reducers: {
-
 		setQuestions(state, action) {
 			state.questions = action.payload;
 		},

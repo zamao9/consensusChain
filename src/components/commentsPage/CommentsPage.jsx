@@ -17,12 +17,15 @@ const CommentsPage = ({ questionsItem, setPopup, setPopupText, setPopupSource, a
 
 	const getComments = async () => {
 		try {
-			const response = await fetch(`http://localhost:8000/questions/${questionId}/comments?user_id=5499493097`, {
-				method: 'GET',  // Используем GET запрос
-				headers: {
-					'Content-Type': 'application/json'
-				},
-			});
+			const response = await fetch(
+				`https://web-production-c0b1.up.railway.app/questions/${questionId}/comments?user_id=5499493097`,
+				{
+					method: 'GET', // Используем GET запрос
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				}
+			);
 			if (!response.ok) {
 				throw new Error('Failed to fetch comments');
 			}
@@ -38,13 +41,16 @@ const CommentsPage = ({ questionsItem, setPopup, setPopupText, setPopupSource, a
 	// Функция для отправки лайка на сервер
 	const likeComment = async (commentId) => {
 		try {
-			const response = await fetch(`http://localhost:8000/comments/${commentId}/like`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ user_id: userId }),
-			});
+			const response = await fetch(
+				`https://web-production-c0b1.up.railway.app/comments/${commentId}/like`,
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({ user_id: userId }),
+				}
+			);
 
 			if (response.ok) {
 				dispatch(toggleLike({ commentId }));
@@ -60,13 +66,16 @@ const CommentsPage = ({ questionsItem, setPopup, setPopupText, setPopupSource, a
 	// Функция для отправки дизлайка на сервер
 	const dislikeComment = async (commentId) => {
 		try {
-			const response = await fetch(`http://localhost:8000/comments/${commentId}/dislike`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ user_id: userId }),
-			});
+			const response = await fetch(
+				`https://web-production-c0b1.up.railway.app/comments/${commentId}/dislike`,
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({ user_id: userId }),
+				}
+			);
 
 			if (response.ok) {
 				dispatch(toggleDislike({ commentId }));
