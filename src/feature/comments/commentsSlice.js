@@ -2,8 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 // Начальное состояние хранилища. Здесь мы храним массив комментариев.
 const initialState = {
-	comments: [
-	],
+	comments: [],
 };
 
 // Создаем slice (часть состояния) для комментариев.

@@ -10,6 +10,7 @@ import {
 	StarIcon,
 } from '../../../constants/SvgIcons';
 import { useAppDispatch } from '../../../hooks/store';
+import { ClipLoader } from 'react-spinners';
 
 const QuestionsItem = ({
 	userId,
@@ -25,6 +26,7 @@ const QuestionsItem = ({
 }) => {
 	const dispatch = useAppDispatch();
 	const [isProcessing, setIsProcessing] = useState(false);
+
 	// Функция для отправки запроса на лайк или дизлайк
 	const handleLike = async () => {
 		if (isProcessing) return;
@@ -155,8 +157,9 @@ const QuestionsItem = ({
 		<li className='questions-page__item'>
 			{comments === 'questions-page' && (
 				<div
-					className={`button questions-page__button questions-page__popular ${questionsItem.popular === false ? 'none' : ''
-						}`}
+					className={`button questions-page__button questions-page__popular ${
+						questionsItem.popular === false ? 'none' : ''
+					}`}
 				>
 					<StarIcon />
 				</div>
@@ -181,20 +184,23 @@ const QuestionsItem = ({
 				<div className='questions-page__buttons'>
 					<button
 						type='button'
-						className={`button questions-page__button questions-page__report ${questionsItem.report ? 'active' : ''
-							}`}
+						className={`button questions-page__button questions-page__report ${
+							questionsItem.report ? 'active' : ''
+						}`}
+						// disabled={questionsItem.report}
 						onClick={handleReport}
-						disabled={isProcessing}
+						// disabled={isProcessing}
 					>
 						<ReportIcon />
 					</button>
 
 					<button
 						type='button'
-						className={`button questions-page__button questions-page__trace ${questionsItem.trace ? 'active' : ''
-							}`}
+						className={`button questions-page__button questions-page__trace ${
+							questionsItem.trace ? 'active' : ''
+						}`}
 						onClick={handleTrace}
-						disabled={isProcessing}
+						// disabled={isProcessing}
 					>
 						<NotificationIcon />
 					</button>
@@ -202,10 +208,11 @@ const QuestionsItem = ({
 					<div className='questions-page__like-wrapper'>
 						<button
 							type='button'
-							className={`button questions-page__button questions-page__like ${questionsItem.like ? 'active' : ''
-								}`}
+							className={`button questions-page__button questions-page__like ${
+								questionsItem.like ? 'active' : ''
+							}`}
 							onClick={handleLike}
-							disabled={isProcessing}
+							// disabled={isProcessing}
 						>
 							<LikeIcon />
 						</button>

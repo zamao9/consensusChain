@@ -56,7 +56,7 @@ const CommentsPage = ({ questionsItem, setPopup, setPopupText, setPopupSource, a
 			);
 
 			if (response.ok) {
-				console.log("yep")
+				console.log('yep');
 				dispatch(toggleLike({ commentId }));
 			} else {
 				throw new Error('Failed to like the comment');
@@ -122,7 +122,7 @@ const CommentsPage = ({ questionsItem, setPopup, setPopupText, setPopupSource, a
 	useEffect(() => {
 		getComments(); // Получаем комментарии при загрузке
 	}, [questionId]);
-	//console.log(comments);
+
 	return (
 		<div className='comments-page'>
 			{/* Комментарий */}
@@ -144,11 +144,19 @@ const CommentsPage = ({ questionsItem, setPopup, setPopupText, setPopupSource, a
 
 						{/* Обертка Лайков и Дизлайков */}
 						<div className='reactions-counter mb--32'>
-							<div className='reactions-counter__icon-wrapper'>
+							<div
+								className={`reactions-counter__icon-wrapper ${
+									comments[currentIndex].likedByUser ? 'active' : ''
+								}`}
+							>
 								<LikeIcon />
 								<span className='reactions-counter__count'>{comments[currentIndex].likes}</span>
 							</div>
-							<div className='reactions-counter__icon-wrapper'>
+							<div
+								className={`reactions-counter__icon-wrapper ${
+									comments[currentIndex].dislikedByUser ? 'active' : ''
+								}`}
+							>
 								<DislikeIcon />
 								<span className='reactions-counter__count'>{comments[currentIndex].dislikes}</span>
 							</div>

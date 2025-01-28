@@ -37,7 +37,7 @@ const AppScreen = () => {
 	const url = new URL(urlWindow);
 	const params = new URLSearchParams(url.search);
 	//const userIdFromUrl = params.get('user_id');
-	const userIdFromUrl = '5499493097';
+	const userIdFromUrl = '6621151292';
 	useEffect(() => {
 		// Запрос для получения данных пользователя
 		const fetchUserData = async () => {
