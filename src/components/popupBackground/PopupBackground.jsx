@@ -3,8 +3,9 @@ import ReportPopup from '../reportPopup/ReportPopup';
 import { CloseIcon, SuccessIcon } from '../../constants/SvgIcons';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
-import { useAppDispatch } from '../../hooks/store';
+import { useAppDispatch, useAppSelector } from '../../hooks/store';
 import { addComment } from '../../feature/comments/commentsSlice';
+import { selectUserId } from '../../feature/profile/profileSelector';
 
 const PopupBackground = ({
 	setPopup,
@@ -12,18 +13,63 @@ const PopupBackground = ({
 	popupText,
 	popupSource,
 	setPopupSource,
+	setPopupText,
 	setAnswer,
 	questionsItem,
 }) => {
+	const userId = useAppSelector(selectUserId);
 	const variants = {
 		hidden: { opacity: 0 }, // Начальное состояние (скрыто)
 		visible: { opacity: 1 }, // Конечное состояние (видимо)
 	};
 	const [active, setActive] = useState(true); // активировать попап или нет
+	console.log(questionsItem)
+	const questionId = questionsItem !== null ? questionsItem.question_id : '0';
+	const [questionText, setQuestionText] = useState('');
 
-	const dispatch = useAppDispatch();
-	const questionId = questionsItem !== null ? questionsItem.id : '0';
-	const questionText = 'fsasfasfasafsf';
+	const handleCommentSubmit = async () => {
+		if (!questionText.trim()) {
+			setPopup(true);
+			setPopupText('Your answer cannot be empty. Please enter some text before submitting.');
+			setPopupSource('error');
+			return;
+		}
+
+		const payload = {
+			user_id: userId.toString(),
+			text: questionText,
+		};
+		const strQuestionId = questionId.toString();
+		try {
+			const response = await fetch(
+				`http://localhost:8000/questions/${strQuestionId}/comments`,
+				{
+					method: 'POST',
+					body: JSON.stringify(payload),
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				}
+			);
+
+			if (response.ok) {
+				setPopup(true);
+				setPopupText(
+					'Your answer has been successfully submitted. It may take up to 24 hours to review your response. You will receive a notification once the review process is complete.'
+				);
+				setPopupSource('success'); // переключает попап на success
+				setAnswer(true);
+				setQuestionText(''); // очищает текстовое поле
+			} else {
+				throw new Error('Failed to submit the answer.');
+			}
+		} catch (error) {
+			console.log(error);
+			setPopup(true);
+			setPopupText('An error occurred while submitting your answer. Please try again later.');
+			setPopupSource('error');
+		}
+	};
 
 	return (
 		<AnimatePresence>
@@ -96,21 +142,22 @@ const PopupBackground = ({
 								{/* Текстареа */}
 								<textarea
 									placeholder='. . .'
-									className='text mb--16 lh--140 popup-background__textarea '
+									className='text mb--16 lh--140 popup-background__textarea'
+									value={questionText}
+									onChange={(e) => setQuestionText(e.target.value)}
 									required
 								/>
+
+								{/* Кнопка отправки */}
 								<button
 									type='submit'
 									className='button'
-									onClick={() => {
-										dispatch(addComment({ questionId, questionText }));
-										setPopupSource('success'); // меняет popup на success
-										setAnswer(true);
-									}}
+									onClick={handleCommentSubmit}
 								>
 									Submit
 								</button>
 							</>
+
 						)}
 						{/* Открыть Report Popup  */}
 						{popupSource === 'report-page' && (

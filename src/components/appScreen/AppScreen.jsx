@@ -161,7 +161,10 @@ const AppScreen = () => {
 				)}
 
 				{/* Страница Ask */}
-				{curPage === 'ask-page' && <AskPage />}
+				{curPage === 'ask-page' && <AskPage
+					setPopup={setPopup}
+					setPopupText={setPopupText}
+					setPopupSource={setPopupSource} />}
 
 				{/* Страница Questions */}
 				{curPage === 'questions-page' && (
