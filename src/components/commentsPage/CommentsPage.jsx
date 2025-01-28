@@ -38,21 +38,25 @@ const CommentsPage = ({ questionsItem, setPopup, setPopupText, setPopupSource, a
 		}
 	};
 
+	// Получаем комментарии для конкретного вопроса
+	const comments = useAppSelector(selectCommentsByQuestionId(questionId));
+
 	// Функция для отправки лайка на сервер
 	const likeComment = async (commentId) => {
 		try {
 			const response = await fetch(
-				`https://web-production-c0b1.up.railway.app/comments/${commentId}/like`,
+				`https://web-production-c0b1.up.railway.app/comments/${commentId.toString()}/like`,
 				{
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify({ user_id: userId }),
+					body: JSON.stringify({ user_id: userId.toString() }),
 				}
 			);
 
 			if (response.ok) {
+				console.log("yep")
 				dispatch(toggleLike({ commentId }));
 			} else {
 				throw new Error('Failed to like the comment');
@@ -62,18 +66,17 @@ const CommentsPage = ({ questionsItem, setPopup, setPopupText, setPopupSource, a
 			alert('Error liking comment');
 		}
 	};
-
 	// Функция для отправки дизлайка на сервер
 	const dislikeComment = async (commentId) => {
 		try {
 			const response = await fetch(
-				`https://web-production-c0b1.up.railway.app/comments/${commentId}/dislike`,
+				`https://web-production-c0b1.up.railway.app/comments/${commentId.toString()}/dislike`,
 				{
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify({ user_id: userId }),
+					body: JSON.stringify({ user_id: userId.toString() }),
 				}
 			);
 
@@ -101,9 +104,9 @@ const CommentsPage = ({ questionsItem, setPopup, setPopupText, setPopupSource, a
 		const currentComment = comments[currentIndex];
 
 		if (type === 'like') {
-			likeComment(currentComment.commentsId); // Отправляем запрос на лайк
+			likeComment(currentComment.commentId); // Отправляем запрос на лайк
 		} else if (type === 'dislike') {
-			dislikeComment(currentComment.commentsId); // Отправляем запрос на дизлайк
+			dislikeComment(currentComment.commentId); // Отправляем запрос на дизлайк
 		}
 
 		// Переход к следующему комментарию
@@ -119,9 +122,6 @@ const CommentsPage = ({ questionsItem, setPopup, setPopupText, setPopupSource, a
 	useEffect(() => {
 		getComments(); // Получаем комментарии при загрузке
 	}, [questionId]);
-
-	// Получаем комментарии для конкретного вопроса
-	const comments = useAppSelector(selectCommentsByQuestionId(questionId));
 	//console.log(comments);
 	return (
 		<div className='comments-page'>

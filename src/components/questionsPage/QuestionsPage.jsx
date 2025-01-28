@@ -37,12 +37,12 @@ const QuestionsPage = ({
 	const fetchQuestions = async (userId) => {
 		try {
 			const response = await fetch(
-				`https://web-production-c0b1.up.railway.app/questions/${userId}`
+				`http://localhost:8000/questions/${userId}`
 			);
 			if (!response.ok) throw new Error('Failed to fetch questions');
 			const questions = await response.json();
 
-			console.log(questions);
+			//console.log(questions);
 
 			// Устанавливаем вопросы в Redux
 			dispatch(setQuestions(questions));

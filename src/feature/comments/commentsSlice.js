@@ -15,7 +15,7 @@ const commentsSlice = createSlice({
 		// Редьюсер для переключения лайка на комментарий
 		toggleLike: (state, action) => {
 			const { commentId } = action.payload; // Извлекаем ID комментария из действия
-			const comment = state.comments.find((c) => c.commentsId === commentId); // Ищем комментарий по ID
+			const comment = state.comments.find((c) => c.commentId === commentId); // Ищем комментарий по ID
 			if (comment) {
 				if (comment.likedByUser) {
 					// Если пользователь уже лайкнул, отменяем лайк
@@ -36,7 +36,7 @@ const commentsSlice = createSlice({
 		// Редьюсер для переключения дизлайка на комментарий
 		toggleDislike: (state, action) => {
 			const { commentId } = action.payload; // Извлекаем ID комментария из действия
-			const comment = state.comments.find((c) => c.commentsId === commentId); // Ищем комментарий по ID
+			const comment = state.comments.find((c) => c.commentId === commentId); // Ищем комментарий по ID
 			if (comment) {
 				if (comment.dislikedByUser) {
 					// Если пользователь уже дизлайкнул, отменяем дизлайк

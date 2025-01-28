@@ -9,7 +9,7 @@ const selectquestions = (state) => state.questions;
 export const selectQuestions = createSelector(
 	[selectquestions], // Входной селектор
 	(questions) => {
-		console.log('Questions state:', questions.questions); // Лог состояния (для отладки)
+		//console.log('Questions state:', questions.questions); // Лог состояния (для отладки)
 		return questions ? questions.questions : []; // Проверка на null/undefined
 	}
 );

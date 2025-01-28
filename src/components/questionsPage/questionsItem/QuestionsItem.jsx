@@ -78,11 +78,11 @@ const QuestionsItem = ({
 		try {
 			// Отправляем запрос на сервер для репорта вопроса
 			const response = await fetch(
-				`https://web-production-c0b1.up.railway.app/questions/${questionsItem.question_id}/report`,
+				`https://web-production-c0b1.up.railway.app/questions/${questionsItem.question_id.toString()}/report`,
 				{
 					method: 'POST',
 					body: JSON.stringify({
-						user_id: userId,
+						user_id: userId.toString(),
 					}),
 					headers: {
 						'Content-Type': 'application/json',
@@ -120,11 +120,11 @@ const QuestionsItem = ({
 		try {
 			// Отправляем запрос на сервер для отслеживания вопроса
 			const response = await fetch(
-				`https://web-production-c0b1.up.railway.app/questions/${questionsItem.question_id}/trace`,
+				`https://web-production-c0b1.up.railway.app/questions/${questionsItem.question_id.toString()}/trace`,
 				{
 					method: 'POST',
 					body: JSON.stringify({
-						user_id: userId,
+						user_id: userId.toString(),
 					}),
 					headers: {
 						'Content-Type': 'application/json',
@@ -155,9 +155,8 @@ const QuestionsItem = ({
 		<li className='questions-page__item'>
 			{comments === 'questions-page' && (
 				<div
-					className={`button questions-page__button questions-page__popular ${
-						questionsItem.popular === false ? 'none' : ''
-					}`}
+					className={`button questions-page__button questions-page__popular ${questionsItem.popular === false ? 'none' : ''
+						}`}
 				>
 					<StarIcon />
 				</div>
@@ -166,11 +165,11 @@ const QuestionsItem = ({
 			<h2 className='title lh--140 questions-page__title'>{questionsItem.title}</h2>
 
 			<ul className='tags'>
-				{/* {questionsItem.tags.map((tag, id) => (
+				{questionsItem.tags.map((tag, id) => (
 					<li className='tags__item' key={id} id={id}>
 						{tag}
 					</li>
-				))} */}
+				))}
 			</ul>
 
 			<div className='user questions-page__user'>
@@ -182,9 +181,8 @@ const QuestionsItem = ({
 				<div className='questions-page__buttons'>
 					<button
 						type='button'
-						className={`button questions-page__button questions-page__report ${
-							questionsItem.report ? 'active' : ''
-						}`}
+						className={`button questions-page__button questions-page__report ${questionsItem.report ? 'active' : ''
+							}`}
 						onClick={handleReport}
 						disabled={isProcessing}
 					>
@@ -193,9 +191,8 @@ const QuestionsItem = ({
 
 					<button
 						type='button'
-						className={`button questions-page__button questions-page__trace ${
-							questionsItem.trace ? 'active' : ''
-						}`}
+						className={`button questions-page__button questions-page__trace ${questionsItem.trace ? 'active' : ''
+							}`}
 						onClick={handleTrace}
 						disabled={isProcessing}
 					>
@@ -205,9 +202,8 @@ const QuestionsItem = ({
 					<div className='questions-page__like-wrapper'>
 						<button
 							type='button'
-							className={`button questions-page__button questions-page__like ${
-								questionsItem.like ? 'active' : ''
-							}`}
+							className={`button questions-page__button questions-page__like ${questionsItem.like ? 'active' : ''
+								}`}
 							onClick={handleLike}
 							disabled={isProcessing}
 						>
