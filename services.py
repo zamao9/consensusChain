@@ -217,19 +217,20 @@ async def get_questions(user_id: int, allQuestions: bool = True) -> List[Dict]:
         trace_questions = json.loads(user["trace_questions"]) if user["trace_questions"] else []
         
         # Определяем запрос для выборки вопросов
-        query = "" if allQuestions else "WHERE user_id = $1"
+        query = "" if allQuestions else "WHERE q.user_id = $1"
         
         # Получаем вопросы из базы данных
         questions = await conn.fetch(f"""
-            SELECT q.question_id, q.user_id, u.username, q.title, q.likes, q.popular, q.tags 
+            SELECT q.question_id, q.user_id, u.username, q.title, q.tags, q.likes, q.popular 
             FROM questions q
             LEFT JOIN users u ON q.user_id = u.user_id
             {query};
         """, *([user_id] if not allQuestions else []))  # Используем *для передачи параметров
-
+        
         # Формируем список вопросов
         result = []
         for question in questions:
+            questions_tags = json.loads(question["tags"]) if question["tags"] else []
             result.append({
                 "question_id": question["question_id"],
                 "user_id": question["user_id"],
@@ -237,7 +238,7 @@ async def get_questions(user_id: int, allQuestions: bool = True) -> List[Dict]:
                 "title": question["title"],
                 "likeCount": question["likes"],  # Заменили на 'likes'
                 "popular": question["popular"],
-                "tags": question["tags"],
+                "tags": questions_tags,
                 "report": question["question_id"] in reported_questions,
                 "trace": question["question_id"] in trace_questions,
                 "like": question["question_id"] in liked_questions
