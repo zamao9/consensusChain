@@ -23,7 +23,7 @@ const PopupBackground = ({
 		visible: { opacity: 1 }, // Конечное состояние (видимо)
 	};
 	const [active, setActive] = useState(true); // активировать попап или нет
-	console.log(questionsItem)
+	console.log(questionsItem);
 	const questionId = questionsItem !== null ? questionsItem.question_id : '0';
 	const [questionText, setQuestionText] = useState('');
 
@@ -42,7 +42,7 @@ const PopupBackground = ({
 		const strQuestionId = questionId.toString();
 		try {
 			const response = await fetch(
-				`http://localhost:8000/questions/${strQuestionId}/comments`,
+				`https://web-production-c0b1.up.railway.app/questions/${strQuestionId}/comments`,
 				{
 					method: 'POST',
 					body: JSON.stringify(payload),
@@ -149,15 +149,10 @@ const PopupBackground = ({
 								/>
 
 								{/* Кнопка отправки */}
-								<button
-									type='submit'
-									className='button'
-									onClick={handleCommentSubmit}
-								>
+								<button type='submit' className='button' onClick={handleCommentSubmit}>
 									Submit
 								</button>
 							</>
-
 						)}
 						{/* Открыть Report Popup  */}
 						{popupSource === 'report-page' && (

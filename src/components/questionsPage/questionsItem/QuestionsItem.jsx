@@ -153,6 +153,8 @@ const QuestionsItem = ({
 		}
 	};
 
+	console.log(questionsItem);
+
 	return (
 		<li className='questions-page__item'>
 			{comments === 'questions-page' && (

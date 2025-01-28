@@ -34,7 +34,7 @@ const questionsSlice = createSlice({
 
 		updateQuestion(state, action) {
 			const { id, updates } = action.payload; // Деструктуризация: извлекаем id и updates
-			const questionIndex = state.questions.findIndex((q) => q.question_id === id); // Поиск вопроса по id
+			const questionIndex = state.questions.findIndex((q) => q.id === id); // Поиск вопроса по id
 			if (questionIndex !== -1) {
 				// Если вопрос найден, обновляем его данные
 				state.questions[questionIndex] = {

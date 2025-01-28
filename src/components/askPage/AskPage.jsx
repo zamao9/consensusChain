@@ -3,11 +3,7 @@ import './askPage.sass';
 import { useAppDispatch, useAppSelector } from '../../hooks/store';
 import { selectUserId } from '../../feature/profile/profileSelector';
 
-const AskPage = ({
-	setPopup,
-	setPopupText,
-	setPopupSource,
-}) => {
+const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 	const dispatch = useAppDispatch();
 	const userId = useAppSelector(selectUserId);
 
@@ -50,9 +46,7 @@ const AskPage = ({
 		setIsSubmitting(true);
 
 		// Формируем массив выбранных тегов
-		const selectedTags = filtersItems
-			.filter((item) => item.active)
-			.map((item) => item.label);
+		const selectedTags = filtersItems.filter((item) => item.active).map((item) => item.label);
 
 		// Создаем payload для отправки на сервер
 		const payload = {
@@ -63,7 +57,7 @@ const AskPage = ({
 		};
 
 		try {
-			const response = await fetch('http://localhost:8000/questions/', {
+			const response = await fetch('https://web-production-c0b1.up.railway.app/questions/', {
 				method: 'POST',
 				body: JSON.stringify(payload),
 				headers: {
@@ -98,7 +92,6 @@ const AskPage = ({
 			setIsSubmitting(false);
 		}
 	};
-
 
 	return (
 		<form onSubmit={handleSubmit} className='ask-page'>
@@ -135,14 +128,18 @@ const AskPage = ({
 				<div className='ask-page__privacy-buttons'>
 					<button
 						type='button'
-						className={`ask-page__privacy-button ask-page__public-button ${!currPrivacyBtn ? 'active' : ''}`}
+						className={`ask-page__privacy-button ask-page__public-button ${
+							!currPrivacyBtn ? 'active' : ''
+						}`}
 						onClick={() => setPrivacyBtn(false)}
 					>
 						Public
 					</button>
 					<button
 						type='button'
-						className={`ask-page__privacy-button ask-page__private-button ${currPrivacyBtn ? 'active' : ''}`}
+						className={`ask-page__privacy-button ask-page__private-button ${
+							currPrivacyBtn ? 'active' : ''
+						}`}
 						onClick={() => setPrivacyBtn(true)}
 					>
 						Private
@@ -160,7 +157,6 @@ const AskPage = ({
 					Submit
 				</button>
 			</div>
-
 		</form>
 	);
 };
