@@ -57,6 +57,7 @@ const QuestionsPage = ({
 
 	// Получаем вопросы при изменении userId
 	useEffect(() => {
+
 		if (userId) {
 			setIsLoading(true);
 			fetchQuestions(userId); // Вызываем функцию для получения вопросов
@@ -67,7 +68,6 @@ const QuestionsPage = ({
 	const currentPage = useAppSelector(selectCurrentPage);
 	const displayedQuestions = useAppSelector(selectCurrentQuestionPageList);
 	const totalPages = useAppSelector(selectTotalPages);
-
 	// Функции для перехода между страницами
 	const goToFirstPage = () => dispatch(setCurrentPage(1));
 	const goToLastPage = () => dispatch(setCurrentPage(totalPages));

@@ -2,46 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
 	tasks: [
-		{
-			key: 1,
-			title: 'Subscribe our discord channel.',
-			isClaimed: false,
-			isDone: false,
-			cost: 1000,
-			timer: '10:23:15',
-		},
-		{
-			key: 2,
-			title: 'Subscribe our telegram channel.',
-			isClaimed: false,
-			isDone: false,
-			cost: 100,
-			timer: '10:23:15',
-		},
-		{
-			key: 3,
-			title: 'Post your first public question.',
-			isClaimed: false,
-			isDone: false,
-			cost: 300,
-			timer: '10:23:15',
-		},
-		{
-			key: 4,
-			title: 'Post your first private question.',
-			isClaimed: false,
-			isDone: false,
-			cost: 400,
-			timer: '',
-		},
-		{
-			key: 5,
-			title: 'Answer your first public question.',
-			isClaimed: false,
-			isDone: false,
-			cost: 400,
-			timer: '',
-		},
+
 	], // Изначально пусто, данные будут загружаться с сервера
 };
 
@@ -50,7 +11,7 @@ const tasksSlice = createSlice({
 	initialState,
 	reducers: {
 		setTasks(state, action) {
-			state.tasks = action.payload; // Устанавливаем данные задач
+			state.tasks = action.payload; // Устанавливаем данные задач с сервера
 		},
 		markTaskDone(state, action) {
 			const taskKey = action.payload;

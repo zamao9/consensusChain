@@ -53,7 +53,7 @@ const AppScreen = () => {
 				dispatch(setId(data.user_id));
 				dispatch(setName(data.fullName));
 				dispatch(setRegistrationDate(data.registrationDate));
-				dispatch(setBalance(data.balance));
+				dispatch(setBalance(Number(data.balance)));
 				dispatch(setRating(data.rating));
 			} catch (error) {
 				setError('Error fetching user data');

@@ -13,7 +13,6 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource, answer }) => {
 	const dispatch = useAppDispatch();
 	const userId = useAppSelector(selectUserId);
 	const questionsItem = useAppSelector(selectSelectedQuestion);
-	console.log("selectedQuestion1-->", questionsItem);
 	const questionId = questionsItem?.question_id || null;
 
 	const [currentIndex, setCurrentIndex] = useState(0);

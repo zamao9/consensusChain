@@ -26,45 +26,40 @@ const QuestionsItem = ({
 }) => {
 	const dispatch = useAppDispatch();
 	const userId = useAppSelector(selectUserId);
-
 	const [isProcessing, setIsProcessing] = useState(false);
-
 	const selectedQuestion = useAppSelector(selectSelectedQuestion);
 
-	const [questionsItem, setQuestionsItem] = useState(questionItem);
-
+	// Обновляем локальное состояние при изменении вопроса или флага isCurrentElement
 	useEffect(() => {
 		if (isCurrentElement) {
 			setQuestionsItem(selectedQuestion); // Обновляем текущий вопрос
+		} else {
+			setQuestionsItem(questionItem); // Используем переданный вопрос
 		}
-	}, [isCurrentElement, selectedQuestion]);
+	}, [isCurrentElement, selectedQuestion, questionItem]);
+
+	const [questionsItem, setQuestionsItem] = useState(isCurrentElement ? selectedQuestion : questionItem);
 
 	// Функция для отправки запроса на лайк или дизлайк
 	const handleLike = async () => {
 		if (isProcessing) return;
 		setIsProcessing(true);
-
 		const likeStatus = !questionsItem.like;
 		const updatedLikeCount = likeStatus ? questionsItem.likeCount + 1 : questionsItem.likeCount - 1;
-
 		try {
-			// Отправляем запрос на сервер для обновления лайка
 			const response = await fetch(
 				`https://web-production-c0b1.up.railway.app/questions/${questionsItem.question_id.toString()}/like`,
 				{
 					method: 'POST',
 					body: JSON.stringify({
-						user_id: userId.toString(), // Передаем user_id в теле запроса
+						user_id: userId.toString(),
 					}),
 					headers: {
 						'Content-Type': 'application/json',
 					},
 				}
 			);
-
-			// Проверяем, что сервер вернул успешный ответ
 			if (response.ok) {
-				// Обновляем состояние в Redux
 				dispatch(
 					updateQuestion({
 						question_id: questionsItem.question_id,
@@ -74,11 +69,11 @@ const QuestionsItem = ({
 						},
 					})
 				);
+				setQuestionsItem((prev) => ({ ...prev, like: likeStatus, likeCount: updatedLikeCount }));
 			} else {
 				throw new Error('Failed to like the question');
 			}
 		} catch (error) {
-			console.log(questionsItem)
 			console.error('Error liking question:', error);
 		} finally {
 			setIsProcessing(false);
@@ -89,9 +84,7 @@ const QuestionsItem = ({
 	const handleReport = async () => {
 		if (isProcessing) return;
 		setIsProcessing(true);
-
 		try {
-			// Отправляем запрос на сервер для репорта вопроса
 			const response = await fetch(
 				`https://web-production-c0b1.up.railway.app/questions/${questionsItem.question_id.toString()}/report`,
 				{
@@ -104,16 +97,14 @@ const QuestionsItem = ({
 					},
 				}
 			);
-
-			// Проверяем, что сервер вернул успешный ответ
 			if (response.ok) {
-				// Обновляем состояние в Redux
 				dispatch(
 					updateQuestion({
 						question_id: questionsItem.question_id,
 						updates: { report: !questionsItem.report },
 					})
 				);
+				setQuestionsItem((prev) => ({ ...prev, report: !prev.report }));
 				setPopup(true);
 				setPopupText('Your report has been successfully sent.');
 				setPopupSource('report-page');
@@ -131,9 +122,7 @@ const QuestionsItem = ({
 	const handleTrace = async () => {
 		if (isProcessing) return;
 		setIsProcessing(true);
-
 		try {
-			// Отправляем запрос на сервер для отслеживания вопроса
 			const response = await fetch(
 				`https://web-production-c0b1.up.railway.app/questions/${questionsItem.question_id.toString()}/trace`,
 				{
@@ -146,16 +135,14 @@ const QuestionsItem = ({
 					},
 				}
 			);
-
-			// Проверяем, что сервер вернул успешный ответ
 			if (response.ok) {
-				// Обновляем состояние в Redux
 				dispatch(
 					updateQuestion({
 						question_id: questionsItem.question_id,
 						updates: { trace: !questionsItem.trace },
 					})
 				);
+				setQuestionsItem((prev) => ({ ...prev, trace: !prev.trace }));
 			} else {
 				throw new Error('Failed to trace the question');
 			}
@@ -165,8 +152,6 @@ const QuestionsItem = ({
 			setIsProcessing(false);
 		}
 	};
-
-	//console.log(questionsItem);
 
 	return (
 		<li className='questions-page__item'>
@@ -178,9 +163,7 @@ const QuestionsItem = ({
 					<StarIcon />
 				</div>
 			)}
-
 			<h2 className='title lh--140 questions-page__title'>{questionsItem.title}</h2>
-
 			<ul className='tags'>
 				{questionsItem.tags.map((tag, id) => (
 					<li className='tags__item' key={id} id={id}>
@@ -188,49 +171,40 @@ const QuestionsItem = ({
 					</li>
 				))}
 			</ul>
-
 			<div className='user questions-page__user'>
 				<ProfileIcon />
 				<span className='user__name'>{questionsItem.user_name}</span>
 			</div>
-
 			<div className='questions-page__buttons-wrapper'>
 				<div className='questions-page__buttons'>
 					<button
 						type='button'
 						className={`button questions-page__button questions-page__report ${questionsItem.report ? 'active' : ''
 							}`}
-						// disabled={questionsItem.report}
 						onClick={handleReport}
-					// disabled={isProcessing}
 					>
 						<ReportIcon />
 					</button>
-
 					<button
 						type='button'
 						className={`button questions-page__button questions-page__trace ${questionsItem.trace ? 'active' : ''
 							}`}
 						onClick={handleTrace}
-					// disabled={isProcessing}
 					>
 						<NotificationIcon />
 					</button>
-
 					<div className='questions-page__like-wrapper'>
 						<button
 							type='button'
 							className={`button questions-page__button questions-page__like ${questionsItem.like ? 'active' : ''
 								}`}
 							onClick={handleLike}
-						// disabled={isProcessing}
 						>
 							<LikeIcon />
 						</button>
 						<span className='questions-page__likeCount'>{questionsItem.likeCount}</span>
 					</div>
 				</div>
-
 				{comments === 'questions-page' && (
 					<button
 						type='button'
@@ -244,7 +218,6 @@ const QuestionsItem = ({
 						<CommentsIcon />
 					</button>
 				)}
-
 				{comments === 'comments-page' && (
 					<button
 						type='button'
