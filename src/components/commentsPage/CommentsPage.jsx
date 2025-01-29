@@ -148,15 +148,17 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource, answer }) => {
 						{/* Обертка Лайков и Дизлайков */}
 						<div className='reactions-counter mb--32'>
 							<div
-								className={`reactions-counter__icon-wrapper ${comments[currentIndex].likedByUser ? 'active' : ''
-									}`}
+								className={`reactions-counter__icon-wrapper ${
+									comments[currentIndex].likedByUser ? 'active' : ''
+								}`}
 							>
 								<LikeIcon />
 								<span className='reactions-counter__count'>{comments[currentIndex].likes}</span>
 							</div>
 							<div
-								className={`reactions-counter__icon-wrapper ${comments[currentIndex].dislikedByUser ? 'active' : ''
-									}`}
+								className={`reactions-counter__icon-wrapper ${
+									comments[currentIndex].dislikedByUser ? 'active' : ''
+								}`}
 							>
 								<DislikeIcon />
 								<span className='reactions-counter__count'>{comments[currentIndex].dislikes}</span>

@@ -3,8 +3,9 @@ import { Logo, NotificationIcon, ProfileIcon } from '../../constants/SvgIcons';
 import './header.sass';
 import { useAppSelector } from '../../hooks/store';
 import { selectUserBalance } from '../../feature/profile/profileSelector';
+import CountUp from 'react-countup';
 
-const Header = ({ curItem, setItem, setPage, setTab }) => {
+const Header = ({ curItem, setItem, setPage, setTab, currentBalance }) => {
 	const userBalance = useAppSelector(selectUserBalance);
 
 	return (
@@ -17,7 +18,15 @@ const Header = ({ curItem, setItem, setPage, setTab }) => {
 			<div className='header__profile'>
 				{/* Баланс */}
 				<div className='balance'>
-					<span>{userBalance} CT</span>
+					<span>
+						<CountUp start={currentBalance} end={userBalance} duration={2} delay={0} suffix=' CT'>
+							{({ countUpRef }) => (
+								<div>
+									<span ref={countUpRef} />
+								</div>
+							)}
+						</CountUp>
+					</span>
 				</div>
 
 				{/* Обертка Уведомлений, Профиля */}

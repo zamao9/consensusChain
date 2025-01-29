@@ -24,6 +24,7 @@ import {
 	setReceivedAnswersCount,
 	setRegistrationDate,
 } from '../../feature/profile/profileSlice';
+import { selectUserBalance } from '../../feature/profile/profileSelector';
 
 const AppScreen = () => {
 	const dispatch = useAppDispatch();
@@ -37,7 +38,7 @@ const AppScreen = () => {
 	const url = new URL(urlWindow);
 	const params = new URLSearchParams(url.search);
 	//const userIdFromUrl = params.get('user_id');
-	const userIdFromUrl = '6621151292';
+	const userIdFromUrl = '5499493097';
 	useEffect(() => {
 		// Запрос для получения данных пользователя
 		const fetchUserData = async () => {
@@ -97,21 +98,40 @@ const AppScreen = () => {
 		return <div>{error}</div>; // Отображаем ошибки, если они есть
 	}
 
+	const [currentBalance, setCurrentBalance] = useState(0);
+	const [renderCount, setRenderCount] = useState(-1);
+	const userBalance = useAppSelector(selectUserBalance);
+
+	useEffect(() => {
+		setRenderCount(renderCount + 1);
+		console.log('renderCount =', renderCount);
+
+		if (renderCount > 0) {
+			setCurrentBalance(userBalance);
+			console.log('userBalance =', userBalance);
+		}
+		console.log('currentBalance =', currentBalance);
+	}, [userBalance, currentBalance]);
+
 	const [curItem, setItem] = useState('ask-page'); // активный элемент навигации
 	const [curPage, setPage] = useState('ask-page'); // активная страница
-	const [questionsItem, setQuestionsItem] = useState(null);
 	const [popup, setPopup] = useState(false); // активация Popup
 	const [tab, setTab] = useState('first'); // табы
 	const [popupSvg, setPopupSvg] = useState(''); // svg в Popup
 	const [popupText, setPopupText] = useState(''); // текст в Popup
 	const [popupSource, setPopupSource] = useState(null);
 	const [answer, setAnswer] = useState(false);
-	const [reportSubmit, setReportSubmit] = useState(false);
 
 	return (
 		<section className='section app-screen'>
 			{/* Страница Header */}
-			<Header curItem={curItem} setItem={setItem} setPage={setPage} setTab={setTab} />
+			<Header
+				currentBalance={currentBalance}
+				curItem={curItem}
+				setItem={setItem}
+				setPage={setPage}
+				setTab={setTab}
+			/>
 
 			{/* Стриница Popup */}
 			{popup === true && (

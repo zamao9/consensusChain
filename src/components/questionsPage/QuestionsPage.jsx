@@ -57,7 +57,6 @@ const QuestionsPage = ({
 
 	// Получаем вопросы при изменении userId
 	useEffect(() => {
-
 		if (userId) {
 			setIsLoading(true);
 			fetchQuestions(userId); // Вызываем функцию для получения вопросов

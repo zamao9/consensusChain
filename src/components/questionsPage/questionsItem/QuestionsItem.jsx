@@ -38,7 +38,9 @@ const QuestionsItem = ({
 		}
 	}, [isCurrentElement, selectedQuestion, questionItem]);
 
-	const [questionsItem, setQuestionsItem] = useState(isCurrentElement ? selectedQuestion : questionItem);
+	const [questionsItem, setQuestionsItem] = useState(
+		isCurrentElement ? selectedQuestion : questionItem
+	);
 
 	// Функция для отправки запроса на лайк или дизлайк
 	const handleLike = async () => {
@@ -157,8 +159,9 @@ const QuestionsItem = ({
 		<li className='questions-page__item'>
 			{comments === 'questions-page' && (
 				<div
-					className={`button questions-page__button questions-page__popular ${questionsItem.popular === false ? 'none' : ''
-						}`}
+					className={`button questions-page__button questions-page__popular ${
+						questionsItem.popular === false ? 'none' : ''
+					}`}
 				>
 					<StarIcon />
 				</div>
@@ -179,16 +182,19 @@ const QuestionsItem = ({
 				<div className='questions-page__buttons'>
 					<button
 						type='button'
-						className={`button questions-page__button questions-page__report ${questionsItem.report ? 'active' : ''
-							}`}
+						className={`button questions-page__button questions-page__report ${
+							questionsItem.report ? 'active' : ''
+						}`}
 						onClick={handleReport}
+						disabled={questionsItem.report}
 					>
 						<ReportIcon />
 					</button>
 					<button
 						type='button'
-						className={`button questions-page__button questions-page__trace ${questionsItem.trace ? 'active' : ''
-							}`}
+						className={`button questions-page__button questions-page__trace ${
+							questionsItem.trace ? 'active' : ''
+						}`}
 						onClick={handleTrace}
 					>
 						<NotificationIcon />
@@ -196,8 +202,9 @@ const QuestionsItem = ({
 					<div className='questions-page__like-wrapper'>
 						<button
 							type='button'
-							className={`button questions-page__button questions-page__like ${questionsItem.like ? 'active' : ''
-								}`}
+							className={`button questions-page__button questions-page__like ${
+								questionsItem.like ? 'active' : ''
+							}`}
 							onClick={handleLike}
 						>
 							<LikeIcon />
@@ -210,7 +217,7 @@ const QuestionsItem = ({
 						type='button'
 						className='button questions-page__button questions-page__comments'
 						onClick={() => {
-							dispatch(setSelectedQuestionId(questionsItem.question_id))
+							dispatch(setSelectedQuestionId(questionsItem.question_id));
 							setPage('comments-page');
 							setItem('');
 						}}
