@@ -1,11 +1,12 @@
 import os
-from fastapi import FastAPI, HTTPException
+from typing import Dict
+from fastapi import FastAPI, HTTPException, Query
 from motor.motor_asyncio import AsyncIOMotorClient
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import uvicorn
 from models import CommentRequest, GetCommentsRequest, LikeDislikeRequest, Question, UserStatistics
-from services import create_comment, create_question, dislike_comment, get_comments, get_questions, get_user_data, get_user_statistics, like_comment, like_question, report_question, trace_question
+from services import create_comment, create_question, dislike_comment, get_comments, get_questions, get_user_data, get_user_statistics, get_user_tasks, like_comment, like_question, report_question, trace_question, update_task_status
 
 
 
@@ -123,6 +124,25 @@ async def get_user_statistics_endpoint(user_id: str):
     if "error" in statistics:
         raise HTTPException(status_code=404, detail=statistics["error"])
     return statistics
+
+# Получить список вопросов
+@app.get("/users/{user_id}/tasks")
+async def get_user_tasks_endpoint(user_id: int) -> Dict:
+    result = await get_user_tasks(user_id)
+    if "error" in result:
+        raise HTTPException(status_code=404, detail=result["error"])
+    return result
+
+@app.post("/tasks/{task_id}/{status}")
+async def update_task_status_endpoint(
+    task_id: int,
+    status: str,  
+    user_id: int = Query(..., description="The ID of the user")  # Query parameter
+):
+    result = await update_task_status(user_id, task_id, status)
+    if "error" in result:
+        raise HTTPException(status_code=404, detail=result["error"])
+    return result
 
 if __name__ == '__main__':
     port = int(os.getenv("PORT", 8000))

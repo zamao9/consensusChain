@@ -44,5 +44,16 @@ async def ensure_tables_exist():
             dislikes INT DEFAULT 0
         );
         """)
+        await conn.execute("""
+            CREATE TABLE IF NOT EXISTS tasks (
+                task_id SERIAL PRIMARY KEY,
+                user_id BIGINT REFERENCES users(user_id),
+                title TEXT NOT NULL,
+                is_claimed BOOLEAN DEFAULT FALSE,
+                is_done BOOLEAN DEFAULT FALSE,
+                cost NUMERIC DEFAULT 0,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        """)
     finally:
         await conn.close()

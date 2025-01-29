@@ -407,3 +407,112 @@ async def get_comments(question_id: int, user_id: int) -> List[Dict]:
         return result
     finally:
         await conn.close()
+
+# Fetch Tasks Data and add tasks
+async def get_user_tasks(user_id: int) -> Dict:
+    conn = await get_db_connection()
+    await ensure_tables_exist()
+    try:
+        # Проверяем, существует ли пользователь
+        user = await conn.fetchrow("SELECT * FROM users WHERE user_id = $1;", user_id)
+        if not user:
+            return {"error": "User not found"}
+
+        # Получаем все задачи пользователя
+        tasks = await conn.fetch("SELECT * FROM tasks WHERE user_id = $1;", user_id)
+
+        # Список всех возможных задач
+        default_tasks = [
+            {"title": "Subscribe our discord channel.", "cost": 1000},
+            {"title": "Subscribe our telegram channel.", "cost": 100},
+            {"title": "Post your first public question.", "cost": 300},
+            {"title": "Post your first private question.", "cost": 400},
+            {"title": "Answer your first public question.", "cost": 400}
+        ]
+
+        # Создаем словарь существующих задач для удобства проверки
+        existing_tasks = {task["title"]: task for task in tasks}
+
+        # Формируем полный список задач с учетом отсутствующих
+        complete_tasks = []
+        for idx, default_task in enumerate(default_tasks):
+            if default_task["title"] in existing_tasks:
+                task = existing_tasks[default_task["title"]]
+                complete_tasks.append({
+                    "key": task["task_id"],
+                    "title": task["title"],
+                    "isClaimed": task["is_claimed"],
+                    "isDone": task["is_done"],
+                    "cost": task["cost"]
+                })
+            else:
+                # Добавляем отсутствующую задачу в базу данных
+                await conn.execute("""
+                    INSERT INTO tasks (user_id, title, cost)
+                    VALUES ($1, $2, $3);
+                """, user_id, default_task["title"], default_task["cost"])
+                # И добавляем её в результирующий список
+                new_task = await conn.fetchrow("""
+                    SELECT * FROM tasks WHERE user_id = $1 AND title = $2;
+                """, user_id, default_task["title"])
+                complete_tasks.append({
+                    "key": new_task["task_id"],
+                    "title": new_task["title"],
+                    "isClaimed": new_task["is_claimed"],
+                    "isDone": new_task["is_done"],
+                    "cost": new_task["cost"]
+                })
+
+        return {"tasks": complete_tasks}
+    finally:
+        await conn.close()
+
+# Service for update Tasks Status
+async def update_task_status(user_id: int, task_id: int, status: str) -> Dict:
+    conn = await get_db_connection()
+    try:
+        # Проверяем, существует ли пользователь
+        user = await conn.fetchrow("SELECT * FROM users WHERE user_id = $1;", user_id)
+        if not user:
+            return {"error": "User not found"}
+
+        # Проверяем, существует ли задача для данного пользователя
+        task = await conn.fetchrow("SELECT * FROM tasks WHERE task_id = $1 AND user_id = $2;", task_id, user_id)
+        if not task:
+            return {"error": "Task not found for this user"}
+
+        # Логика обновления статуса задачи
+        if status == 'done':
+            # Устанавливаем задачу как выполненную
+            await conn.execute("""
+                UPDATE tasks SET is_done = TRUE WHERE task_id = $1;
+            """, task_id)
+            return {"message": "Task marked as done successfully"}
+
+        elif status == 'claimed':
+            # Проверяем, что задача уже выполнена
+            if not task["is_done"]:
+                return {"error": "Cannot claim a task that is not marked as done"}
+
+            # Проверяем, что задача еще не была получена (claimed)
+            if task["is_claimed"]:
+                return {"error": "Task already claimed"}
+
+            # Устанавливаем задачу как полученную и увеличиваем баланс пользователя
+            cost = task["cost"]
+            await conn.execute("""
+                UPDATE tasks SET is_claimed = TRUE WHERE task_id = $1;
+            """, task_id)
+
+            # Увеличиваем баланс пользователя
+            await conn.execute("""
+                UPDATE users SET balance = balance + $1 WHERE user_id = $2;
+            """, cost, user_id)
+
+            return {"message": f"Task claimed successfully. Balance increased by {cost}"}
+
+        else:
+            return {"error": "Invalid status"}
+
+    finally:
+        await conn.close()
