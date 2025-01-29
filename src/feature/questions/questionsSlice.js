@@ -1,14 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid'; // Генерация уникальных идентификаторов
 
-// Изначальное состояние для среза. Оно содержит:
-// 1. Список вопросов (questions) с начальными данными.
-// 2. Текущую страницу (currentPage) для пагинации.
-// 3. Количество вопросов на странице (questionsPerPage).
 const initialState = {
 	questions: [],
 	currentPage: 1,
 	questionsPerPage: 3,
+	selectedQuestionId: 1,
 };
 
 const questionsSlice = createSlice({
@@ -17,6 +14,10 @@ const questionsSlice = createSlice({
 	reducers: {
 		setQuestions(state, action) {
 			state.questions = action.payload;
+		},
+
+		setSelectedQuestionId(state, action) {
+			state.selectedQuestionId = action.payload;
 		},
 
 		setCurrentPage(state, action) {
@@ -28,13 +29,13 @@ const questionsSlice = createSlice({
 		},
 
 		addQuestion(state, action) {
-			const newQuestion = { id: uuidv4(), ...action.payload }; // Генерация нового вопроса с уникальным ID
+			const newQuestion = { question_id: uuidv4(), ...action.payload }; // Генерация нового вопроса с уникальным ID
 			state.questions.push(newQuestion); // Добавление вопроса в массив
 		},
 
 		updateQuestion(state, action) {
-			const { id, updates } = action.payload; // Деструктуризация: извлекаем id и updates
-			const questionIndex = state.questions.findIndex((q) => q.id === id); // Поиск вопроса по id
+			const { question_id, updates } = action.payload; // Деструктуризация: извлекаем id и updates
+			const questionIndex = state.questions.findIndex((q) => q.question_id === question_id); // Поиск вопроса по id
 			if (questionIndex !== -1) {
 				// Если вопрос найден, обновляем его данные
 				state.questions[questionIndex] = {
@@ -58,6 +59,7 @@ export const {
 	addQuestion, // Добавить новый вопрос
 	updateQuestion, // Обновить существующий вопрос
 	deleteQuestion, // Удалить вопрос
+	setSelectedQuestionId,
 } = questionsSlice.actions;
 
 // Экспортируем редьюсер для подключения к хранилищу Redux.

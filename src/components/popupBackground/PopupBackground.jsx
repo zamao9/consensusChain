@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks/store';
 import { addComment } from '../../feature/comments/commentsSlice';
 import { selectUserId } from '../../feature/profile/profileSelector';
+import { selectSelectedQuestion } from '../../feature/questions/questionsSelector';
 
 const PopupBackground = ({
 	setPopup,
@@ -15,7 +16,6 @@ const PopupBackground = ({
 	setPopupSource,
 	setPopupText,
 	setAnswer,
-	questionsItem,
 }) => {
 	const userId = useAppSelector(selectUserId);
 	const variants = {
@@ -23,6 +23,7 @@ const PopupBackground = ({
 		visible: { opacity: 1 }, // Конечное состояние (видимо)
 	};
 	const [active, setActive] = useState(true); // активировать попап или нет
+	const questionsItem = useAppSelector(selectSelectedQuestion);
 	console.log(questionsItem);
 	const questionId = questionsItem !== null ? questionsItem.question_id : '0';
 	const [questionText, setQuestionText] = useState('');

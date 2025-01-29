@@ -14,6 +14,20 @@ export const selectQuestions = createSelector(
 	}
 );
 
+// Селектор текущего вопроса
+export const selectSelectedQuestion = createSelector(
+	[selectquestions], // Входной селектор
+	(questions) => {
+		const selectedQuestionId = questions.selectedQuestionId; // Получаем ID выбранного вопроса
+		if (!Array.isArray(questions.questions)) {
+			console.warn('Questions data is not an array:', questions.questions); // Предупреждение о некорректных данных
+			return null; // Возвращаем null, если данные некорректны
+		}
+		// Находим вопрос по question_id
+		return questions.questions.find((q) => q.question_id === selectedQuestionId) || null;
+	}
+);
+
 // Селектор для получения текущей страницы
 // Извлекает значение currentPage из ветки состояния questions
 export const selectCurrentPage = createSelector(

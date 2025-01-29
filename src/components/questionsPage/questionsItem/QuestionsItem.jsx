@@ -1,6 +1,5 @@
-import { useDispatch } from 'react-redux';
-import { useState } from 'react';
-import { updateQuestion } from '../../../feature/questions/questionsSlice';
+import { useState, useEffect } from 'react';
+import { setSelectedQuestionId, updateQuestion } from '../../../feature/questions/questionsSlice';
 import {
 	CommentsIcon,
 	LikeIcon,
@@ -9,23 +8,36 @@ import {
 	ReportIcon,
 	StarIcon,
 } from '../../../constants/SvgIcons';
-import { useAppDispatch } from '../../../hooks/store';
+import { useAppDispatch, useAppSelector } from '../../../hooks/store';
 import { ClipLoader } from 'react-spinners';
+import { selectUserId } from '../../../feature/profile/profileSelector';
+import { selectSelectedQuestion } from '../../../feature/questions/questionsSelector';
 
 const QuestionsItem = ({
-	userId,
-	questionsItem,
+	questionItem,
 	comments,
 	setPopup,
 	setPopupText,
 	setPopupSource,
 	answer,
 	setPage,
-	setQuestionsItem,
 	setItem,
+	isCurrentElement,
 }) => {
 	const dispatch = useAppDispatch();
+	const userId = useAppSelector(selectUserId);
+
 	const [isProcessing, setIsProcessing] = useState(false);
+
+	const selectedQuestion = useAppSelector(selectSelectedQuestion);
+
+	const [questionsItem, setQuestionsItem] = useState(questionItem);
+
+	useEffect(() => {
+		if (isCurrentElement) {
+			setQuestionsItem(selectedQuestion); // Обновляем текущий вопрос
+		}
+	}, [isCurrentElement, selectedQuestion]);
 
 	// Функция для отправки запроса на лайк или дизлайк
 	const handleLike = async () => {
@@ -55,7 +67,7 @@ const QuestionsItem = ({
 				// Обновляем состояние в Redux
 				dispatch(
 					updateQuestion({
-						id: questionsItem.id,
+						question_id: questionsItem.question_id,
 						updates: {
 							like: likeStatus,
 							likeCount: updatedLikeCount,
@@ -66,6 +78,7 @@ const QuestionsItem = ({
 				throw new Error('Failed to like the question');
 			}
 		} catch (error) {
+			console.log(questionsItem)
 			console.error('Error liking question:', error);
 		} finally {
 			setIsProcessing(false);
@@ -97,7 +110,7 @@ const QuestionsItem = ({
 				// Обновляем состояние в Redux
 				dispatch(
 					updateQuestion({
-						id: questionsItem.id,
+						question_id: questionsItem.question_id,
 						updates: { report: !questionsItem.report },
 					})
 				);
@@ -139,7 +152,7 @@ const QuestionsItem = ({
 				// Обновляем состояние в Redux
 				dispatch(
 					updateQuestion({
-						id: questionsItem.id,
+						question_id: questionsItem.question_id,
 						updates: { trace: !questionsItem.trace },
 					})
 				);
@@ -153,15 +166,14 @@ const QuestionsItem = ({
 		}
 	};
 
-	console.log(questionsItem);
+	//console.log(questionsItem);
 
 	return (
 		<li className='questions-page__item'>
 			{comments === 'questions-page' && (
 				<div
-					className={`button questions-page__button questions-page__popular ${
-						questionsItem.popular === false ? 'none' : ''
-					}`}
+					className={`button questions-page__button questions-page__popular ${questionsItem.popular === false ? 'none' : ''
+						}`}
 				>
 					<StarIcon />
 				</div>
@@ -186,23 +198,21 @@ const QuestionsItem = ({
 				<div className='questions-page__buttons'>
 					<button
 						type='button'
-						className={`button questions-page__button questions-page__report ${
-							questionsItem.report ? 'active' : ''
-						}`}
+						className={`button questions-page__button questions-page__report ${questionsItem.report ? 'active' : ''
+							}`}
 						// disabled={questionsItem.report}
 						onClick={handleReport}
-						// disabled={isProcessing}
+					// disabled={isProcessing}
 					>
 						<ReportIcon />
 					</button>
 
 					<button
 						type='button'
-						className={`button questions-page__button questions-page__trace ${
-							questionsItem.trace ? 'active' : ''
-						}`}
+						className={`button questions-page__button questions-page__trace ${questionsItem.trace ? 'active' : ''
+							}`}
 						onClick={handleTrace}
-						// disabled={isProcessing}
+					// disabled={isProcessing}
 					>
 						<NotificationIcon />
 					</button>
@@ -210,11 +220,10 @@ const QuestionsItem = ({
 					<div className='questions-page__like-wrapper'>
 						<button
 							type='button'
-							className={`button questions-page__button questions-page__like ${
-								questionsItem.like ? 'active' : ''
-							}`}
+							className={`button questions-page__button questions-page__like ${questionsItem.like ? 'active' : ''
+								}`}
 							onClick={handleLike}
-							// disabled={isProcessing}
+						// disabled={isProcessing}
 						>
 							<LikeIcon />
 						</button>
@@ -227,8 +236,8 @@ const QuestionsItem = ({
 						type='button'
 						className='button questions-page__button questions-page__comments'
 						onClick={() => {
+							dispatch(setSelectedQuestionId(questionsItem.question_id))
 							setPage('comments-page');
-							setQuestionsItem(questionsItem);
 							setItem('');
 						}}
 					>

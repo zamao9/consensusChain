@@ -7,12 +7,15 @@ import './commentsPage.sass';
 import { setComments, toggleDislike, toggleLike } from '../../feature/comments/commentsSlice';
 import { selectCommentsByQuestionId } from '../../feature/comments/commentsSelector';
 import { selectUserId } from '../../feature/profile/profileSelector';
+import { selectSelectedQuestion } from '../../feature/questions/questionsSelector';
 
-const CommentsPage = ({ questionsItem, setPopup, setPopupText, setPopupSource, answer }) => {
+const CommentsPage = ({ setPopup, setPopupText, setPopupSource, answer }) => {
 	const dispatch = useAppDispatch();
 	const userId = useAppSelector(selectUserId);
-	const questionId = questionsItem.question_id;
-	// Текущий индекс комментария
+	const questionsItem = useAppSelector(selectSelectedQuestion);
+	console.log("selectedQuestion1-->", questionsItem);
+	const questionId = questionsItem?.question_id || null;
+
 	const [currentIndex, setCurrentIndex] = useState(0);
 
 	const getComments = async () => {
@@ -127,12 +130,13 @@ const CommentsPage = ({ questionsItem, setPopup, setPopupText, setPopupSource, a
 		<div className='comments-page'>
 			{/* Комментарий */}
 			<QuestionsItem
-				questionsItem={questionsItem}
+				questionItem={questionsItem}
 				comments={'comments-page'}
 				setPopup={setPopup}
 				setPopupText={setPopupText}
 				setPopupSource={setPopupSource}
 				answer={answer}
+				isCurrentElement={true}
 			/>
 
 			{/* Ответы */}
@@ -145,17 +149,15 @@ const CommentsPage = ({ questionsItem, setPopup, setPopupText, setPopupSource, a
 						{/* Обертка Лайков и Дизлайков */}
 						<div className='reactions-counter mb--32'>
 							<div
-								className={`reactions-counter__icon-wrapper ${
-									comments[currentIndex].likedByUser ? 'active' : ''
-								}`}
+								className={`reactions-counter__icon-wrapper ${comments[currentIndex].likedByUser ? 'active' : ''
+									}`}
 							>
 								<LikeIcon />
 								<span className='reactions-counter__count'>{comments[currentIndex].likes}</span>
 							</div>
 							<div
-								className={`reactions-counter__icon-wrapper ${
-									comments[currentIndex].dislikedByUser ? 'active' : ''
-								}`}
+								className={`reactions-counter__icon-wrapper ${comments[currentIndex].dislikedByUser ? 'active' : ''
+									}`}
 							>
 								<DislikeIcon />
 								<span className='reactions-counter__count'>{comments[currentIndex].dislikes}</span>

@@ -117,12 +117,11 @@ const QuestionsPage = ({
 					<ul className=' mb--32 questions-page__list'>
 						{displayedQuestions.map((element) => (
 							<QuestionsItem
-								userId={userId}
-								questionsItem={element}
+								questionItem={element}
+								isCurrentElement={false}
 								setPage={setPage}
 								setItem={setItem}
-								key={element.id}
-								setQuestionsItem={setQuestionsItem}
+								key={element.question_id}
 								comments={'questions-page'}
 								setPopup={setPopup}
 								setPopupText={setPopupText}

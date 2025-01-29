@@ -124,7 +124,6 @@ const AppScreen = () => {
 					popupSource={popupSource}
 					setPopupSource={setPopupSource}
 					setAnswer={setAnswer}
-					questionsItem={questionsItem}
 				/>
 			)}
 
@@ -174,7 +173,6 @@ const AppScreen = () => {
 					<QuestionsPage
 						setPage={setPage}
 						setItem={setItem}
-						setQuestionsItem={setQuestionsItem}
 						setPopup={setPopup}
 						setPopupText={setPopupText}
 						setPopupSource={setPopupSource}
@@ -192,7 +190,6 @@ const AppScreen = () => {
 						setPopup={setPopup}
 						setPopupText={setPopupText}
 						setPopupSource={setPopupSource}
-						questionsItem={questionsItem}
 						answer={answer}
 					/>
 				)}
