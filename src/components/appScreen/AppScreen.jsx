@@ -32,13 +32,42 @@ const AppScreen = () => {
 	const [userStats, setUserStats] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState('');
-
 	// Получаем userId из URL
 	const urlWindow = window.location.href;
 	const url = new URL(urlWindow);
 	const params = new URLSearchParams(url.search);
-	//const userIdFromUrl = params.get('user_id');
-	const userIdFromUrl = '5499493097';
+	const userIdFromUrlBot = params.get('user_id');
+	//const userIdFromUrlBot = "6621151292";
+	const [userIdFromUrl, setUserIdFromUrl] = useState(userIdFromUrlBot);
+
+	useEffect(() => {
+		// Проверяем, что объект Telegram существует и содержит нужные данные
+		if (typeof Telegram !== 'undefined' && Telegram.WebApp) {
+			const initData = Telegram.WebApp.initData;
+			console.log("initData", initData);
+
+			if (initData) {
+				const parsedInitData = new URLSearchParams(initData);
+				const userParam = parsedInitData.get('user');
+
+				if (userParam) {
+					try {
+						const userData = JSON.parse(userParam);
+						if (userData && typeof userData.id !== 'undefined') {
+							setUserIdFromUrl(userData.id);
+						}
+						else { setUserIdFromUrl("6621151292"); }
+					} catch (error) {
+						console.error("Ошибка при парсинге данных пользователя:", error);
+					}
+				}
+				else { setUserIdFromUrl("6621151292"); }
+			}
+		}
+		else { setUserIdFromUrl("6621151292"); }
+	}, []);
+
+
 	useEffect(() => {
 		// Запрос для получения данных пользователя
 		const fetchUserData = async () => {
@@ -98,21 +127,6 @@ const AppScreen = () => {
 		return <div>{error}</div>; // Отображаем ошибки, если они есть
 	}
 
-	const [currentBalance, setCurrentBalance] = useState(0);
-	const [renderCount, setRenderCount] = useState(-1);
-	const userBalance = useAppSelector(selectUserBalance);
-
-	useEffect(() => {
-		setRenderCount(renderCount + 1);
-		console.log('renderCount =', renderCount);
-
-		if (renderCount > 0) {
-			setCurrentBalance(userBalance);
-			console.log('userBalance =', userBalance);
-		}
-		console.log('currentBalance =', currentBalance);
-	}, [userBalance, currentBalance]);
-
 	const [curItem, setItem] = useState('ask-page'); // активный элемент навигации
 	const [curPage, setPage] = useState('ask-page'); // активная страница
 	const [popup, setPopup] = useState(false); // активация Popup
@@ -126,13 +140,11 @@ const AppScreen = () => {
 		<section className='section app-screen'>
 			{/* Страница Header */}
 			<Header
-				currentBalance={currentBalance}
 				curItem={curItem}
 				setItem={setItem}
 				setPage={setPage}
 				setTab={setTab}
 			/>
-
 			{/* Стриница Popup */}
 			{popup === true && (
 				<PopupBackground

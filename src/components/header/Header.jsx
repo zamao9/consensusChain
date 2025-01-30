@@ -1,12 +1,26 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Logo, NotificationIcon, ProfileIcon } from '../../constants/SvgIcons';
 import './header.sass';
+import CountUp from 'react-countup';
 import { useAppSelector } from '../../hooks/store';
 import { selectUserBalance } from '../../feature/profile/profileSelector';
-import CountUp from 'react-countup';
 
-const Header = ({ curItem, setItem, setPage, setTab, currentBalance }) => {
-	const userBalance = useAppSelector(selectUserBalance);
+const Header = ({ curItem, setItem, setPage, setTab }) => {
+
+	const userBalance = useAppSelector(selectUserBalance); // Получаем значение баланса через селектор
+	const [startValue, setStartValue] = useState(0);
+	const [endValue, setEndValue] = useState(userBalance);
+
+	useEffect(() => {
+		if (startValue === 0 && endValue === 0) {
+			// Первый рендер: анимация начинается с 0 до текущего значения userBalance
+			setEndValue(userBalance);
+		} else {
+			// Последующие обновления: анимация от предыдущего значения до нового
+			setStartValue(endValue);
+			setEndValue(userBalance);
+		}
+	}, [userBalance]);
 
 	return (
 		<header className='header'>
@@ -19,7 +33,13 @@ const Header = ({ curItem, setItem, setPage, setTab, currentBalance }) => {
 				{/* Баланс */}
 				<div className='balance'>
 					<span>
-						<CountUp start={currentBalance} end={userBalance} duration={2} delay={0} suffix=' CT'>
+						<CountUp
+							start={startValue}
+							end={endValue}
+							duration={2}
+							delay={0}
+							suffix=" CT"
+						>
 							{({ countUpRef }) => (
 								<div>
 									<span ref={countUpRef} />
@@ -32,9 +52,8 @@ const Header = ({ curItem, setItem, setPage, setTab, currentBalance }) => {
 				{/* Обертка Уведомлений, Профиля */}
 				<div className='header__buttons'>
 					<button
-						className={`header__button header-item1 ${
-							curItem === 'notifications-page' ? 'active' : ''
-						}`}
+						className={`header__button header-item1 ${curItem === 'notifications-page' ? 'active' : ''
+							}`}
 						onClick={() => {
 							setItem('notifications-page');
 							setPage('notifications-page');
