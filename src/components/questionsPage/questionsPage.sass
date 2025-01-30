@@ -48,6 +48,7 @@
 	/* Обертка Репорта, Отслеживания, Лайков */
 	&__buttons
 		display: flex
+		align-items: center
 		gap: 8px
 
 	/* Кнопки */
@@ -58,8 +59,34 @@
 		&.active
 			@include index.button-active
 
-	&__comments
+	/* Обертка комментариев */
+	&__wrapper
+		display: flex
+		align-items: center
+		min-height: 35px
+		overflow: hidden
+		border-radius: 7px
+
+	/* Количесвто комментариев */
+	&__comments-count
+		position: relative
+		z-index: 0
+		display: flex
+		align-items: center
+		height: 100%
+		padding: 0 16px
+		margin-right: -8px
 		@include index.link
+		background-color: index.$c-bg-900 !important
+		animation: comments-translate 1.5s ease
+		border-radius: 7px 0 0 7px !important
+
+	/* Кнопка комментариев */
+	&__comments
+		position: relative
+		z-index: 1
+		@include index.link
+		background-color: index.$c-bg-900 !important
 
 	/* Кнопка оставить комментарий */
 	&__leave-a-comment
@@ -72,7 +99,27 @@
 	&__like-wrapper
 		display: flex
 		align-items: center
-		gap: 8px
+		overflow: hidden
+		@include index.border7
+
+	&__like
+		position: relative
+		z-index: 1
+
+	&__like-count
+		position: relative
+		z-index: 0
+		display: flex
+		align-items: center
+		justify-content: center
+		height: 35px
+		min-width: 50px
+		margin-left: -8px
+		padding: 0 8px 0 16px
+		background-color: index.$c-bg-900
+		border-radius: 0 7px 7px 0 !important
+		border: 1px solid index.$c-stroke
+		animation: likes-translate 1s ease
 
 @media (any-hover:hover)
 	.questions-page

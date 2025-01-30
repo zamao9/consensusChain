@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSwipeable } from 'react-swipeable';
 import { useAppDispatch, useAppSelector } from '../../hooks/store';
-import { DislikeIcon, LikeIcon } from '../../constants/SvgIcons';
+import { DislikeIcon, LikeIcon, ProfileIcon } from '../../constants/SvgIcons';
 import QuestionsItem from '../questionsPage/questionsItem/QuestionsItem';
 import './commentsPage.sass';
 import { setComments, toggleDislike, toggleLike } from '../../feature/comments/commentsSlice';
@@ -162,6 +162,12 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource, answer }) => {
 							>
 								<DislikeIcon />
 								<span className='reactions-counter__count'>{comments[currentIndex].dislikes}</span>
+							</div>
+
+							{/* Никнейм ответчика */}
+							<div className='user reactions-counter__user'>
+								<ProfileIcon />
+								<span className='user__name'>{questionsItem.user_name}</span>
 							</div>
 						</div>
 

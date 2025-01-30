@@ -1,4 +1,6 @@
-// usf, uef, sfc
+// usf — useState 
+// uef — useEffect
+// sfc — component
 
 /* Fonts */
 $f-global: 'Montserrat', sans-serif
@@ -55,7 +57,7 @@ $c-stroke-active: #45442A
 	border: 1px solid $c-stroke
 	border-radius: 7px
 	transition: 0.2s ease
-	box-shadow: 2px 2px 4px rgba($c-black, 0.16), -1px -1px 2px rgba($c-white, 0.06), 2px 2px 4px rgba($c-white, 0.08) inset
+	box-shadow: 2px 2px 4px rgba($c-white, 0.08) inset
 
 @mixin button-active
 	background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(102, 100, 62, 0.4)) !important
@@ -159,8 +161,11 @@ body
 	display: flex
 	align-items: center
 	gap: 4px
+	& svg
+		stroke: $c-text-disabled
 	&__name
 		word-break: break-all
+		color: $c-text-disabled
 
 /* Табы */
 .tabs
@@ -208,8 +213,8 @@ body
 	&__counter
 		padding: 0 14px
 		@include border7
-		background-color: $c-bg-input
-
+		background-color: $c-bg-main
+		border: 1px solid $c-stroke
 /* Прелоадер */
 .preloader
 	display: flex
@@ -362,6 +367,18 @@ hr
 	100%
 		position: relative
 		top: 0
+@keyframes comments-translate
+	0%
+		right: -100%
+	50%
+		right: -100%
+	100%
+		right: 0
+@keyframes likes-translate
+	0%
+		left: -100%
+	100%
+		left: 0
 
 @keyframes footer-item1
 	0%

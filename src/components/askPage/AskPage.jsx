@@ -135,7 +135,7 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 					>
 						Public
 					</button>
-					<button
+					{/* <button
 						type='button'
 						className={`ask-page__privacy-button ask-page__private-button ${
 							currPrivacyBtn ? 'active' : ''
@@ -143,7 +143,7 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 						onClick={() => setPrivacyBtn(true)}
 					>
 						Private
-					</button>
+					</button> */}
 				</div>
 				{currPrivacyBtn === true && (
 					<div className='filters__button filters__private'>

@@ -6,7 +6,6 @@ import { useAppSelector } from '../../hooks/store';
 import { selectUserBalance } from '../../feature/profile/profileSelector';
 
 const Header = ({ curItem, setItem, setPage, setTab }) => {
-
 	const userBalance = useAppSelector(selectUserBalance); // Получаем значение баланса через селектор
 	const [startValue, setStartValue] = useState(0);
 	const [endValue, setEndValue] = useState(userBalance);
@@ -33,13 +32,7 @@ const Header = ({ curItem, setItem, setPage, setTab }) => {
 				{/* Баланс */}
 				<div className='balance'>
 					<span>
-						<CountUp
-							start={startValue}
-							end={endValue}
-							duration={2}
-							delay={0}
-							suffix=" CT"
-						>
+						<CountUp start={startValue} end={endValue} duration={2} delay={0} suffix=' CT'>
 							{({ countUpRef }) => (
 								<div>
 									<span ref={countUpRef} />
@@ -52,8 +45,9 @@ const Header = ({ curItem, setItem, setPage, setTab }) => {
 				{/* Обертка Уведомлений, Профиля */}
 				<div className='header__buttons'>
 					<button
-						className={`header__button header-item1 ${curItem === 'notifications-page' ? 'active' : ''
-							}`}
+						className={`header__button header-item1 ${
+							curItem === 'notifications-page' ? 'active' : ''
+						}`}
 						onClick={() => {
 							setItem('notifications-page');
 							setPage('notifications-page');

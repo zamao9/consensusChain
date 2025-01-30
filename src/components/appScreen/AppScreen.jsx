@@ -36,15 +36,15 @@ const AppScreen = () => {
 	const urlWindow = window.location.href;
 	const url = new URL(urlWindow);
 	const params = new URLSearchParams(url.search);
-	const userIdFromUrlBot = params.get('user_id');
-	//const userIdFromUrlBot = "6621151292";
+	// const userIdFromUrlBot = params.get('user_id');
+	const userIdFromUrlBot = '6621151292';
 	const [userIdFromUrl, setUserIdFromUrl] = useState(userIdFromUrlBot);
 
 	useEffect(() => {
 		// Проверяем, что объект Telegram существует и содержит нужные данные
 		if (typeof Telegram !== 'undefined' && Telegram.WebApp) {
 			const initData = Telegram.WebApp.initData;
-			console.log("initData", initData);
+			console.log('initData', initData);
 
 			if (initData) {
 				const parsedInitData = new URLSearchParams(initData);
@@ -55,18 +55,20 @@ const AppScreen = () => {
 						const userData = JSON.parse(userParam);
 						if (userData && typeof userData.id !== 'undefined') {
 							setUserIdFromUrl(userData.id);
+						} else {
+							setUserIdFromUrl('6621151292');
 						}
-						else { setUserIdFromUrl("6621151292"); }
 					} catch (error) {
-						console.error("Ошибка при парсинге данных пользователя:", error);
+						console.error('Ошибка при парсинге данных пользователя:', error);
 					}
+				} else {
+					setUserIdFromUrl('6621151292');
 				}
-				else { setUserIdFromUrl("6621151292"); }
 			}
+		} else {
+			setUserIdFromUrl('6621151292');
 		}
-		else { setUserIdFromUrl("6621151292"); }
 	}, []);
-
 
 	useEffect(() => {
 		// Запрос для получения данных пользователя
@@ -137,14 +139,9 @@ const AppScreen = () => {
 	const [answer, setAnswer] = useState(false);
 
 	return (
-		<section className='section app-screen'>
+		<section className={`section app-screen ${popup === true ? 'block' : ''}`}>
 			{/* Страница Header */}
-			<Header
-				curItem={curItem}
-				setItem={setItem}
-				setPage={setPage}
-				setTab={setTab}
-			/>
+			<Header curItem={curItem} setItem={setItem} setPage={setPage} setTab={setTab} />
 			{/* Стриница Popup */}
 			{popup === true && (
 				<PopupBackground

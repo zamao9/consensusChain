@@ -12,6 +12,7 @@ import { useAppDispatch, useAppSelector } from '../../../hooks/store';
 import { ClipLoader } from 'react-spinners';
 import { selectUserId } from '../../../feature/profile/profileSelector';
 import { selectSelectedQuestion } from '../../../feature/questions/questionsSelector';
+import CountUp from 'react-countup';
 
 const QuestionsItem = ({
 	questionItem,
@@ -41,6 +42,21 @@ const QuestionsItem = ({
 	const [questionsItem, setQuestionsItem] = useState(
 		isCurrentElement ? selectedQuestion : questionItem
 	);
+
+	const [startValue, setStartValue] = useState(0);
+	const [endValue, setEndValue] = useState(questionsItem.likeCount);
+	console.log('startValue = ', startValue, ' endValue = ', endValue);
+
+	useEffect(() => {
+		if (startValue === 0 && endValue === 0) {
+			// Первый рендер: анимация начинается с 0 до текущего значения userBalance
+			setEndValue(questionsItem.likeCount);
+		} else {
+			// Последующие обновления: анимация от предыдущего значения до нового
+			setStartValue(endValue);
+			setEndValue(questionsItem.likeCount);
+		}
+	}, [questionsItem.likeCount]);
 
 	// Функция для отправки запроса на лайк или дизлайк
 	const handleLike = async () => {
@@ -155,6 +171,8 @@ const QuestionsItem = ({
 		}
 	};
 
+	const commentsCount = 999;
+
 	return (
 		<li className='questions-page__item'>
 			{comments === 'questions-page' && (
@@ -209,21 +227,39 @@ const QuestionsItem = ({
 						>
 							<LikeIcon />
 						</button>
-						<span className='questions-page__likeCount'>{questionsItem.likeCount}</span>
+						<span className='questions-page__like-count'>
+							<CountUp start={startValue} end={endValue} duration={5} delay={0}>
+								{({ countUpRef }) => (
+									<div>
+										<span ref={countUpRef} />
+									</div>
+								)}
+							</CountUp>
+						</span>
 					</div>
 				</div>
 				{comments === 'questions-page' && (
-					<button
-						type='button'
-						className='button questions-page__button questions-page__comments'
-						onClick={() => {
-							dispatch(setSelectedQuestionId(questionsItem.question_id));
-							setPage('comments-page');
-							setItem('');
-						}}
-					>
-						<CommentsIcon />
-					</button>
+					<div className='questions-page__wrapper'>
+						{/* Обертка комментариев */}
+
+						{/* Количесвто комментариев */}
+						<span className='questions-page__comments-count'>{commentsCount}</span>
+
+						{/* Кнопка комментариев */}
+						<button
+							type='button'
+							className='button questions-page__button questions-page__button-comments questions-page__comments'
+							onClick={() => {
+								dispatch(setSelectedQuestionId(questionsItem.question_id));
+								setPage('comments-page');
+								setItem('');
+							}}
+						>
+							{/* Иконка комментариев */}
+
+							<CommentsIcon />
+						</button>
+					</div>
 				)}
 				{comments === 'comments-page' && (
 					<button

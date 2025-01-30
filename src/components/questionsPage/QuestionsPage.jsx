@@ -94,14 +94,14 @@ const QuestionsPage = ({
 								All
 							</button>
 						</li>
-						<li>
+						{/* <li>
 							<button
 								className={`button tabs__item ${tab === 'second' ? 'active' : ''}`}
 								onClick={() => setTab('second')}
 							>
 								Private
 							</button>
-						</li>
+						</li> */}
 						<li>
 							<button
 								className={`button tabs__item ${tab === 'third' ? 'active' : ''}`}
