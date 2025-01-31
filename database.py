@@ -55,5 +55,27 @@ async def ensure_tables_exist():
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
         """)
+        await conn.execute("""
+            CREATE TABLE IF NOT EXISTS question_traces (
+                trace_id SERIAL PRIMARY KEY,
+                question_id INT REFERENCES questions(question_id),
+                user_id BIGINT REFERENCES users(user_id),
+                new_trace_question_comments BOOLEAN DEFAULT FALSE,
+                UNIQUE (question_id, user_id) -- Каждый пользователь может отслеживать вопрос только один раз
+            );
+        """)
+        await conn.execute("""
+            CREATE TABLE IF NOT EXISTS notifications (
+                notification_id SERIAL PRIMARY KEY,
+                user_id BIGINT REFERENCES users(user_id),
+                question_id INT REFERENCES questions(question_id), -- Новое поле
+                title TEXT NOT NULL,
+                description TEXT NOT NULL,
+                type TEXT NOT NULL, -- 'updates', 'messages', 'trace', 'likes'
+                is_read BOOLEAN DEFAULT FALSE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        """)
     finally:
         await conn.close()

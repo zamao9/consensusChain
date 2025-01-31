@@ -1,12 +1,12 @@
 import os
-from typing import Dict
+from typing import Dict, List
 from fastapi import FastAPI, HTTPException, Query
 from motor.motor_asyncio import AsyncIOMotorClient
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import uvicorn
 from models import CommentRequest, GetCommentsRequest, LikeDislikeRequest, Question, UserStatistics
-from services import create_comment, create_question, dislike_comment, get_comments, get_questions, get_user_data, get_user_statistics, get_user_tasks, like_comment, like_question, report_question, trace_question, update_task_status
+from services import create_comment, create_question, dislike_comment, get_comments, get_notifications, get_questions, get_user_data, get_user_statistics, get_user_tasks, like_comment, like_question, mark_notifications_as_read, report_question, trace_question, update_task_status
 
 
 
@@ -133,6 +133,7 @@ async def get_user_tasks_endpoint(user_id: int) -> Dict:
         raise HTTPException(status_code=404, detail=result["error"])
     return result
 
+# Изменить статус task на Done или Claim
 @app.post("/tasks/{task_id}/{status}")
 async def update_task_status_endpoint(
     task_id: int,
@@ -140,6 +141,28 @@ async def update_task_status_endpoint(
     user_id: int = Query(..., description="The ID of the user")  # Query parameter
 ):
     result = await update_task_status(user_id, task_id, status)
+    if "error" in result:
+        raise HTTPException(status_code=404, detail=result["error"])
+    return result
+
+# Получить список нотификаций
+@app.get("/users/{user_id}/notifications")
+async def get_user_notifications_endpoint(
+    user_id: int,
+    unread_only: bool = Query(True, description="Filter unread notifications only")
+) -> List[Dict]:
+    result = await get_notifications(user_id, unread_only)
+    if "error" in result:
+        raise HTTPException(status_code=404, detail=result["error"])
+    return result
+
+# Эндпоинт для отметки уведомлений как прочитанных
+@app.post("/users/{user_id}/notifications/mark-as-read")
+async def mark_notifications_as_read_endpoint(
+    user_id: int,
+    notification_ids: List[int]
+) -> Dict:
+    result = await mark_notifications_as_read(user_id, notification_ids)
     if "error" in result:
         raise HTTPException(status_code=404, detail=result["error"])
     return result

@@ -145,28 +145,43 @@ async def like_question(user_id: int, question_id: str) -> Dict:
 """Like or dislike a question by user."""
 
 #Track or untrack a question."""
-async def trace_question(user_id: int, question_id: str) -> Dict:
+async def trace_question(user_id: int, question_id: int) -> Dict:
     conn = await get_db_connection()
+    await ensure_tables_exist()
     try:
         # Проверяем, существует ли пользователь
-        user = await conn.fetchrow("SELECT trace_questions FROM users WHERE user_id = $1;", user_id)
+        user = await conn.fetchrow("SELECT * FROM users WHERE user_id = $1;", user_id)
         if not user:
             return {"error": "User not found"}
-        
-        trace_questions = json.loads(user["trace_questions"]) if user["trace_questions"] else []
-        
-        # Добавляем или удаляем вопрос из отслеживаемых
-        if question_id not in trace_questions:
-            trace_questions.append(question_id)
+
+        # Проверяем, существует ли вопрос
+        question = await conn.fetchrow("SELECT * FROM questions WHERE question_id = $1;", question_id)
+        if not question:
+            return {"error": "Question not found"}
+
+        # Проверяем, отслеживает ли пользователь этот вопрос
+        trace = await conn.fetchrow(
+            "SELECT * FROM question_traces WHERE question_id = $1 AND user_id = $2;",
+            question_id, user_id
+        )
+
+        if trace:
+            # Если вопрос уже отслеживается, удаляем запись
+            await conn.execute(
+                "DELETE FROM question_traces WHERE question_id = $1 AND user_id = $2;",
+                question_id, user_id
+            )
+            return {"message": "Question untracked"}
         else:
-            trace_questions.remove(question_id)
-        
-        # Обновляем базу данных
-        await conn.execute("""
-            UPDATE users SET trace_questions = $1 WHERE user_id = $2;
-        """, json.dumps(trace_questions), user_id)
-        
-        return {"message": "Trace status updated"}
+            # Если вопрос не отслеживается, добавляем запись
+            await conn.execute(
+                """
+                INSERT INTO question_traces (question_id, user_id, new_trace_question_comments)
+                VALUES ($1, $2, FALSE);
+                """,
+                question_id, user_id
+            )
+            return {"message": "Question tracked"}
     finally:
         await conn.close()
 """Track or untrack a question."""
@@ -199,34 +214,43 @@ async def report_question(user_id: int, question_id: str) -> Dict:
 """Report or unreport a question."""
 
 #Fetch Questions Data or User Questions Data"""
-async def get_questions(user_id: int, allQuestions: bool = True) -> List[Dict]:
+async def get_questions(user_id: int, all_questions: bool = True) -> List[Dict]:
     conn = await get_db_connection()
-
+    await ensure_tables_exist()
     try:
-        # Получаем данные пользователя
+        # Проверяем, существует ли пользователь
         user = await conn.fetchrow("""
-            SELECT liked_questions, reported_questions, trace_questions 
+            SELECT liked_questions, reported_questions 
             FROM users WHERE user_id = $1;
         """, user_id)
         
         if not user:
             return {"error": "User not found"}
         
+        # Декодируем JSON-поля пользователя
         liked_questions = json.loads(user["liked_questions"]) if user["liked_questions"] else []
         reported_questions = json.loads(user["reported_questions"]) if user["reported_questions"] else []
-        trace_questions = json.loads(user["trace_questions"]) if user["trace_questions"] else []
-        
+
+        # Получаем список вопросов, которые пользователь отслеживает
+        trace_questions = await conn.fetch(
+            """
+            SELECT question_id FROM question_traces WHERE user_id = $1;
+            """,
+            user_id
+        )
+        trace_question_ids = [trace["question_id"] for trace in trace_questions]
+
         # Определяем запрос для выборки вопросов
-        query = "" if allQuestions else "WHERE q.user_id = $1"
-        
+        query = "" if all_questions else "WHERE q.user_id = $1"
+
         # Получаем вопросы из базы данных
         questions = await conn.fetch(f"""
             SELECT q.question_id, q.user_id, u.username, q.title, q.tags, q.likes, q.popular 
             FROM questions q
             LEFT JOIN users u ON q.user_id = u.user_id
             {query};
-        """, *([user_id] if not allQuestions else []))  # Используем *для передачи параметров
-        
+        """, *([user_id] if not all_questions else []))  # Используем *для передачи параметров
+
         # Формируем список вопросов
         result = []
         for question in questions:
@@ -240,10 +264,9 @@ async def get_questions(user_id: int, allQuestions: bool = True) -> List[Dict]:
                 "popular": question["popular"],
                 "tags": questions_tags,
                 "report": question["question_id"] in reported_questions,
-                "trace": question["question_id"] in trace_questions,
+                "trace": question["question_id"] in trace_question_ids,  # Проверяем в списке отслеживаемых
                 "like": question["question_id"] in liked_questions
             })
-
         return result
     finally:
         await conn.close()
@@ -258,11 +281,13 @@ async def create_comment(user_id: int, question_id: int, text: str) -> Dict:
         user = await conn.fetchval("SELECT user_id FROM users WHERE user_id = $1;", user_id)
         if not user:
             return {"error": "User not found"}
-
-        # Проверяем, существует ли вопрос
-        question = await conn.fetchval("SELECT question_id FROM questions WHERE question_id = $1;", question_id)
+        
+        # Проверяем, существует ли вопрос и получаем его заголовок
+        question = await conn.fetchrow("SELECT title FROM questions WHERE question_id = $1;", question_id)
         if not question:
             return {"error": "Question not found"}
+        
+        question_title = question["title"]
 
         # Создаем комментарий
         query = """
@@ -270,6 +295,28 @@ async def create_comment(user_id: int, question_id: int, text: str) -> Dict:
         VALUES ($1, $2, $3) RETURNING comment_id;
         """
         comment_id = await conn.fetchval(query, user_id, question_id, text)
+
+        # Ограничиваем заголовок вопроса до 10 символов с добавлением многоточия
+        short_title = (question_title[:10] + "...") if len(question_title) > 10 else question_title
+
+        # Массовая вставка уведомлений и обновление меток new_trace_question_comments
+        await conn.execute("""
+            WITH updated_traces AS (
+                UPDATE question_traces
+                SET new_trace_question_comments = TRUE
+                WHERE question_id = $1 AND new_trace_question_comments = FALSE
+                RETURNING user_id
+            )
+            INSERT INTO notifications (user_id, title, description, type, is_read, question_id)
+            SELECT 
+                ut.user_id,
+                'New Answer',
+                'A new answer has been added to your tracked question: ' || $2,
+                'trace',
+                FALSE,
+                $1
+            FROM updated_traces ut;
+        """, question_id, short_title)
 
         return {"message": "Comment created successfully", "comment_id": comment_id}
     finally:
@@ -320,6 +367,7 @@ async def like_comment(user_id: int, comment_id: int) -> Dict:
         return {"message": "Like status updated"}
     finally:
         await conn.close()
+"""Like a comments by user."""
 
 # Dislike a comment by user
 async def dislike_comment(user_id: int, comment_id: int) -> Dict:
@@ -365,6 +413,7 @@ async def dislike_comment(user_id: int, comment_id: int) -> Dict:
         return {"message": "Dislike status updated"}
     finally:
         await conn.close()
+"""Dislike a comment by user"""
 
 # Fetch Comments Data for QuestionId
 async def get_comments(question_id: int, user_id: int) -> List[Dict]:
@@ -407,6 +456,7 @@ async def get_comments(question_id: int, user_id: int) -> List[Dict]:
         return result
     finally:
         await conn.close()
+"""Fetch Comments Data for QuestionId"""
 
 # Fetch Tasks Data and add tasks
 async def get_user_tasks(user_id: int) -> Dict:
@@ -466,6 +516,7 @@ async def get_user_tasks(user_id: int) -> Dict:
         return {"tasks": complete_tasks}
     finally:
         await conn.close()
+"""Fetch Tasks Data and add tasks"""
 
 # Service for update Tasks Status
 async def update_task_status(user_id: int, task_id: int, status: str) -> Dict:
@@ -516,3 +567,96 @@ async def update_task_status(user_id: int, task_id: int, status: str) -> Dict:
 
     finally:
         await conn.close()
+"""Service for update Tasks Status"""
+
+# Fetch Notifications Data
+async def get_notifications(user_id: int, unread_only: bool = True) -> List[Dict]:
+    conn = await get_db_connection()
+    try:
+        # Проверяем, существует ли пользователь
+        user = await conn.fetchval("SELECT user_id FROM users WHERE user_id = $1;", user_id)
+        if not user:
+            return {"error": "User not found"}
+
+        # Определяем запрос для выборки уведомлений
+        query = """
+        SELECT 
+            notification_id, 
+            title, 
+            description, 
+            type, 
+            is_read, 
+            to_char(created_at, 'YYYY.MM.DD HH24:MI') AS formatted_date
+        FROM notifications
+        WHERE user_id = $1
+        """
+        if unread_only:
+            query += " AND is_read = FALSE"
+
+        # Получаем уведомления из базы данных
+        notifications = await conn.fetch(query, user_id)
+
+        # Формируем список уведомлений
+        result = []
+        for notification in notifications:
+            result.append({
+                "id": notification["notification_id"],
+                "title": notification["title"],
+                "description": notification["description"],
+                "type": notification["type"],
+                "isRead": notification["is_read"],
+                "animation": False,  # Поле animation всегда false при получении
+                "createdAt": notification["formatted_date"]  # Используем отформатированную дату
+            })
+
+        return result
+    finally:
+        await conn.close()
+"""Fetch Notifications Data"""
+
+# Service for marked notifications is Read
+async def mark_notifications_as_read(user_id: int, notification_ids: List[int]) -> Dict:
+    conn = await get_db_connection()
+    try:
+        # Проверяем, существует ли пользователь
+        user = await conn.fetchval("SELECT user_id FROM users WHERE user_id = $1;", user_id)
+        if not user:
+            return {"error": "User not found"}
+
+        # Получаем question_id для каждого уведомления
+        notifications = await conn.fetch(
+            """
+            SELECT question_id FROM notifications
+            WHERE notification_id = ANY($1) AND user_id = $2;
+            """,
+            notification_ids, user_id
+        )
+
+        # Обновляем статус уведомлений на "прочитано"
+        await conn.execute(
+            """
+            UPDATE notifications
+            SET is_read = TRUE
+            WHERE notification_id = ANY($1) AND user_id = $2;
+            """,
+            notification_ids, user_id
+        )
+
+        # Собираем уникальные question_id для обновления метки new_trace_question_comments
+        question_ids = {n["question_id"] for n in notifications if n["question_id"]}
+
+        # Обновляем метку new_trace_question_comments для всех найденных вопросов
+        if question_ids:
+            await conn.execute(
+                """
+                UPDATE question_traces
+                SET new_trace_question_comments = FALSE
+                WHERE question_id = ANY($1) AND user_id = $2;
+                """,
+                list(question_ids), user_id
+            )
+
+        return {"message": "Notifications marked as read"}
+    finally:
+        await conn.close()
+"""Service for marked notifications is Read"""
