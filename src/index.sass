@@ -191,10 +191,11 @@ body
 	align-items: center
 	justify-content: center
 	gap: 8px
+	width: fit-content
+	margin: 0 auto
 	padding: 8px
 	@include border15
 	background-color: $c-bg-900
-
 	&__button,
 	&__counter
 		display: flex
@@ -203,21 +204,21 @@ body
 		height: 35px
 		padding: 0
 	&__button
-		width: 50px
+		width: 35px
 		@include button
 		cursor: pointer
 		transition: 0.2s ease
-
 	@media(any-hover:hover)
 		&__button:hover
 			@include button-hover
-
 	/* Счетчик страниц */
 	&__counter
 		padding: 0 14px
 		@include border7
 		background-color: $c-bg-main
 		border: 1px solid $c-stroke
+		min-width: 80px
+
 /* Прелоадер */
 .preloader
 	display: flex
@@ -340,14 +341,11 @@ hr
 
 @keyframes balance-translate
 	0%
-		left: 0
-		opacity: 0
-	50%
-		left: 0
-		opacity: 0
+		right: -100%
+	10%
+		right: -100%
 	100%
-		left: -120px
-		opacity: 1
+		right: 0
 @keyframes opacity
 	0%
 		opacity: 0

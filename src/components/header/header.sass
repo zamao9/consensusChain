@@ -35,28 +35,32 @@
 		justify-content: center
 		box-shadow: 0 0 4px 2px index.$c-bg-main
 		border-radius: 15px
+		overflow: hidden
 
 	/* Баланс */
 	.balance
-		position: absolute
-		left: -120px
-		z-index: -1
+		position: relative
+		right: 0
+		z-index: 0
 		display: flex
 		align-items: center
 		justify-content: center
-		width: 120px
-		height: 30px
+		min-width: 120px
+		height: 35px
 		padding: 0 12px
 		background-color: index.$c-bg-input
 		@include index.border7
 		border-radius: 7px 0 0 7px
 		border: 1px solid index.$c-stroke
 		border-right: 0
-		animation: balance-translate 1.4s ease
+		animation: balance-translate 1.5s ease
 		box-shadow: 0 0 4px 2px index.$c-bg-main
+		color: index.$c-title
 
 	/* Обертка Уведомлений, Профиля */
 	&__buttons
+		position: relative
+		z-index: 1
 		display: flex
 		justify-content: center
 		align-items: center
