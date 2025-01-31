@@ -80,7 +80,7 @@ const Marquees = () => {
 				right: 0,
 				bottom: 0,
 				width: '100%',
-				height: 'calc(100vh + 120px)',
+				height: '100%',
 				zIndex: -1, // Размещаем за основным контентом
 				pointerEvents: 'none', // Делаем холст невзаимодействуемым
 			}}

@@ -147,95 +147,97 @@ const AppScreen = () => {
 	}, [popup]);
 
 	return (
-		<section className={`section app-screen ${popup === true ? 'block' : ''}`}>
+		<>
 			{/* Страница Header */}
 			<Header curItem={curItem} setItem={setItem} setPage={setPage} setTab={setTab} />
-			{/* Стриница Popup */}
-			{popup === true && (
-				<PopupBackground
-					popup={popup}
-					setPopup={setPopup}
-					popupSvg={popupSvg}
-					popupText={popupText}
-					setPopupText={setPopupText}
-					popupSource={popupSource}
-					setPopupSource={setPopupSource}
-					setAnswer={setAnswer}
-				/>
-			)}
 
-			{/* Marquees */}
-			{/* <Marquees /> */}
+			<main className='section main'>
+				{/* Marquees */}
+				<Marquees />
 
-			<div className='container app-screen__container'>
-				{/*  Preloader */}
-				{curPage === 'preloader' && (
-					<Preloader
-						isVisible={true}
-						color='#FF5733'
-						size={60}
-						message='Please wait, fetching data...'
-					/>
-				)}
+				<div className='container'>
+					{/* Стриница Popup */}
+					{popup === true && (
+						<PopupBackground
+							popup={popup}
+							setPopup={setPopup}
+							popupSvg={popupSvg}
+							popupText={popupText}
+							setPopupText={setPopupText}
+							popupSource={popupSource}
+							setPopupSource={setPopupSource}
+							setAnswer={setAnswer}
+						/>
+					)}
 
-				{/* Страница Profile */}
-				{curPage === 'profile-page' && (
-					<ProfilePage tab={tab} setTab={setTab} setPage={setPage} setItem={setItem} />
-				)}
+					{/*  Preloader */}
+					{curPage === 'preloader' && (
+						<Preloader
+							isVisible={true}
+							color='#FF5733'
+							size={60}
+							message='Please wait, fetching data...'
+						/>
+					)}
 
-				{/* Страница Replies Sent */}
-				{curPage === 'replies-sent-page' && <RepliesSentPage />}
+					{/* Страница Profile */}
+					{curPage === 'profile-page' && (
+						<ProfilePage tab={tab} setTab={setTab} setPage={setPage} setItem={setItem} />
+					)}
 
-				{/* Страница Notifications */}
-				{curPage === 'notifications-page' && (
-					<NotificationsPage
-						popup={popup}
-						setPopup={setPopup}
-						setPopupSvg={setPopupSvg}
-						setPopupText={setPopupText}
-						setPopupSource={setPopupSource}
-					/>
-				)}
+					{/* Страница Replies Sent */}
+					{curPage === 'replies-sent-page' && <RepliesSentPage />}
 
-				{/* Страница Ask */}
-				{curPage === 'ask-page' && (
-					<AskPage
-						setPopup={setPopup}
-						setPopupText={setPopupText}
-						setPopupSource={setPopupSource}
-					/>
-				)}
+					{/* Страница Notifications */}
+					{curPage === 'notifications-page' && (
+						<NotificationsPage
+							popup={popup}
+							setPopup={setPopup}
+							setPopupSvg={setPopupSvg}
+							setPopupText={setPopupText}
+							setPopupSource={setPopupSource}
+						/>
+					)}
 
-				{/* Страница Questions */}
-				{curPage === 'questions-page' && (
-					<QuestionsPage
-						setPage={setPage}
-						setItem={setItem}
-						setPopup={setPopup}
-						setPopupText={setPopupText}
-						setPopupSource={setPopupSource}
-						tab={tab}
-						setTab={setTab}
-					/>
-				)}
+					{/* Страница Ask */}
+					{curPage === 'ask-page' && (
+						<AskPage
+							setPopup={setPopup}
+							setPopupText={setPopupText}
+							setPopupSource={setPopupSource}
+						/>
+					)}
 
-				{/* Страница Tasks */}
-				{curPage === 'tasks-page' && <TasksPage />}
+					{/* Страница Questions */}
+					{curPage === 'questions-page' && (
+						<QuestionsPage
+							setPage={setPage}
+							setItem={setItem}
+							setPopup={setPopup}
+							setPopupText={setPopupText}
+							setPopupSource={setPopupSource}
+							tab={tab}
+							setTab={setTab}
+						/>
+					)}
 
-				{/* Страница Comments */}
-				{curPage === 'comments-page' && (
-					<CommentsPage
-						setPopup={setPopup}
-						setPopupText={setPopupText}
-						setPopupSource={setPopupSource}
-						answer={answer}
-					/>
-				)}
-			</div>
+					{/* Страница Tasks */}
+					{curPage === 'tasks-page' && <TasksPage />}
 
+					{/* Страница Comments */}
+					{curPage === 'comments-page' && (
+						<CommentsPage
+							setPopup={setPopup}
+							setPopupText={setPopupText}
+							setPopupSource={setPopupSource}
+							answer={answer}
+						/>
+					)}
+				</div>
+			</main>
 			{/* Footer */}
 			<Footer curItem={curItem} setItem={setItem} setPage={setPage} />
-		</section>
+		</>
 	);
 };
 
