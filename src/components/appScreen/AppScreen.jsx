@@ -37,7 +37,7 @@ const AppScreen = () => {
 	const url = new URL(urlWindow);
 	const params = new URLSearchParams(url.search);
 	// const userIdFromUrlBot = params.get('user_id');
-	const userIdFromUrlBot = '6621151292';
+	const userIdFromUrlBot = '5499493097';
 	const [userIdFromUrl, setUserIdFromUrl] = useState(userIdFromUrlBot);
 
 	useEffect(() => {
@@ -56,17 +56,17 @@ const AppScreen = () => {
 						if (userData && typeof userData.id !== 'undefined') {
 							setUserIdFromUrl(userData.id);
 						} else {
-							setUserIdFromUrl('6621151292');
+							//setUserIdFromUrl('6621151292');
 						}
 					} catch (error) {
 						console.error('Ошибка при парсинге данных пользователя:', error);
 					}
 				} else {
-					setUserIdFromUrl('6621151292');
+					//setUserIdFromUrl('6621151292');
 				}
 			}
 		} else {
-			setUserIdFromUrl('6621151292');
+			//setUserIdFromUrl('6621151292');
 		}
 	}, []);
 
@@ -137,6 +137,14 @@ const AppScreen = () => {
 	const [popupText, setPopupText] = useState(''); // текст в Popup
 	const [popupSource, setPopupSource] = useState(null);
 	const [answer, setAnswer] = useState(false);
+
+	useEffect(() => {
+		if (popup) {
+			document.body.classList.add('no-scroll');
+		} else {
+			document.body.classList.remove('no-scroll');
+		}
+	}, [popup]);
 
 	return (
 		<section className={`section app-screen ${popup === true ? 'block' : ''}`}>

@@ -45,7 +45,7 @@ const QuestionsItem = ({
 
 	const [startValue, setStartValue] = useState(0);
 	const [endValue, setEndValue] = useState(questionsItem.likeCount);
-	console.log('startValue = ', startValue, ' endValue = ', endValue);
+	//console.log('startValue = ', startValue, ' endValue = ', endValue);
 
 	useEffect(() => {
 		if (startValue === 0 && endValue === 0) {
@@ -177,9 +177,8 @@ const QuestionsItem = ({
 		<li className='questions-page__item'>
 			{comments === 'questions-page' && (
 				<div
-					className={`button questions-page__button questions-page__popular ${
-						questionsItem.popular === false ? 'none' : ''
-					}`}
+					className={`button questions-page__button questions-page__popular ${questionsItem.popular === false ? 'none' : ''
+						}`}
 				>
 					<StarIcon />
 				</div>
@@ -200,9 +199,8 @@ const QuestionsItem = ({
 				<div className='questions-page__buttons'>
 					<button
 						type='button'
-						className={`button questions-page__button questions-page__report ${
-							questionsItem.report ? 'active' : ''
-						}`}
+						className={`button questions-page__button questions-page__report ${questionsItem.report ? 'active' : ''
+							}`}
 						onClick={handleReport}
 						disabled={questionsItem.report}
 					>
@@ -210,9 +208,8 @@ const QuestionsItem = ({
 					</button>
 					<button
 						type='button'
-						className={`button questions-page__button questions-page__trace ${
-							questionsItem.trace ? 'active' : ''
-						}`}
+						className={`button questions-page__button questions-page__trace ${questionsItem.trace ? 'active' : ''
+							}`}
 						onClick={handleTrace}
 					>
 						<NotificationIcon />
@@ -220,9 +217,8 @@ const QuestionsItem = ({
 					<div className='questions-page__like-wrapper'>
 						<button
 							type='button'
-							className={`button questions-page__button questions-page__like ${
-								questionsItem.like ? 'active' : ''
-							}`}
+							className={`button questions-page__button questions-page__like ${questionsItem.like ? 'active' : ''
+								}`}
 							onClick={handleLike}
 						>
 							<LikeIcon />

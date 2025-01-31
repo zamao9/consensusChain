@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
 	ArrowLeftIcon,
 	ArrowRightIcon,
@@ -12,217 +12,217 @@ import {
 } from '../../constants/SvgIcons';
 import './notificationsPage.sass';
 import { AnimatePresence, motion } from 'framer-motion';
-import { selectCurrentPage } from '../../feature/questions/questionsSelector';
-import { useAppSelector } from '../../hooks/store';
+import { useAppDispatch, useAppSelector } from '../../hooks/store';
+import { selectUserId } from '../../feature/profile/profileSelector';
+import { setNotificationList, markAsRead } from '../../feature/notifications/notificationsSlice';
+import { selectAllNotifications } from '../../feature/notifications/notificationsSelector';
+import Preloader from '../preloader/Preloader';
 
 const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource }) => {
-	const currentPage = useAppSelector(selectCurrentPage);
-
-	// Стриктура списка уведомлений
-	const notificationsData = [
-		{
-			key: 1,
-			text: 'Blabla left a comment on your question.',
-			type: 'comment',
-			date: '23.01.2025',
-			isRead: false,
-		},
-		{
-			key: 2,
-			text: 'Your report ... was accept and ...',
-			type: 'report',
-			date: '23.01.2025',
-			isRead: false,
-		},
-		{
-			key: 3,
-			text: 'System update 12.0.1 v.',
-			type: 'system',
-			date: '23.01.2025',
-			isRead: false,
-		},
-		{
-			key: 4,
-			text: 'Gugugaga liked your question.',
-			type: 'like',
-			date: '23.01.2025',
-			isRead: false,
-		},
-	];
-
-	// Стриктура списка фильтрации
-	const notificationsFilterData = [
-		{
-			key: 1,
-			type: 'comment',
-			text: 'Comments notices',
-			status: true,
-		},
-		{
-			key: 2,
-			type: 'report',
-			text: 'Reports notices',
-			status: true,
-		},
-		{
-			key: 3,
-			type: 'system',
-			text: 'System notices',
-			status: true,
-		},
-		{
-			key: 4,
-			type: 'like',
-			text: 'Like notices',
-			status: true,
-		},
-	];
-
+	const dispatch = useAppDispatch();
+	const userId = useAppSelector(selectUserId);
+	const [isLoading, setIsLoading] = useState(true);
 	const [curItem, setItem] = useState(false);
-	const [radio, setRadio] = useState(notificationsFilterData);
-	const [status, setStatus] = useState(notificationsData);
+	const [currentPage, setCurrentPage] = useState(1); // Текущая страница
+	const [itemsPerPage] = useState(3); // Количество элементов на странице
+
+	const [radio, setRadio] = useState([
+		{ key: 1, type: 'trace', text: 'Trace notices', status: true },
+		{ key: 2, type: 'report', text: 'Reports notices', status: true },
+		{ key: 3, type: 'system', text: 'System notices', status: true },
+		{ key: 4, type: 'like', text: 'Like notices', status: true },
+	]);
+
+	// Загрузка уведомлений с сервера
+	useEffect(() => {
+		const fetchNotifications = async () => {
+			try {
+				const response = await fetch(
+					`https://web-production-c0b1.up.railway.app/users/${userId}/notifications?unread_only=false`
+				);
+				if (!response.ok) {
+					throw new Error('Failed to load notifications');
+				}
+				const data = await response.json();
+				dispatch(setNotificationList(data));
+			} catch (error) {
+				console.error('Error fetching notifications:', error);
+				alert('Failed to load notifications. Please try again later.');
+			} finally {
+				setIsLoading(false);
+			}
+		};
+		fetchNotifications();
+	}, [dispatch, userId]);
 
 	// Клик на элементы списка уведомлений
-	const updateNotifications = (key, status, setStatus) => {
-		let statusNew = status.slice();
-
-		statusNew.map((element) => {
-			if (element.key === key) {
-				element.isRead = true;
+	const updateNotifications = async (id) => {
+		try {
+			const response = await fetch(
+				`https://web-production-c0b1.up.railway.app/users/${userId}/notifications/mark-as-read`,
+				{
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify([id]),
+				}
+			);
+			if (!response.ok) {
+				throw new Error('Failed to mark notification as read');
 			}
-		});
-		setStatus(statusNew);
+			dispatch(markAsRead(id));
+		} catch (error) {
+			console.error('Error marking notification as read:', error);
+			alert('Failed to mark notification as read. Please try again later.');
+		}
 	};
 
 	// Радио кнопки клик
-	const radioHandler = (key, status, setStatus) => {
-		let statusNew = status.slice();
-
-		statusNew.map((element) => {
-			if (element.key === key) {
-				element.status = !element.status;
-			}
-		});
-		setStatus(statusNew);
+	const radioHandler = (key) => {
+		setRadio((prev) =>
+			prev.map((element) =>
+				element.key === key ? { ...element, status: !element.status } : element
+			)
+		);
 	};
 
-	// Сортировка
-	const filteredNotifications = status
+	const notificationsData = useAppSelector(selectAllNotifications);
+
+	// Фильтрация и сортировка уведомлений
+	const filteredNotifications = notificationsData
 		.filter((notification) => {
 			const typeStatus = radio.find((opt) => opt.type === notification.type)?.status;
 			return typeStatus;
 		})
 		.sort((a, b) => (a.isRead ? 1 : -1));
 
+	// Пагинация
+	const totalPages = Math.ceil(filteredNotifications.length / itemsPerPage);
+	const indexOfLastItem = currentPage * itemsPerPage;
+	const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+	const currentNotifications = filteredNotifications.slice(indexOfFirstItem, indexOfLastItem);
+
+	// Обработчики пагинации
+	const goToFirstPage = () => setCurrentPage(1);
+	const goToPreviousPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
+	const goToNextPage = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+	const goToLastPage = () => setCurrentPage(totalPages);
+
 	return (
 		<div className='notifications-page'>
-			{/* Обертка Заголовка, Кнопки фильтрации */}
-			<div className='notifications-page__header  mb--32'>
-				{/* Заголовок */}
-				<h2 className='title lh--140 notifications-page__title'>Notifications</h2>
-
-				{/* Кнопка фильтрации */}
-				<div className='notifications-page__button-wrapper'>
-					<button
-						className={`button notifications-page__button ${curItem === true ? 'active' : ''}`}
-						onClick={() => {
-							setItem(!curItem);
-						}}
-					>
-						<FilterIcon />
-					</button>
-				</div>
-			</div>
-
-			{/* Список элементов Фильтрации */}
-			{curItem === true && (
-				<AnimatePresence>
-					<motion.ul className='notifications-filter'>
-						{/* Элементы списка фильтрации */}
-						{radio.map((element) => (
-							<li className='notifications-filter__item' key={element.key}>
-								<span>{element.text}</span>
-								<button
-									type='button'
-									className={`radio ${element.status === true ? 'active' : ''}`}
-									onClick={() => radioHandler(element.key, radio, setRadio)}
-								>
-									<div className='radio__button'></div>
-								</button>
-							</li>
-						))}
-					</motion.ul>
-				</AnimatePresence>
-			)}
-
-			{/* Список уведомлений */}
-			<ul className='mb--32 notifications-page__list'>
-				{/* Элементы списка уведомлений */}
-				{filteredNotifications.map((element) => (
-					<li key={element.key}>
+			{isLoading ? (
+				<Preloader
+					isVisible={isLoading}
+					color='#CECECE'
+					size={60}
+					message='Please wait, fetching data...'
+				/>
+			) : (<>
+				{/* Заголовок и кнопка фильтрации */}
+				<div className='notifications-page__header mb--32'>
+					<h2 className='title lh--140 notifications-page__title'>Notifications</h2>
+					<div className='notifications-page__button-wrapper'>
 						<button
-							type='button'
-							className={`notifications-page__item ${element.isRead === true ? 'is-read' : ''}`}
-							onClick={() => {
-								updateNotifications(element.key, status, setStatus);
-								console.log(element.text);
-								setPopup(true);
-								setPopupSvg(
-									(element.type === 'system' && <SettingsIcon />) ||
-										(element.type === 'comment' && <CommentsIcon />) ||
+							className={`button notifications-page__button ${curItem ? 'active' : ''}`}
+							onClick={() => setItem(!curItem)}
+						>
+							<FilterIcon />
+						</button>
+					</div>
+				</div>
+
+				{/* Список фильтрации */}
+				{curItem && (
+					<AnimatePresence>
+						<motion.ul className='notifications-filter'>
+							{radio.map((element) => (
+								<li className='notifications-filter__item' key={element.key}>
+									<span>{element.text}</span>
+									<button
+										type='button'
+										className={`radio ${element.status ? 'active' : ''}`}
+										onClick={() => radioHandler(element.key)}
+									>
+										<div className='radio__button'></div>
+									</button>
+								</li>
+							))}
+						</motion.ul>
+					</AnimatePresence>
+				)}
+
+				{/* Список уведомлений */}
+
+				<ul className='mb--32 notifications-page__list'>
+					{currentNotifications.map((element) => (
+						<li key={element.id}>
+							<button
+								type='button'
+								className={`notifications-page__item ${element.isRead ? 'is-read' : ''}`}
+								onClick={() => {
+									updateNotifications(element.id);
+									setPopup(true);
+									setPopupSvg(
+										(element.type === 'system' && <SettingsIcon />) ||
+										(element.type === 'trace' && <CommentsIcon />) ||
 										(element.type === 'report' && <ReportIcon />) ||
 										(element.type === 'like' && <LikeIcon />)
-								);
-								setPopupText(element.text);
-								setPopupSource('notifications-page');
-							}}
-						>
-							{/* Описание элемента */}
-							<h2 className='title lh--140 fw--400 notifications-page__title'>{element.text}</h2>
+									);
+									setPopupText(element.description);
+									setPopupSource('notifications-page');
+								}}
+							>
+								<h2 className='title lh--140 fw--400 notifications-page__title'>
+									{element.title}
+								</h2>
+								<hr />
+								<span className='notifications-page__date'>{element.createdAt}</span>
+								<div className='notifications-page__icon'>
+									{(element.type === 'system' && <SettingsIcon />) ||
+										(element.type === 'trace' && <CommentsIcon />) ||
+										(element.type === 'report' && <ReportIcon />) ||
+										(element.type === 'like' && <LikeIcon />)}
+								</div>
+							</button>
+						</li>
+					))}
+				</ul>
 
-							{/* Разделительная линия */}
-							<hr />
-
-							{/* Дата элемента */}
-							<span className='notifications-page__date'>{element.date}</span>
-
-							{/* Тип иконки */}
-							<div className='notifications-page__icon'>
-								{(element.type === 'system' && <SettingsIcon />) ||
-									(element.type === 'comment' && <CommentsIcon />) ||
-									(element.type === 'report' && <ReportIcon />) ||
-									(element.type === 'like' && <LikeIcon />)}
-							</div>
-						</button>
-					</li>
-				))}
-			</ul>
-
-			{/* Пагинация */}
-			<div className='pagination'>
-				<button
-					className={`pagination__button ${currentPage === 1 ? 'disabled' : ''}`}
-					onClick={() => console.log('first')}
-				>
-					<DblArrowLeftIcon />
-				</button>
-				<button
-					className={`pagination__button ${currentPage === 1 ? 'disabled' : ''}`}
-					onClick={() => console.log('prev')}
-				>
-					<ArrowLeftIcon />
-				</button>
-
-				{/* Счетчик страниц */}
-				<div className='pagination__counter'>1 / 3</div>
-
-				<button className={`pagination__button `} onClick={() => console.log('next')}>
-					<ArrowRightIcon />
-				</button>
-				<button className={`pagination__button `} onClick={() => console.log('last')}>
-					<DblArrowRightIcon />
-				</button>
-			</div>
+				{/* Пагинация */}
+				<div className='pagination'>
+					<button
+						className={`pagination__button ${currentPage === 1 ? 'disabled' : ''}`}
+						onClick={goToFirstPage}
+						disabled={currentPage === 1}
+					>
+						<DblArrowLeftIcon />
+					</button>
+					<button
+						className={`pagination__button ${currentPage === 1 ? 'disabled' : ''}`}
+						onClick={goToPreviousPage}
+						disabled={currentPage === 1}
+					>
+						<ArrowLeftIcon />
+					</button>
+					<div className='pagination__counter'>
+						{currentPage} / {totalPages}
+					</div>
+					<button
+						className={`pagination__button ${currentPage === totalPages ? 'disabled' : ''}`}
+						onClick={goToNextPage}
+						disabled={currentPage === totalPages}
+					>
+						<ArrowRightIcon />
+					</button>
+					<button
+						className={`pagination__button ${currentPage === totalPages ? 'disabled' : ''}`}
+						onClick={goToLastPage}
+						disabled={currentPage === totalPages}
+					>
+						<DblArrowRightIcon />
+					</button>
+				</div>
+			</>
+			)}
 		</div>
 	);
 };
