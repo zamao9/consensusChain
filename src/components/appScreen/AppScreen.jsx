@@ -164,10 +164,10 @@ const AppScreen = () => {
 				/>
 			)}
 
-			<div className='container app-screen__container'>
-				{/* Marquees */}
-				{/* <Marquees /> */}
+			{/* Marquees */}
+			{/* <Marquees /> */}
 
+			<div className='container app-screen__container'>
 				{/*  Preloader */}
 				{curPage === 'preloader' && (
 					<Preloader
@@ -189,6 +189,7 @@ const AppScreen = () => {
 				{/* Страница Notifications */}
 				{curPage === 'notifications-page' && (
 					<NotificationsPage
+						popup={popup}
 						setPopup={setPopup}
 						setPopupSvg={setPopupSvg}
 						setPopupText={setPopupText}

@@ -7,51 +7,58 @@ const Marquees = () => {
 		const canvas = canvasRef.current;
 		const ctx = canvas.getContext('2d');
 
+		// Настройка размеров холста
 		canvas.width = window.innerWidth;
 		canvas.height = window.innerHeight;
 
-		const fontSize = 16; // Размер символов
-		const speed = 0.1; // Скорость движения символов (увеличь для ускорения)
-		const verticalPadding = canvas.height * 0.15; // Отступ сверху и снизу (15% высоты экрана)
-		const horizontalPadding = 1; // Отступ слева и справа (в пикселях)
+		// Параметры анимации
+		const fontSize = 16; // Размер цифр
+		const speed = 2; // Скорость движения (пикселей за кадр)
+		const rows = Math.floor(canvas.height / fontSize); // Количество строк
+		const columns = Math.ceil(canvas.width / fontSize); // Количество столбцов
 
-		const totalHeight = canvas.height;
-		const rows = Math.floor(totalHeight / fontSize);
-
+		// Создаем массив позиций для каждой строки
 		const positions = Array.from({ length: rows }, () => ({
-			pos: Math.floor(Math.random() * ((canvas.width - horizontalPadding) / fontSize)),
-			delay: Math.random() * 1000,
+			x: Math.random() * canvas.width, // Начальная позиция по X
+			y: Math.random() * rows, // Начальная позиция по Y
+			speed: Math.random() * 2 + 1, // Случайная скорость для каждой строки
 		}));
 
+		// Функция отрисовки
 		const draw = () => {
-			ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+			// Добавляем полупрозрачный фон для эффекта "следа"
+			ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'; // Увеличиваем прозрачность фона
 			ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-			ctx.fillStyle = '#0F0';
+			// Отрисовываем цифры
+			ctx.fillStyle = '#0F0'; // Цвет цифр
 			ctx.font = `${fontSize}px monospace`;
 
 			for (let i = 0; i < positions.length; i++) {
-				const { pos, delay } = positions[i];
+				const { x, y, speed: rowSpeed } = positions[i];
 
-				if (delay > 0) {
-					positions[i].delay -= 16;
-					continue;
+				// Генерируем случайную цифру
+				const digit = Math.floor(Math.random() * 10);
+
+				// Рассчитываем позицию
+				const xPos = x;
+				const yPos = y * fontSize;
+
+				// Отрисовываем цифру
+				ctx.fillText(digit, xPos, yPos);
+
+				// Обновляем позицию
+				positions[i].x += rowSpeed;
+
+				// Если цифра выходит за пределы экрана, возвращаем ее в начало
+				if (xPos > canvas.width) {
+					positions[i].x = -fontSize;
+					positions[i].y = Math.random() * rows; // Новая случайная строка
 				}
-
-				const text = String.fromCharCode(0x30a0 + Math.random() * 96);
-				const x = pos * fontSize + horizontalPadding;
-				const y = i * fontSize + verticalPadding;
-
-				ctx.fillText(text, x, y);
-
-				if (x > canvas.width - horizontalPadding && Math.random() > 0.975) {
-					positions[i].pos = 0;
-				}
-
-				positions[i].pos += speed; // Движение символов
 			}
 		};
 
+		// Анимация
 		const animate = () => {
 			draw();
 			requestAnimationFrame(animate);
@@ -59,6 +66,7 @@ const Marquees = () => {
 
 		animate();
 
+		// Очистка при размонтировании
 		return () => cancelAnimationFrame(animate);
 	}, []);
 
@@ -66,10 +74,15 @@ const Marquees = () => {
 		<canvas
 			ref={canvasRef}
 			style={{
-				maxWidth: '500px',
-				maxHeight: '500px',
-				display: 'block',
-				background: 'transparent',
+				position: 'absolute',
+				top: 0,
+				left: 0,
+				right: 0,
+				bottom: 0,
+				width: '100%',
+				height: 'calc(100vh + 120px)',
+				zIndex: -1, // Размещаем за основным контентом
+				pointerEvents: 'none', // Делаем холст невзаимодействуемым
 			}}
 		/>
 	);

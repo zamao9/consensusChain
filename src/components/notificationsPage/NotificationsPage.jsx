@@ -18,7 +18,7 @@ import { setNotificationList, markAsRead } from '../../feature/notifications/not
 import { selectAllNotifications } from '../../feature/notifications/notificationsSelector';
 import Preloader from '../preloader/Preloader';
 
-const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource }) => {
+const NotificationsPage = ({ popup, setPopup, setPopupSvg, setPopupText, setPopupSource }) => {
 	const dispatch = useAppDispatch();
 	const userId = useAppSelector(selectUserId);
 	const [isLoading, setIsLoading] = useState(true);
@@ -107,6 +107,19 @@ const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource
 	const goToNextPage = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));
 	const goToLastPage = () => setCurrentPage(totalPages);
 
+	// При открытой фильтрации запретить скролл
+	useEffect(() => {
+		console.log('popupStatus:', popup);
+		console.log('curItemStatus:', curItem);
+		if (curItem) {
+			document.body.classList.add('no-scroll');
+			console.log('on');
+		} else {
+			document.body.classList.remove('no-scroll');
+			console.log('off');
+		}
+	}, [curItem]);
+
 	return (
 		<div className='notifications-page'>
 			{isLoading ? (
@@ -116,112 +129,113 @@ const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource
 					size={60}
 					message='Please wait, fetching data...'
 				/>
-			) : (<>
-				{/* Заголовок и кнопка фильтрации */}
-				<div className='notifications-page__header mb--32'>
-					<h2 className='title lh--140 notifications-page__title'>Notifications</h2>
-					<div className='notifications-page__button-wrapper'>
+			) : (
+				<>
+					{/* Заголовок и кнопка фильтрации */}
+					<div className='notifications-page__header mb--32'>
+						<h2 className='title lh--140 notifications-page__title'>Notifications</h2>
+						<div className='notifications-page__button-wrapper'>
+							<button
+								className={`button notifications-page__button ${curItem ? 'active' : ''}`}
+								onClick={() => setItem(!curItem)}
+							>
+								<FilterIcon />
+							</button>
+						</div>
+					</div>
+
+					{/* Список фильтрации */}
+					{curItem && (
+						<AnimatePresence>
+							<motion.ul className='notifications-filter'>
+								{radio.map((element) => (
+									<li className='notifications-filter__item' key={element.key}>
+										<span>{element.text}</span>
+										<button
+											type='button'
+											className={`radio ${element.status ? 'active' : ''}`}
+											onClick={() => radioHandler(element.key)}
+										>
+											<div className='radio__button'></div>
+										</button>
+									</li>
+								))}
+							</motion.ul>
+						</AnimatePresence>
+					)}
+
+					{/* Список уведомлений */}
+
+					<ul className='mb--32 notifications-page__list'>
+						{currentNotifications.map((element) => (
+							<li key={element.id}>
+								<button
+									type='button'
+									className={`notifications-page__item ${element.isRead ? 'is-read' : ''}`}
+									onClick={() => {
+										updateNotifications(element.id);
+										setPopup(true);
+										setPopupSvg(
+											(element.type === 'system' && <SettingsIcon />) ||
+												(element.type === 'trace' && <CommentsIcon />) ||
+												(element.type === 'report' && <ReportIcon />) ||
+												(element.type === 'like' && <LikeIcon />)
+										);
+										setPopupText(element.description);
+										setPopupSource('notifications-page');
+									}}
+								>
+									<h2 className='title lh--140 fw--400 notifications-page__title'>
+										{element.title}
+									</h2>
+									<hr />
+									<span className='notifications-page__date'>{element.createdAt}</span>
+									<div className='notifications-page__icon'>
+										{(element.type === 'system' && <SettingsIcon />) ||
+											(element.type === 'trace' && <CommentsIcon />) ||
+											(element.type === 'report' && <ReportIcon />) ||
+											(element.type === 'like' && <LikeIcon />)}
+									</div>
+								</button>
+							</li>
+						))}
+					</ul>
+
+					{/* Пагинация */}
+					<div className='pagination'>
 						<button
-							className={`button notifications-page__button ${curItem ? 'active' : ''}`}
-							onClick={() => setItem(!curItem)}
+							className={`pagination__button ${currentPage === 1 ? 'disabled' : ''}`}
+							onClick={goToFirstPage}
+							disabled={currentPage === 1}
 						>
-							<FilterIcon />
+							<DblArrowLeftIcon />
+						</button>
+						<button
+							className={`pagination__button ${currentPage === 1 ? 'disabled' : ''}`}
+							onClick={goToPreviousPage}
+							disabled={currentPage === 1}
+						>
+							<ArrowLeftIcon />
+						</button>
+						<div className='pagination__counter'>
+							{currentPage} / {totalPages}
+						</div>
+						<button
+							className={`pagination__button ${currentPage === totalPages ? 'disabled' : ''}`}
+							onClick={goToNextPage}
+							disabled={currentPage === totalPages}
+						>
+							<ArrowRightIcon />
+						</button>
+						<button
+							className={`pagination__button ${currentPage === totalPages ? 'disabled' : ''}`}
+							onClick={goToLastPage}
+							disabled={currentPage === totalPages}
+						>
+							<DblArrowRightIcon />
 						</button>
 					</div>
-				</div>
-
-				{/* Список фильтрации */}
-				{curItem && (
-					<AnimatePresence>
-						<motion.ul className='notifications-filter'>
-							{radio.map((element) => (
-								<li className='notifications-filter__item' key={element.key}>
-									<span>{element.text}</span>
-									<button
-										type='button'
-										className={`radio ${element.status ? 'active' : ''}`}
-										onClick={() => radioHandler(element.key)}
-									>
-										<div className='radio__button'></div>
-									</button>
-								</li>
-							))}
-						</motion.ul>
-					</AnimatePresence>
-				)}
-
-				{/* Список уведомлений */}
-
-				<ul className='mb--32 notifications-page__list'>
-					{currentNotifications.map((element) => (
-						<li key={element.id}>
-							<button
-								type='button'
-								className={`notifications-page__item ${element.isRead ? 'is-read' : ''}`}
-								onClick={() => {
-									updateNotifications(element.id);
-									setPopup(true);
-									setPopupSvg(
-										(element.type === 'system' && <SettingsIcon />) ||
-										(element.type === 'trace' && <CommentsIcon />) ||
-										(element.type === 'report' && <ReportIcon />) ||
-										(element.type === 'like' && <LikeIcon />)
-									);
-									setPopupText(element.description);
-									setPopupSource('notifications-page');
-								}}
-							>
-								<h2 className='title lh--140 fw--400 notifications-page__title'>
-									{element.title}
-								</h2>
-								<hr />
-								<span className='notifications-page__date'>{element.createdAt}</span>
-								<div className='notifications-page__icon'>
-									{(element.type === 'system' && <SettingsIcon />) ||
-										(element.type === 'trace' && <CommentsIcon />) ||
-										(element.type === 'report' && <ReportIcon />) ||
-										(element.type === 'like' && <LikeIcon />)}
-								</div>
-							</button>
-						</li>
-					))}
-				</ul>
-
-				{/* Пагинация */}
-				<div className='pagination'>
-					<button
-						className={`pagination__button ${currentPage === 1 ? 'disabled' : ''}`}
-						onClick={goToFirstPage}
-						disabled={currentPage === 1}
-					>
-						<DblArrowLeftIcon />
-					</button>
-					<button
-						className={`pagination__button ${currentPage === 1 ? 'disabled' : ''}`}
-						onClick={goToPreviousPage}
-						disabled={currentPage === 1}
-					>
-						<ArrowLeftIcon />
-					</button>
-					<div className='pagination__counter'>
-						{currentPage} / {totalPages}
-					</div>
-					<button
-						className={`pagination__button ${currentPage === totalPages ? 'disabled' : ''}`}
-						onClick={goToNextPage}
-						disabled={currentPage === totalPages}
-					>
-						<ArrowRightIcon />
-					</button>
-					<button
-						className={`pagination__button ${currentPage === totalPages ? 'disabled' : ''}`}
-						onClick={goToLastPage}
-						disabled={currentPage === totalPages}
-					>
-						<DblArrowRightIcon />
-					</button>
-				</div>
-			</>
+				</>
 			)}
 		</div>
 	);
