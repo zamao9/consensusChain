@@ -94,6 +94,7 @@ const PopupBackground = ({
 						>
 							<CloseIcon />
 						</button>
+
 						{/* Иконка и Текст если popup success */}
 						{popupSource === 'success' && (
 							<>
@@ -101,6 +102,7 @@ const PopupBackground = ({
 								<div className='popup-background__svg popup-background__success mb--10'>
 									<SuccessIcon />
 								</div>
+
 								{/* Текст */}
 								<p className='lh--140 popup-background__text'>{popupText}</p>
 							</>
@@ -113,10 +115,12 @@ const PopupBackground = ({
 								<div className='popup-background__svg popup-background__error mb--10'>
 									<SuccessIcon />
 								</div>
+
 								{/* Текст */}
 								<p className='lh--140 popup-background__text'>{popupText}</p>
 							</>
 						)}
+
 						{/* Иконка и Текст если popup notifications */}
 						{popupSource === 'notifications-page' && (
 							<>
@@ -124,13 +128,14 @@ const PopupBackground = ({
 								<div className='popup-background__svg popup-background__notifications-svg mb--16 '>
 									{popupSvg}
 								</div>
-
 								{/* Разделительная линия */}
 								<hr className='mb--22' />
 
+								{/* Текст уведомления */}
 								<p className='lh--140 popup-background__text'>{popupText}</p>
 							</>
 						)}
+
 						{/* Заголовок, Текстареа, Кнопка если popup comments */}
 						{popupSource === 'answer' && (
 							<>

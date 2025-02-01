@@ -177,8 +177,9 @@ const QuestionsItem = ({
 		<li className='questions-page__item'>
 			{comments === 'questions-page' && (
 				<div
-					className={`button questions-page__button questions-page__popular ${questionsItem.popular === false ? 'none' : ''
-						}`}
+					className={`button questions-page__button questions-page__popular ${
+						questionsItem.popular === false ? 'none' : ''
+					}`}
 				>
 					<StarIcon />
 				</div>
@@ -199,8 +200,9 @@ const QuestionsItem = ({
 				<div className='questions-page__buttons'>
 					<button
 						type='button'
-						className={`button questions-page__button questions-page__report ${questionsItem.report ? 'active' : ''
-							}`}
+						className={`button questions-page__button questions-page__report ${
+							questionsItem.report ? 'active' : ''
+						}`}
 						onClick={handleReport}
 						disabled={questionsItem.report}
 					>
@@ -208,8 +210,9 @@ const QuestionsItem = ({
 					</button>
 					<button
 						type='button'
-						className={`button questions-page__button questions-page__trace ${questionsItem.trace ? 'active' : ''
-							}`}
+						className={`button questions-page__button questions-page__trace ${
+							questionsItem.trace ? 'active' : ''
+						}`}
 						onClick={handleTrace}
 					>
 						<NotificationIcon />
@@ -217,8 +220,9 @@ const QuestionsItem = ({
 					<div className='questions-page__like-wrapper'>
 						<button
 							type='button'
-							className={`button questions-page__button questions-page__like ${questionsItem.like ? 'active' : ''
-								}`}
+							className={`button questions-page__button questions-page__like ${
+								questionsItem.like ? 'active' : ''
+							}`}
 							onClick={handleLike}
 						>
 							<LikeIcon />
@@ -234,6 +238,8 @@ const QuestionsItem = ({
 						</span>
 					</div>
 				</div>
+
+				{/* Кнопка комментариев */}
 				{comments === 'questions-page' && (
 					<div className='questions-page__wrapper'>
 						{/* Обертка комментариев */}
@@ -252,11 +258,12 @@ const QuestionsItem = ({
 							}}
 						>
 							{/* Иконка комментариев */}
-
 							<CommentsIcon />
 						</button>
 					</div>
 				)}
+
+				{/* Кнопка оставить комментарий */}
 				{comments === 'comments-page' && (
 					<button
 						type='button'

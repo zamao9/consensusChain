@@ -180,6 +180,7 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource, answer }) => {
 							>
 								<LikeIcon />
 							</button>
+
 							<button
 								type='button'
 								className='reactions__button'

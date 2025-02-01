@@ -153,7 +153,7 @@ const AppScreen = () => {
 
 			<main className='section main'>
 				{/* Marquees */}
-				<Marquees />
+				{/* <Marquees /> */}
 
 				<div className='container'>
 					{/* Стриница Popup */}
