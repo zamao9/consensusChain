@@ -148,7 +148,8 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource, answer }) => {
 				setNextCommentVisible(false);
 			}, 300);
 		} else {
-			setCurrentIndex(0); setNextCommentVisible(false);
+			setCurrentIndex(0);
+			setNextCommentVisible(false);
 		}
 	};
 
@@ -206,18 +207,22 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource, answer }) => {
 							{/* Обертка Лайков и Дизлайков */}
 							<div className='reactions-counter mb--32'>
 								<div
-									className={`reactions-counter__icon-wrapper ${comments[currentIndex].likedByUser ? 'active' : ''
-										}`}
+									className={`reactions-counter__icon-wrapper ${
+										comments[currentIndex].likedByUser ? 'active' : ''
+									}`}
 								>
 									<LikeIcon />
 									<span className='reactions-counter__count'>{comments[currentIndex].likes}</span>
 								</div>
 								<div
-									className={`reactions-counter__icon-wrapper ${comments[currentIndex].dislikedByUser ? 'active' : ''
-										}`}
+									className={`reactions-counter__icon-wrapper ${
+										comments[currentIndex].dislikedByUser ? 'active' : ''
+									}`}
 								>
 									<DislikeIcon />
-									<span className='reactions-counter__count'>{comments[currentIndex].dislikes}</span>
+									<span className='reactions-counter__count'>
+										{comments[currentIndex].dislikes}
+									</span>
 								</div>
 								{/* Никнейм ответчика */}
 								<div className='user reactions-counter__user'>
@@ -229,15 +234,21 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource, answer }) => {
 						{/* Следующий комментарий */}
 						{nextCommentVisible && currentIndex < comments.length - 1 && (
 							<div className='comment-card next-comment-card'>
-								<h2 className='answers__title lh--140 mb--16'>{comments[currentIndex + 1]?.text}</h2>
+								<h2 className='answers__title lh--140 mb--16'>
+									{comments[currentIndex + 1]?.text}
+								</h2>
 								<div className='reactions-counter mb--32'>
 									<div className='reactions-counter__icon-wrapper'>
 										<LikeIcon />
-										<span className='reactions-counter__count'>{comments[currentIndex + 1]?.likes}</span>
+										<span className='reactions-counter__count'>
+											{comments[currentIndex + 1]?.likes}
+										</span>
 									</div>
 									<div className='reactions-counter__icon-wrapper'>
 										<DislikeIcon />
-										<span className='reactions-counter__count'>{comments[currentIndex + 1]?.dislikes}</span>
+										<span className='reactions-counter__count'>
+											{comments[currentIndex + 1]?.dislikes}
+										</span>
 									</div>
 									<div className='user reactions-counter__user'>
 										<ProfileIcon />

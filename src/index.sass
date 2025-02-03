@@ -21,7 +21,7 @@ $c-text-disabled: #737373
 $c-title: #F2F2F2
 
 $c-bg-button: #474747
-$c-bg-button-active: #66643E
+$c-bg-button-active: #66643e
 
 $c-stroke: #3B3B3B
 $c-stroke-active: #45442A
@@ -91,6 +91,15 @@ body
 	user-select: none
 	word-break: break-word
 	background-color: $c-bg-main
+	&::-webkit-scrollbar
+		width: 10px
+		background: transparent
+	&::-webkit-scrollbar-track
+		background: transparent
+	&::-webkit-scrollbar-thumb
+		background-color: $c-stroke
+		border-radius: 6px
+		border: 3px solid $c-bg-main
 
 .section
 	position: relative
@@ -108,8 +117,6 @@ body
 	height: 100%
 	margin: 0 auto
 	padding: 0 15px
-	&::-webkit-scrollbar
-		width: 0
 
 .title
 	font-size: 18px

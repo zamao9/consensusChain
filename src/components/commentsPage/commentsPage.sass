@@ -1,86 +1,84 @@
 @use '../../index'
 
 .comments-page
-  max-width: 395px
-  margin: 0 auto
+	max-width: 395px
+	margin: 0 auto
 
-  .answers
-    position: relative // Для позиционирования карточек
-    padding: 14px 20px
-    @include index.border15
-    background-color: index.$c-bg-900
-    overflow: hidden
+	.answers
+		position: relative // Для позиционирования карточек
+		padding: 14px 20px
+		@include index.border15
+		background-color: index.$c-bg-900
 
-    &__title
-      font-size: 16px
-      line-height: 1.4
-      margin-bottom: 16px
+		&__title
+			font-size: 16px
+			line-height: 1.4
+			margin-bottom: 16px
 
-  .reactions-counter
-    display: flex
-    gap: 16px
-    align-items: center
+	.reactions-counter
+		display: flex
+		gap: 16px
+		align-items: center
 
-    &__icon-wrapper
-      display: flex
-      align-items: center
-      gap: 4px
+		&__icon-wrapper
+			display: flex
+			align-items: center
+			gap: 4px
 
-      &.active
-        color: index.$c-text-disabled
+			&.active
+				color: index.$c-text-disabled
 
-        svg
-          stroke: index.$c-text-disabled
+				svg
+					stroke: index.$c-text-disabled
 
-    &__user
-      margin-left: auto
+		&__user
+			margin-left: auto
 
-  .reactions
-    display: flex
-    justify-content: center
-    gap: 46px
-    margin-top: 16px
+	.reactions
+		display: flex
+		justify-content: center
+		gap: 46px
+		margin-top: 16px
 
-    &__button
-      display: flex
-      justify-content: center
-      align-items: center
-      width: 60px
-      height: 60px
-      cursor: pointer
-      @include index.link
+		&__button
+			display: flex
+			justify-content: center
+			align-items: center
+			width: 60px
+			height: 60px
+			cursor: pointer
+			@include index.link
 
-      svg
-        width: 40px
-        height: 40px
+			svg
+				width: 40px
+				height: 40px
 
-  // Стили для карточек
-  .comment-card
-    position: absolute
-    top: 0
-    left: 0
-    right: 0
-    bottom: 0
-    padding: 20px
-    border-radius: 15px
-    background-color: index.$c-bg-900
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2)
-    transform: translate(0, 0) rotate(0deg)
-    transition: transform 0.3s ease-out, filter 0.3s ease-out
-    z-index: 10
+	// Стили для карточек
+	.comment-card
+		position: relative
+		top: 0
+		left: 0
+		right: 0
+		bottom: 0
+		padding: 20px
+		border-radius: 15px
+		background-color: index.$c-bg-900
+		transform: translate(0, 0) rotate(0deg)
+		transition: transform 0.3s ease-out, filter 0.3s ease-out
+		z-index: 10
 
-    &.grabbing
-      cursor: grabbing
+		&.grabbing
+			cursor: grabbing
 
-    &.next-comment-card
-      filter: blur(5px)
-      opacity: 0.5
-      pointer-events: none
-      z-index: 5
+		&.next-comment-card
+			filter: blur(5px)
+			opacity: 0.5
+			pointer-events: none
+			z-index: 5
 
 // Анимация при наведении (для десктопов)
 @media (any-hover:hover)
-  .comments-page
-    .reactions
-      &__button:hover
-        @include index.link-hover
+	.comments-page
+		.reactions
+			&__button:hover
+				@include index.link-hover
