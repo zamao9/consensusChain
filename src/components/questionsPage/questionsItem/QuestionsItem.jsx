@@ -264,7 +264,7 @@ const QuestionsItem = ({
 				)}
 
 				{/* Кнопка оставить комментарий */}
-				{comments === 'comments-page' && (
+				{comments === 'comments-page' && !answer && (
 					<button
 						type='button'
 						className='questions-page__button questions-page__leave-a-comment'

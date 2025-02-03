@@ -1,3 +1,4 @@
+import { transform } from 'motion';
 import React, { useEffect, useRef } from 'react';
 
 const Marquees = () => {
@@ -41,6 +42,7 @@ const Marquees = () => {
 			isActive: true, // Флаг, указывающий, что строка активна
 			nextSpawnTime: 0, // Время, когда можно создать новый текст
 		}));
+		console.log(rows);
 
 		// Функция отрисовки
 		const draw = () => {
@@ -49,18 +51,18 @@ const Marquees = () => {
 			ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 			// Отрисовываем вопросы
-			for (let i = 0; i < rowStates.length; i++) {
+			for (let i = 4; i < (rowStates.length - 3) / 2; i++) {
 				const row = rowStates[i];
 
 				if (!row.isActive) continue; // Пропускаем неактивные строки
 
 				// Рассчитываем позицию
 				const xPos = row.x;
-				const yPos = row.y * fontSize;
+				const yPos = row.y * 2 * fontSize;
 
 				// Добавляем эффект мягкости с помощью теней
-				ctx.shadowColor = 'rgba(179, 179, 179)'; // Цвет тени
-				ctx.shadowBlur = 8; // Размытие тени
+				ctx.shadowColor = 'rgba(179, 179, 179, 0.5)'; // Цвет тени
+				ctx.shadowBlur = 2; // Размытие тени
 				ctx.fillStyle = 'rgba(179, 179, 179, 0.1)'; // Полупрозрачный зелёный цвет
 				ctx.font = `${fontSize}px montserrat`;
 				ctx.fillText(row.text, xPos, yPos);
@@ -111,7 +113,6 @@ const Marquees = () => {
 				height: '100%',
 				zIndex: -1, // Размещаем за основным контентом
 				pointerEvents: 'none', // Делаем холст невзаимодействуемым
-				padding: '120px 0',
 			}}
 		/>
 	);
