@@ -7,53 +7,62 @@ const Marquees = () => {
 		const canvas = canvasRef.current;
 		const ctx = canvas.getContext('2d');
 
+		// Список вопросов
+		const questions = [
+			"What are the core goals of Consensus Chain in the next six months?",
+			"How does the token distribution system work within the app?",
+			"What measures will be taken to ensure the security of user data and token transactions?",
+			"How will the AI integrate with the tokenomics of the project?",
+			"What are the challenges we might face when scaling the platform globally?",
+			"How do we plan to engage with users to ensure long-term participation?",
+			"What are the main incentives for early adopters of the app?",
+			"How will we handle and resolve disputes regarding questions and answers?",
+			"What are the benefits of the community-driven approach in our platform?",
+			"What future partnerships or integrations are we looking into to enhance the app?"
+		];
+
+		// Получаем цвет фона из CSS
+		const bgColor = getComputedStyle(document.body).backgroundColor;
+
 		// Настройка размеров холста
 		canvas.width = window.innerWidth;
 		canvas.height = window.innerHeight;
 
 		// Параметры анимации
-		const fontSize = 16; // Размер цифр
-		const speed = 2; // Скорость движения (пикселей за кадр)
+		const fontSize = 16; // Размер шрифта
 		const rows = Math.floor(canvas.height / fontSize); // Количество строк
-		const columns = Math.ceil(canvas.width / fontSize); // Количество столбцов
 
 		// Создаем массив позиций для каждой строки
 		const positions = Array.from({ length: rows }, () => ({
 			x: Math.random() * canvas.width, // Начальная позиция по X
 			y: Math.random() * rows, // Начальная позиция по Y
-			speed: Math.random() * 2 + 1, // Случайная скорость для каждой строки
+			speed: Math.random() * 4 + 1, // Случайная скорость для каждой строки
+			text: questions[Math.floor(Math.random() * questions.length)] // Случайный вопрос
 		}));
 
 		// Функция отрисовки
 		const draw = () => {
 			// Добавляем полупрозрачный фон для эффекта "следа"
-			ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'; // Увеличиваем прозрачность фона
+			ctx.fillStyle = bgColor; // Используем цвет фона страницы
 			ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-			// Отрисовываем цифры
-			ctx.fillStyle = '#0F0'; // Цвет цифр
+			// Отрисовываем вопросы
+			ctx.fillStyle = '#0F0'; // Цвет текста
 			ctx.font = `${fontSize}px monospace`;
-
 			for (let i = 0; i < positions.length; i++) {
-				const { x, y, speed: rowSpeed } = positions[i];
-
-				// Генерируем случайную цифру
-				const digit = Math.floor(Math.random() * 10);
-
+				const { x, y, speed: rowSpeed, text } = positions[i];
 				// Рассчитываем позицию
 				const xPos = x;
 				const yPos = y * fontSize;
-
-				// Отрисовываем цифру
-				ctx.fillText(digit, xPos, yPos);
-
+				// Отрисовываем текст
+				ctx.fillText(text, xPos, yPos);
 				// Обновляем позицию
 				positions[i].x += rowSpeed;
-
-				// Если цифра выходит за пределы экрана, возвращаем ее в начало
+				// Если текст выходит за пределы экрана, возвращаем его в начало
 				if (xPos > canvas.width) {
-					positions[i].x = -fontSize;
+					positions[i].x = -ctx.measureText(text).width; // Учитываем длину текста
 					positions[i].y = Math.random() * rows; // Новая случайная строка
+					positions[i].text = questions[Math.floor(Math.random() * questions.length)]; // Новый случайный вопрос
 				}
 			}
 		};
@@ -63,7 +72,6 @@ const Marquees = () => {
 			draw();
 			requestAnimationFrame(animate);
 		};
-
 		animate();
 
 		// Очистка при размонтировании

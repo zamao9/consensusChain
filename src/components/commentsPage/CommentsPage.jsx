@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSwipeable } from 'react-swipeable';
 import { useAppDispatch, useAppSelector } from '../../hooks/store';
 import { DislikeIcon, LikeIcon, ProfileIcon } from '../../constants/SvgIcons';
@@ -15,7 +15,13 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource, answer }) => {
 	const questionsItem = useAppSelector(selectSelectedQuestion);
 	const questionId = questionsItem?.question_id || null;
 
+	const [position, setPosition] = useState({ x: 0, y: 0, rotation: 0 });
+	const [isDragging, setIsDragging] = useState(false);
+	const [nextCommentVisible, setNextCommentVisible] = useState(false);
+
 	const [currentIndex, setCurrentIndex] = useState(0);
+	// Ссылка на текущий элемент
+	const cardRef = useRef(null);
 
 	const getComments = async () => {
 		try {
@@ -92,25 +98,65 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource, answer }) => {
 			alert('Error disliking comment');
 		}
 	};
-
 	// Обработчики свайпов
-	const handlers = useSwipeable({
-		onSwipedLeft: () => handleReaction('dislike'),
-		onSwipedRight: () => handleReaction('like'),
-	});
+	const handleDragStart = (e) => {
+		setIsDragging(true);
+	};
+
+	// Обработчик движения
+	const handleDragMove = (e) => {
+		if (!isDragging) return;
+
+		// Получаем координаты мыши или тача
+		const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+		const rect = cardRef.current.getBoundingClientRect();
+		const offsetX = clientX - rect.left - rect.width / 2;
+
+		// Ограничиваем угол поворота
+		const maxRotation = 15;
+		const rotation = Math.min(Math.max(offsetX / 10, -maxRotation), maxRotation);
+
+		setPosition({ x: offsetX, y: 0, rotation });
+	};
+
+	// Обработчик окончания перетаскивания
+	const handleDragEnd = () => {
+		if (!isDragging) return;
+
+		// Активируем действие, если смещение превышает порог
+		const threshold = 100;
+		if (position.x > threshold) {
+			likeComment(comments[currentIndex].commentId);
+			setNextCommentVisible(true);
+		} else if (position.x < -threshold) {
+			dislikeComment(comments[currentIndex].commentId);
+			setNextCommentVisible(true);
+		}
+
+		// Сбрасываем состояние
+		setPosition({ x: 0, y: 0, rotation: 0 });
+		setIsDragging(false);
+
+		// Переход к следующему комментарию
+		if (currentIndex < comments.length - 1) {
+			setTimeout(() => {
+				setCurrentIndex(currentIndex + 1);
+				setNextCommentVisible(false);
+			}, 300);
+		} else {
+			setCurrentIndex(0); setNextCommentVisible(false);
+		}
+	};
 
 	// Обработчик лайка и дизлайка
 	const handleReaction = (type) => {
 		if (comments.length === 0) return;
-
 		const currentComment = comments[currentIndex];
-
 		if (type === 'like') {
 			likeComment(currentComment.commentId); // Отправляем запрос на лайк
 		} else if (type === 'dislike') {
 			dislikeComment(currentComment.commentId); // Отправляем запрос на дизлайк
 		}
-
 		// Переход к следующему комментарию
 		if (currentIndex < comments.length - 1) {
 			setCurrentIndex(currentIndex + 1);
@@ -119,11 +165,6 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource, answer }) => {
 			setCurrentIndex(0);
 		}
 	};
-
-	// Загружаем комментарии при монтировании компонента
-	useEffect(() => {
-		getComments(); // Получаем комментарии при загрузке
-	}, [questionId]);
 
 	return (
 		<div className='comments-page'>
@@ -137,41 +178,71 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource, answer }) => {
 				answer={answer}
 				isCurrentElement={true}
 			/>
-
 			{/* Ответы */}
-			<div {...handlers} className='answers mt--16'>
+			<div className='answers mt--16'>
 				{comments.length > 0 ? (
 					<>
-						{/* Текст ответа */}
-						<h2 className='answers__title lh--140 mb--16'>{comments[currentIndex].text}</h2>
-
-						{/* Обертка Лайков и Дизлайков */}
-						<div className='reactions-counter mb--32'>
-							<div
-								className={`reactions-counter__icon-wrapper ${
-									comments[currentIndex].likedByUser ? 'active' : ''
-								}`}
-							>
-								<LikeIcon />
-								<span className='reactions-counter__count'>{comments[currentIndex].likes}</span>
-							</div>
-							<div
-								className={`reactions-counter__icon-wrapper ${
-									comments[currentIndex].dislikedByUser ? 'active' : ''
-								}`}
-							>
-								<DislikeIcon />
-								<span className='reactions-counter__count'>{comments[currentIndex].dislikes}</span>
-							</div>
-
-							{/* Никнейм ответчика */}
-							<div className='user reactions-counter__user'>
-								<ProfileIcon />
-								<span className='user__name'>{questionsItem.user_name}</span>
+						{/* Текущий комментарий */}
+						<div
+							ref={cardRef}
+							className='comment-card'
+							style={{
+								transform: `translate(${position.x}px, ${position.y}px) rotate(${position.rotation}deg)`,
+								transition: isDragging ? 'none' : 'transform 0.3s ease-out',
+								filter: nextCommentVisible ? 'blur(5px)' : 'none',
+							}}
+							onMouseDown={handleDragStart}
+							onMouseMove={handleDragMove}
+							onMouseUp={handleDragEnd}
+							onTouchStart={handleDragStart}
+							onTouchMove={handleDragMove}
+							onTouchEnd={handleDragEnd}
+						>
+							<h2 className='answers__title lh--140 mb--16'>{comments[currentIndex].text}</h2>
+							{/* Обертка Лайков и Дизлайков */}
+							<div className='reactions-counter mb--32'>
+								<div
+									className={`reactions-counter__icon-wrapper ${comments[currentIndex].likedByUser ? 'active' : ''
+										}`}
+								>
+									<LikeIcon />
+									<span className='reactions-counter__count'>{comments[currentIndex].likes}</span>
+								</div>
+								<div
+									className={`reactions-counter__icon-wrapper ${comments[currentIndex].dislikedByUser ? 'active' : ''
+										}`}
+								>
+									<DislikeIcon />
+									<span className='reactions-counter__count'>{comments[currentIndex].dislikes}</span>
+								</div>
+								{/* Никнейм ответчика */}
+								<div className='user reactions-counter__user'>
+									<ProfileIcon />
+									<span className='user__name'>{questionsItem.user_name}</span>
+								</div>
 							</div>
 						</div>
-
-						{/* Свайпер Лайка и Дизлайка */}
+						{/* Следующий комментарий */}
+						{nextCommentVisible && currentIndex < comments.length - 1 && (
+							<div className='comment-card next-comment-card'>
+								<h2 className='answers__title lh--140 mb--16'>{comments[currentIndex + 1]?.text}</h2>
+								<div className='reactions-counter mb--32'>
+									<div className='reactions-counter__icon-wrapper'>
+										<LikeIcon />
+										<span className='reactions-counter__count'>{comments[currentIndex + 1]?.likes}</span>
+									</div>
+									<div className='reactions-counter__icon-wrapper'>
+										<DislikeIcon />
+										<span className='reactions-counter__count'>{comments[currentIndex + 1]?.dislikes}</span>
+									</div>
+									<div className='user reactions-counter__user'>
+										<ProfileIcon />
+										<span className='user__name'>{questionsItem.user_name}</span>
+									</div>
+								</div>
+							</div>
+						)}
+						{/* Кнопки для десктопной версии */}
 						<div className='reactions'>
 							<button
 								type='button'
@@ -180,7 +251,6 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource, answer }) => {
 							>
 								<LikeIcon />
 							</button>
-
 							<button
 								type='button'
 								className='reactions__button'
