@@ -32,12 +32,14 @@ const Marquees = () => {
 		const fontSize = 16; // Размер шрифта
 		const rows = Math.floor(canvas.height / fontSize); // Количество строк
 
-		// Создаем массив позиций для каждой строки
-		const positions = Array.from({ length: rows }, () => ({
-			x: Math.random() * canvas.width, // Начальная позиция по X
-			y: Math.random() * rows, // Начальная позиция по Y
-			speed: Math.random() * 4 + 1, // Случайная скорость для каждой строки
-			text: questions[Math.floor(Math.random() * questions.length)] // Случайный вопрос
+		// Создаем массив состояний для каждой строки
+		const rowStates = Array.from({ length: rows }, (_, i) => ({
+			x: canvas.width + Math.random() * canvas.width, // Начальная позиция за пределами экрана
+			y: i, // Фиксированная строка
+			speed: Math.random() * 2 + 1, // Случайная скорость для каждой строки
+			text: questions[Math.floor(Math.random() * questions.length)], // Случайный вопрос
+			isActive: true, // Флаг, указывающий, что строка активна
+			nextSpawnTime: 0 // Время, когда можно создать новый текст
 		}));
 
 		// Функция отрисовки
@@ -47,22 +49,42 @@ const Marquees = () => {
 			ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 			// Отрисовываем вопросы
-			ctx.fillStyle = '#0F0'; // Цвет текста
-			ctx.font = `${fontSize}px monospace`;
-			for (let i = 0; i < positions.length; i++) {
-				const { x, y, speed: rowSpeed, text } = positions[i];
+			for (let i = 0; i < rowStates.length; i++) {
+				const row = rowStates[i];
+
+				if (!row.isActive) continue; // Пропускаем неактивные строки
+
 				// Рассчитываем позицию
-				const xPos = x;
-				const yPos = y * fontSize;
-				// Отрисовываем текст
-				ctx.fillText(text, xPos, yPos);
+				const xPos = row.x;
+				const yPos = row.y * fontSize;
+
+				// Добавляем эффект мягкости с помощью теней
+				ctx.shadowColor = 'rgba(0, 255, 0, 0.7)'; // Цвет тени
+				ctx.shadowBlur = 8; // Размытие тени
+				ctx.fillStyle = 'rgba(0, 255, 0, 0.4)'; // Полупрозрачный зелёный цвет
+				ctx.font = `${fontSize}px monospace`;
+				ctx.fillText(row.text, xPos, yPos);
+				ctx.shadowBlur = 0; // Сбрасываем тень после отрисовки
+
 				// Обновляем позицию
-				positions[i].x += rowSpeed;
-				// Если текст выходит за пределы экрана, возвращаем его в начало
-				if (xPos > canvas.width) {
-					positions[i].x = -ctx.measureText(text).width; // Учитываем длину текста
-					positions[i].y = Math.random() * rows; // Новая случайная строка
-					positions[i].text = questions[Math.floor(Math.random() * questions.length)]; // Новый случайный вопрос
+				row.x -= row.speed; // Движение справа налево
+
+				// Если текст полностью выходит за пределы экрана
+				if (xPos + ctx.measureText(row.text).width < 0) {
+					row.isActive = false; // Отмечаем строку как неактивную
+					row.nextSpawnTime = Date.now() + Math.random() * 2000; // Задержка перед появлением нового текста
+				}
+			}
+
+			// Проверяем, можно ли создать новый текст в свободных строках
+			const now = Date.now();
+			for (let i = 0; i < rowStates.length; i++) {
+				const row = rowStates[i];
+				if (!row.isActive && now >= row.nextSpawnTime) {
+					row.x = canvas.width + ctx.measureText(row.text).width; // За пределами экрана
+					row.text = questions[Math.floor(Math.random() * questions.length)]; // Новый случайный вопрос
+					row.speed = Math.random() * 2 + 1; // Новая случайная скорость
+					row.isActive = true; // Активируем строку
 				}
 			}
 		};

@@ -46,6 +46,10 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource, answer }) => {
 		}
 	};
 
+	useEffect(() => {
+		getComments(); // Получаем комментарии при загрузке
+	}, [questionId]);
+
 	// Получаем комментарии для конкретного вопроса
 	const comments = useAppSelector(selectCommentsByQuestionId(questionId));
 
