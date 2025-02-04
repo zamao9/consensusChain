@@ -54,7 +54,10 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 			.map((item) => (item.label === 'Other' ? otherTag : item.label));
 
 		if (selectedTags.length === 0 || (selectedTags.includes('') && filtersItems[10].active)) {
-			alert('Please select at least one tag.');
+			// alert('Please select at least one tag.');
+			setPopup(true);
+			setPopupText('Please select at least one tag.');
+			setPopupSource('error');
 			return;
 		}
 
@@ -145,18 +148,42 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 						</div>
 					)}
 				</ul>
+
 				<hr />
+
 				<div className='ask-page__privacy-buttons'>
+					{/* Кнокпа публичных вопросов */}
 					<button
 						type='button'
-						className={`ask-page__privacy-button ask-page__public-button ${!currPrivacyBtn ? 'active' : ''
-							}`}
+						className={`ask-page__privacy-button ask-page__public-button ${
+							!currPrivacyBtn ? 'active' : ''
+						}`}
 						onClick={() => setPrivacyBtn(false)}
 					>
 						Public
 					</button>
+
+					{/* Кнокпа приватных вопросов */}
+					<button
+						type='button'
+						className={`ask-page__privacy-button ask-page__private-button ${
+							currPrivacyBtn ? 'active' : ''
+						}`}
+						onClick={() => setPrivacyBtn(true)}
+					>
+						Private
+					</button>
 				</div>
+
+				{/* Поле для ввода никнейма для приватного вопроса */}
+				{currPrivacyBtn && (
+					<div className={`filters__button filters__private ${currPrivacyBtn ? 'active' : false}`}>
+						<input type='text' required placeholder='@nickname' />
+					</div>
+				)}
 			</div>
+
+			{/* Кнопка для отправки вопроса */}
 			<div className='mt--32 ask-page__button-wrapper'>
 				<button className='button ask-page__button' type='submit' disabled={isSubmitting}>
 					Submit

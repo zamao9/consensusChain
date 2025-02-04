@@ -18,8 +18,6 @@ import Preloader from '../preloader/Preloader';
 import { selectUserId } from '../../feature/profile/profileSelector';
 
 const QuestionsPage = ({
-	tab,
-	setTab,
 	setItem,
 	setPage,
 	setQuestionsItem,
@@ -32,12 +30,13 @@ const QuestionsPage = ({
 	const userId = useAppSelector(selectUserId);
 	const [isLoading, setIsLoading] = useState(true);
 	const [data, setData] = useState(null);
+	const [tab, setTab] = useState('first');
 
 	// Функция для получения вопросов пользователя
-	const fetchQuestions = async (userId) => {
+	const fetchQuestions = async (userId, allQuestions) => {
 		try {
 			const response = await fetch(
-				`https://web-production-c0b1.up.railway.app/questions/${userId}`
+				`https://web-production-c0b1.up.railway.app/questions/${userId}?allQuestions=${allQuestions}`
 			);
 			if (!response.ok) throw new Error('Failed to fetch questions');
 			const questions = await response.json();
@@ -59,9 +58,16 @@ const QuestionsPage = ({
 	useEffect(() => {
 		if (userId) {
 			setIsLoading(true);
-			fetchQuestions(userId); // Вызываем функцию для получения вопросов
+			if (tab === 'first') {
+				fetchQuestions(userId, true); // Вызываем функцию для получения вопросов
+			} else if (tab === 'third') {
+				fetchQuestions(userId, false);
+			}
 		}
-	}, [userId]);
+		return () => {
+			dispatch(setCurrentPage(1));
+		};
+	}, [userId, tab]);
 
 	// Получение данных из хранилища
 	const currentPage = useAppSelector(selectCurrentPage);

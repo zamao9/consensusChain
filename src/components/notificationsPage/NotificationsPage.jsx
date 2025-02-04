@@ -120,6 +120,8 @@ const NotificationsPage = ({ popup, setPopup, setPopupSvg, setPopupText, setPopu
 		}
 	}, [curItem]);
 
+	const notificationsTime = '18:25'; // заменить
+
 	return (
 		<div className='notifications-page'>
 			{isLoading ? (
@@ -189,7 +191,10 @@ const NotificationsPage = ({ popup, setPopup, setPopupSvg, setPopupText, setPopu
 										{element.title}
 									</h2>
 									<hr />
-									<span className='notifications-page__date'>{element.createdAt}</span>
+									<div className='notifications-page__date-wrapper'>
+										<span className='notifications-page__date'>{element.createdAt}</span>
+										<span className='notifications-page__time'>{notificationsTime}</span>
+									</div>
 									<div className='notifications-page__icon'>
 										{(element.type === 'system' && <SettingsIcon />) ||
 											(element.type === 'trace' && <CommentsIcon />) ||

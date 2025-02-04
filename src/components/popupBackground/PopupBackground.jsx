@@ -113,7 +113,7 @@ const PopupBackground = ({
 							<>
 								{/* Иконка */}
 								<div className='popup-background__svg popup-background__error mb--10'>
-									<SuccessIcon />
+									<CloseIcon />
 								</div>
 
 								{/* Текст */}

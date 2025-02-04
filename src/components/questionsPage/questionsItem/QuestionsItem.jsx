@@ -170,14 +170,16 @@ const QuestionsItem = ({
 			setIsProcessing(false);
 		}
 	};
-	console.log(questionsItem.answered)
+
 	const commentsCount = questionsItem.commentsCount;
+
 	return (
 		<li className='questions-page__item'>
 			{comments === 'questions-page' && (
 				<div
-					className={`button questions-page__button questions-page__popular ${questionsItem.popular === false ? 'none' : ''
-						}`}
+					className={`button questions-page__button questions-page__popular ${
+						questionsItem.popular === false ? 'none' : ''
+					}`}
 				>
 					<StarIcon />
 				</div>
@@ -190,6 +192,8 @@ const QuestionsItem = ({
 					</li>
 				))}
 			</ul>
+
+			{/* Автор вопроса */}
 			<div className='user questions-page__user'>
 				<ProfileIcon />
 				<span className='user__name'>{questionsItem.user_name}</span>
@@ -198,8 +202,9 @@ const QuestionsItem = ({
 				<div className='questions-page__buttons'>
 					<button
 						type='button'
-						className={`button questions-page__button questions-page__report ${questionsItem.report ? 'active' : ''
-							}`}
+						className={`button questions-page__button questions-page__report ${
+							questionsItem.report ? 'active' : ''
+						}`}
 						onClick={handleReport}
 						disabled={questionsItem.report}
 					>
@@ -207,8 +212,9 @@ const QuestionsItem = ({
 					</button>
 					<button
 						type='button'
-						className={`button questions-page__button questions-page__trace ${questionsItem.trace ? 'active' : ''
-							}`}
+						className={`button questions-page__button questions-page__trace ${
+							questionsItem.trace ? 'active' : ''
+						}`}
 						onClick={handleTrace}
 					>
 						<NotificationIcon />
@@ -216,8 +222,9 @@ const QuestionsItem = ({
 					<div className='questions-page__like-wrapper'>
 						<button
 							type='button'
-							className={`button questions-page__button questions-page__like ${questionsItem.like ? 'active' : ''
-								}`}
+							className={`button questions-page__button questions-page__like ${
+								questionsItem.like ? 'active' : ''
+							}`}
 							onClick={handleLike}
 						>
 							<LikeIcon />

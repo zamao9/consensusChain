@@ -24,7 +24,6 @@ import {
 	setReceivedAnswersCount,
 	setRegistrationDate,
 } from '../../feature/profile/profileSlice';
-import { selectUserBalance } from '../../feature/profile/profileSelector';
 
 const AppScreen = () => {
 	const dispatch = useAppDispatch();
@@ -159,7 +158,6 @@ const AppScreen = () => {
 					{/* Стриница Popup */}
 					{popup === true && (
 						<PopupBackground
-							popup={popup}
 							setPopup={setPopup}
 							popupSvg={popupSvg}
 							popupText={popupText}
@@ -180,12 +178,12 @@ const AppScreen = () => {
 						/>
 					)}
 
-					{/* Страница Profile */}
+					{/* PROFILE */}
 					{curPage === 'profile-page' && (
 						<ProfilePage tab={tab} setTab={setTab} setPage={setPage} setItem={setItem} />
 					)}
 
-					{/* Страница Replies Sent */}
+					{/* REPLIES SENT */}
 					{curPage === 'replies-sent-page' && <RepliesSentPage />}
 
 					{/* Страница Notifications */}
@@ -216,8 +214,6 @@ const AppScreen = () => {
 							setPopup={setPopup}
 							setPopupText={setPopupText}
 							setPopupSource={setPopupSource}
-							tab={tab}
-							setTab={setTab}
 						/>
 					)}
 

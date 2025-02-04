@@ -69,19 +69,23 @@
 				stroke: index.$c-text-disabled
 			.notifications-page__title
 				color: index.$c-text-disabled
-			.notifications-page__date
+			.notifications-page__date-wrapper
 				color: index.$c-text-disabled
 			.notifications-page__icon
 				@include index.bg-button
 			&.is-read:focus-visible
-				.notifications-page__date
+				.notifications-page__date-wrapper
 					color: index.$c-text-disabled
 				.notifications-page__icon
 					& svg
 						stroke: index.$c-text-disabled !important
 
 	/* Дата элемента */
-	&__date
+	&__date-wrapper
+		display: flex
+		align-items: center
+		justify-content: space-between
+		width: 100%
 		color: index.$c-text
 		transition: 0.2s ease
 
@@ -145,6 +149,9 @@
 
 @media (any-hover:hover)
 	.notifications-page
+		.radio__button:hover
+			background-color: index.$c-title
+
 		&__item:hover
 			@include index.button-hover
 			.notifications-page__title

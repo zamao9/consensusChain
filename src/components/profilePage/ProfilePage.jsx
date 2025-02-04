@@ -49,7 +49,6 @@ const ProfilePage = ({ tab, setTab, setPage, setItem }) => {
 			svg: <ArrowRightIcon />,
 			handler: () => {
 				console.log('Rating');
-				dispatch(incrementRating(1));
 			},
 		},
 		{

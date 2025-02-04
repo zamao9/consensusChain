@@ -30,7 +30,7 @@ const Marquees = () => {
 		canvas.height = window.innerHeight;
 
 		// Параметры анимации
-		const fontSize = 20; // Размер шрифта
+		const fontSize = 16; // Размер шрифта
 		const rows = Math.floor(canvas.height / fontSize); // Количество строк
 
 		// Создаем массив состояний для каждой строки
