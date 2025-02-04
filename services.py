@@ -241,15 +241,32 @@ async def get_questions(user_id: int, all_questions: bool = True) -> List[Dict]:
         trace_question_ids = [trace["question_id"] for trace in trace_questions]
 
         # Определяем запрос для выборки вопросов
-        query = "" if all_questions else "WHERE q.user_id = $1"
+        query = "WHERE q.user_id = $1" if not all_questions else ""
 
-        # Получаем вопросы из базы данных
+        # Получаем вопросы из базы данных с подсчетом комментариев и проверкой ответа пользователя
         questions = await conn.fetch(f"""
-            SELECT q.question_id, q.user_id, u.username, q.title, q.tags, q.likes, q.popular 
+            SELECT 
+                q.question_id,
+                q.user_id,
+                u.username,
+                q.title,
+                q.tags,
+                q.likes,
+                q.popular,
+                (
+                    SELECT COUNT(*) 
+                    FROM comments c 
+                    WHERE c.question_id = q.question_id
+                ) AS comments_count,
+                EXISTS (
+                    SELECT 1 
+                    FROM comments c 
+                    WHERE c.question_id = q.question_id AND c.user_id = ${2 if not all_questions else 1}::BIGINT
+                ) AS answered
             FROM questions q
             LEFT JOIN users u ON q.user_id = u.user_id
             {query};
-        """, *([user_id] if not all_questions else []))  # Используем *для передачи параметров
+        """, *(user_id,) if not all_questions else (user_id,))
 
         # Формируем список вопросов
         result = []
@@ -265,7 +282,9 @@ async def get_questions(user_id: int, all_questions: bool = True) -> List[Dict]:
                 "tags": questions_tags,
                 "report": question["question_id"] in reported_questions,
                 "trace": question["question_id"] in trace_question_ids,  # Проверяем в списке отслеживаемых
-                "like": question["question_id"] in liked_questions
+                "like": question["question_id"] in liked_questions,
+                "commentsCount": question["comments_count"],  # Количество комментариев
+                "answered": question["answered"]  # Метка, указывающая, дал ли пользователь ответ
             })
         return result
     finally:
