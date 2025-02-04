@@ -7,6 +7,7 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 	const dispatch = useAppDispatch();
 	const userId = useAppSelector(selectUserId);
 
+	// Инициализация списка тегов
 	const initialItems = [
 		{ key: 1, label: 'Business', active: false },
 		{ key: 2, label: 'Education', active: false },
@@ -18,19 +19,23 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 		{ key: 8, label: 'Science', active: false },
 		{ key: 9, label: 'Technology', active: false },
 		{ key: 10, label: 'Travel', active: false },
-		{ key: 11, label: 'Other', active: false },
+		{ key: 11, label: 'Other', active: false }, // Тег "Other"
 	];
 
+	// Состояния
 	const [filtersItems, setFiltersItems] = useState(initialItems);
 	const [currPrivacyBtn, setPrivacyBtn] = useState(false);
 	const [questionText, setQuestionText] = useState('');
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [otherTag, setOtherTag] = useState(''); // Новый тег "Other"
 
+	// Обработчик клика по тегу
 	const handleTagClick = (key) => {
 		setFiltersItems((prevItems) => {
 			const activeCount = prevItems.filter((item) => item.active).length;
 			return prevItems.map((item) => {
 				if (item.key === key) {
+					// Проверяем, можно ли активировать тег
 					if (!item.active && activeCount >= 3) return item;
 					return { ...item, active: !item.active };
 				}
@@ -39,14 +44,23 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 		});
 	};
 
+	// Обработчик отправки формы
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+
+		// Проверяем, выбран ли хотя бы один тег
+		const selectedTags = filtersItems
+			.filter((item) => item.active)
+			.map((item) => (item.label === 'Other' ? otherTag : item.label));
+
+		if (selectedTags.length === 0 || (selectedTags.includes('') && filtersItems[10].active)) {
+			alert('Please select at least one tag.');
+			return;
+		}
+
 		if (isSubmitting) return;
 
 		setIsSubmitting(true);
-
-		// Формируем массив выбранных тегов
-		const selectedTags = filtersItems.filter((item) => item.active).map((item) => item.label);
 
 		// Создаем payload для отправки на сервер
 		const payload = {
@@ -64,7 +78,7 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 					'Content-Type': 'application/json',
 				},
 			});
-			//console.log(response)
+
 			// Проверяем успешность ответа
 			if (response.ok) {
 				setPopup(true);
@@ -77,16 +91,17 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 				setQuestionText('');
 				setFiltersItems(initialItems);
 				setPrivacyBtn(false);
+				setOtherTag(''); // Очищаем поле "Other"
 			} else {
 				const errorData = await response.json();
-				throw new Error(errorData.message || 'Не удалось отправить вопрос.');
+				throw new Error(errorData.message || 'Failed to submit the question.');
 			}
 		} catch (error) {
 			// Обработка ошибок
 			setPopup(true);
-			setPopupText('Произошла ошибка при отправке вопроса. Попробуйте ещё раз.');
+			setPopupText('An error occurred while submitting the question. Please try again.');
 			setPopupSource('error');
-			console.error('Ошибка при отправке вопроса:', error);
+			console.error('Error submitting the question:', error);
 		} finally {
 			// Снимаем флаг отправки
 			setIsSubmitting(false);
@@ -103,7 +118,6 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 				value={questionText}
 				onChange={(e) => setQuestionText(e.target.value)}
 			/>
-
 			<h2 className='title mb--22 ask-page__title'>Filters</h2>
 			<div className='filters'>
 				<ul className='filters__list'>
@@ -118,9 +132,16 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 							</button>
 						</li>
 					))}
-					{filtersItems.at(-1).active === true && (
+					{/* Показываем текстовое поле, если выбран тег "Other" */}
+					{filtersItems[10].active && (
 						<div className='mt--8 filters__button filters__other'>
-							<input type='text' required placeholder='Tag' />
+							<input
+								type='text'
+								required
+								placeholder='Enter custom tag'
+								value={otherTag}
+								onChange={(e) => setOtherTag(e.target.value)}
+							/>
 						</div>
 					)}
 				</ul>
@@ -128,30 +149,14 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 				<div className='ask-page__privacy-buttons'>
 					<button
 						type='button'
-						className={`ask-page__privacy-button ask-page__public-button ${
-							!currPrivacyBtn ? 'active' : ''
-						}`}
+						className={`ask-page__privacy-button ask-page__public-button ${!currPrivacyBtn ? 'active' : ''
+							}`}
 						onClick={() => setPrivacyBtn(false)}
 					>
 						Public
 					</button>
-					{/* <button
-						type='button'
-						className={`ask-page__privacy-button ask-page__private-button ${
-							currPrivacyBtn ? 'active' : ''
-						}`}
-						onClick={() => setPrivacyBtn(true)}
-					>
-						Private
-					</button> */}
 				</div>
-				{currPrivacyBtn === true && (
-					<div className='filters__button filters__private'>
-						<input type='text' required placeholder='@nickname' />
-					</div>
-				)}
 			</div>
-
 			<div className='mt--32 ask-page__button-wrapper'>
 				<button className='button ask-page__button' type='submit' disabled={isSubmitting}>
 					Submit

@@ -103,24 +103,42 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource, answer }) => {
 		}
 	};
 	// Обработчики свайпов
-	const handleDragStart = (e) => {
+	const handleDragStart = () => {
 		setIsDragging(true);
+		setNextCommentVisible(true); // Показываем следующий комментарий при начале перетаскивания
 	};
 
-	// Обработчик движения
+	const lerp = (start, end, t) => start * (1 - t) + end * t;
+
 	const handleDragMove = (e) => {
 		if (!isDragging) return;
 
 		// Получаем координаты мыши или тача
 		const clientX = e.touches ? e.touches[0].clientX : e.clientX;
 		const rect = cardRef.current.getBoundingClientRect();
-		const offsetX = clientX - rect.left - rect.width / 2;
+		const centerX = rect.left + rect.width / 2; // Центр карточки по оси X
+		const offsetX = clientX - centerX; // Смещение относительно центра
+
+		// Добавляем "мертвую зону"
+		const deadZone = 20;
+		let adjustedOffsetX = offsetX;
+		if (Math.abs(offsetX) < deadZone) {
+			adjustedOffsetX = 0;
+		}
 
 		// Ограничиваем угол поворота
 		const maxRotation = 15;
-		const rotation = Math.min(Math.max(offsetX / 10, -maxRotation), maxRotation);
+		const targetRotation = Math.min(Math.max(adjustedOffsetX / 10, -maxRotation), maxRotation);
 
-		setPosition({ x: offsetX, y: 0, rotation });
+		// Ограничиваем смещение по оси X
+		const maxOffsetX = 300;
+		const targetOffsetX = Math.min(Math.max(adjustedOffsetX, -maxOffsetX), maxOffsetX);
+
+		// Применяем сглаживание
+		const smoothedX = lerp(position.x, targetOffsetX, 0.2); // 0.2 — коэффициент сглаживания
+		const smoothedRotation = lerp(position.rotation, targetRotation, 0.2);
+
+		setPosition({ x: smoothedX, y: 0, rotation: smoothedRotation });
 	};
 
 	// Обработчик окончания перетаскивания
@@ -131,10 +149,8 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource, answer }) => {
 		const threshold = 100;
 		if (position.x > threshold) {
 			likeComment(comments[currentIndex].commentId);
-			setNextCommentVisible(true);
 		} else if (position.x < -threshold) {
 			dislikeComment(comments[currentIndex].commentId);
-			setNextCommentVisible(true);
 		}
 
 		// Сбрасываем состояние
@@ -145,29 +161,11 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource, answer }) => {
 		if (currentIndex < comments.length - 1) {
 			setTimeout(() => {
 				setCurrentIndex(currentIndex + 1);
-				setNextCommentVisible(false);
+				setNextCommentVisible(false); // Скрываем следующий комментарий после завершения анимации
 			}, 300);
 		} else {
 			setCurrentIndex(0);
 			setNextCommentVisible(false);
-		}
-	};
-
-	// Обработчик лайка и дизлайка
-	const handleReaction = (type) => {
-		if (comments.length === 0) return;
-		const currentComment = comments[currentIndex];
-		if (type === 'like') {
-			likeComment(currentComment.commentId); // Отправляем запрос на лайк
-		} else if (type === 'dislike') {
-			dislikeComment(currentComment.commentId); // Отправляем запрос на дизлайк
-		}
-		// Переход к следующему комментарию
-		if (currentIndex < comments.length - 1) {
-			setCurrentIndex(currentIndex + 1);
-		} else {
-			// Возврат к началу, если закончились комментарии
-			setCurrentIndex(0);
 		}
 	};
 
@@ -180,7 +178,7 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource, answer }) => {
 				setPopup={setPopup}
 				setPopupText={setPopupText}
 				setPopupSource={setPopupSource}
-				answer={answer}
+				answer={questionsItem.answered}
 				isCurrentElement={true}
 			/>
 			{/* Ответы */}
@@ -204,36 +202,46 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource, answer }) => {
 							onTouchEnd={handleDragEnd}
 						>
 							<h2 className='answers__title lh--140 mb--16'>{comments[currentIndex].text}</h2>
-							{/* Обертка Лайков и Дизлайков */}
 							<div className='reactions-counter mb--32'>
 								<div
-									className={`reactions-counter__icon-wrapper ${
-										comments[currentIndex].likedByUser ? 'active' : ''
-									}`}
+									className={`reactions-counter__icon-wrapper ${comments[currentIndex].likedByUser ? 'active' : ''
+										}`}
 								>
 									<LikeIcon />
 									<span className='reactions-counter__count'>{comments[currentIndex].likes}</span>
 								</div>
 								<div
-									className={`reactions-counter__icon-wrapper ${
-										comments[currentIndex].dislikedByUser ? 'active' : ''
-									}`}
+									className={`reactions-counter__icon-wrapper ${comments[currentIndex].dislikedByUser ? 'active' : ''
+										}`}
 								>
 									<DislikeIcon />
 									<span className='reactions-counter__count'>
 										{comments[currentIndex].dislikes}
 									</span>
 								</div>
-								{/* Никнейм ответчика */}
 								<div className='user reactions-counter__user'>
 									<ProfileIcon />
 									<span className='user__name'>{questionsItem.user_name}</span>
 								</div>
 							</div>
 						</div>
+
 						{/* Следующий комментарий */}
 						{nextCommentVisible && currentIndex < comments.length - 1 && (
-							<div className='comment-card next-comment-card'>
+							<div
+								className='comment-card next-comment-card'
+								style={{
+									position: 'absolute',
+									top: 0,
+									left: 0,
+									right: 0,
+									bottom: 0,
+									opacity: nextCommentVisible ? 1 : 0,
+									filter: 'blur(5px)',
+									transition: 'opacity 0.3s ease-out',
+									pointerEvents: 'none',
+								}}
+							>
 								<h2 className='answers__title lh--140 mb--16'>
 									{comments[currentIndex + 1]?.text}
 								</h2>
