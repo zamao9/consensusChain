@@ -1,3 +1,4 @@
+import './notificationsPage.sass';
 import { useState, useEffect } from 'react';
 import {
 	ArrowLeftIcon,
@@ -10,7 +11,6 @@ import {
 	ReportIcon,
 	SettingsIcon,
 } from '../../constants/SvgIcons';
-import './notificationsPage.sass';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAppDispatch, useAppSelector } from '../../hooks/store';
 import { selectUserId } from '../../feature/profile/profileSelector';
@@ -135,8 +135,12 @@ const NotificationsPage = ({ popup, setPopup, setPopupSvg, setPopupText, setPopu
 				<>
 					{/* Заголовок и кнопка фильтрации */}
 					<div className='notifications-page__header mb--32'>
+						{/* Заголовок */}
 						<h2 className='title lh--140 notifications-page__title'>Notifications</h2>
+
+						{/* Обертка кнопки фильтрации */}
 						<div className='notifications-page__button-wrapper'>
+							{/* Кнопка фильтрации */}
 							<button
 								className={`button notifications-page__button ${curItem ? 'active' : ''}`}
 								onClick={() => setItem(!curItem)}
@@ -150,9 +154,13 @@ const NotificationsPage = ({ popup, setPopup, setPopupSvg, setPopupText, setPopu
 					{curItem && (
 						<AnimatePresence>
 							<motion.ul className='notifications-filter'>
+								{/* Элемент списка фильтрации */}
 								{radio.map((element) => (
 									<li className='notifications-filter__item' key={element.key}>
+										{/* Текст фильтра */}
 										<span>{element.text}</span>
+
+										{/* Радио кнопка фильтра */}
 										<button
 											type='button'
 											className={`radio ${element.status ? 'active' : ''}`}
@@ -167,10 +175,10 @@ const NotificationsPage = ({ popup, setPopup, setPopupSvg, setPopupText, setPopu
 					)}
 
 					{/* Список уведомлений */}
-
 					<ul className='mb--32 notifications-page__list'>
 						{currentNotifications.map((element) => (
 							<li key={element.id}>
+								{/* Элементы списка уведомлений */}
 								<button
 									type='button'
 									className={`notifications-page__item ${element.isRead ? 'is-read' : ''}`}
@@ -187,14 +195,24 @@ const NotificationsPage = ({ popup, setPopup, setPopupSvg, setPopupText, setPopu
 										setPopupSource('notifications-page');
 									}}
 								>
+									{/* Текст списка уведомлений */}
 									<h2 className='title lh--140 fw--400 notifications-page__title'>
 										{element.title}
 									</h2>
+
+									{/* Разделительная линия */}
 									<hr />
+
+									{/* Обертка даты и времени элемента */}
 									<div className='notifications-page__date-wrapper'>
+										{/* Дата элемента */}
 										<span className='notifications-page__date'>{element.createdAt}</span>
+
+										{/* Время элемента */}
 										<span className='notifications-page__time'>{notificationsTime}</span>
 									</div>
+
+									{/* Тип иконки */}
 									<div className='notifications-page__icon'>
 										{(element.type === 'system' && <SettingsIcon />) ||
 											(element.type === 'trace' && <CommentsIcon />) ||

@@ -1,14 +1,14 @@
+import './commentsPage.sass';
 import React, { useState, useEffect, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks/store';
 import { DislikeIcon, LikeIcon, ProfileIcon } from '../../constants/SvgIcons';
 import QuestionsItem from '../questionsPage/questionsItem/QuestionsItem';
-import './commentsPage.sass';
 import { setComments, toggleDislike, toggleLike } from '../../feature/comments/commentsSlice';
 import { selectCommentsByQuestionId } from '../../feature/comments/commentsSelector';
 import { selectUserId } from '../../feature/profile/profileSelector';
 import { selectSelectedQuestion } from '../../feature/questions/questionsSelector';
 
-const CommentsPage = ({ setPopup, setPopupText, setPopupSource, answer }) => {
+const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 	const dispatch = useAppDispatch();
 	const userId = useAppSelector(selectUserId);
 	const questionsItem = useAppSelector(selectSelectedQuestion);
@@ -36,7 +36,6 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource, answer }) => {
 				throw new Error('Failed to fetch comments');
 			}
 			const data = await response.json();
-			//console.log("comments data-->", data);
 			dispatch(setComments(data)); // Сохраняем комментарии в состоянии
 		} catch (error) {
 			console.error('Error fetching comments:', error);
@@ -66,7 +65,6 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource, answer }) => {
 			);
 
 			if (response.ok) {
-				console.log('yep');
 				dispatch(toggleLike({ commentId }));
 			} else {
 				throw new Error('Failed to like the comment');

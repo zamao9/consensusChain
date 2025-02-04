@@ -1,4 +1,3 @@
-import { transform } from 'motion';
 import React, { useEffect, useRef } from 'react';
 
 const Marquees = () => {
@@ -42,7 +41,6 @@ const Marquees = () => {
 			isActive: true, // Флаг, указывающий, что строка активна
 			nextSpawnTime: 0, // Время, когда можно создать новый текст
 		}));
-		console.log(rows);
 
 		// Функция отрисовки
 		const draw = () => {

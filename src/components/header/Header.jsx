@@ -1,6 +1,6 @@
+import './header.sass';
 import { useState, useEffect } from 'react';
 import { Logo, NotificationIcon, ProfileIcon } from '../../constants/SvgIcons';
-import './header.sass';
 import CountUp from 'react-countup';
 import { useAppSelector } from '../../hooks/store';
 import { selectUserBalance } from '../../feature/profile/profileSelector';
@@ -44,6 +44,7 @@ const Header = ({ curItem, setItem, setPage, setTab }) => {
 
 				{/* Обертка Уведомлений, Профиля */}
 				<div className='header__buttons'>
+					{/* Кнопка уведомлений */}
 					<button
 						className={`header__button header-item1 ${
 							curItem === 'notifications-page' ? 'active' : ''
@@ -55,6 +56,8 @@ const Header = ({ curItem, setItem, setPage, setTab }) => {
 					>
 						<NotificationIcon />
 					</button>
+
+					{/* Кнопка профиля */}
 					<button
 						className={`header__button header-item2 ${curItem === 'profile-page' ? 'active' : ''}`}
 						onClick={() => {

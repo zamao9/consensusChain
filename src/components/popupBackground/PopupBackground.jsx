@@ -3,8 +3,7 @@ import ReportPopup from '../reportPopup/ReportPopup';
 import { CloseIcon, SuccessIcon } from '../../constants/SvgIcons';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../hooks/store';
-import { addComment } from '../../feature/comments/commentsSlice';
+import { useAppSelector } from '../../hooks/store';
 import { selectUserId } from '../../feature/profile/profileSelector';
 import { selectSelectedQuestion } from '../../feature/questions/questionsSelector';
 
@@ -24,7 +23,6 @@ const PopupBackground = ({
 	};
 	const [active, setActive] = useState(true); // активировать попап или нет
 	const questionsItem = useAppSelector(selectSelectedQuestion);
-	console.log(questionsItem);
 	const questionId = questionsItem !== null ? questionsItem.question_id : '0';
 	const [questionText, setQuestionText] = useState('');
 
@@ -65,7 +63,6 @@ const PopupBackground = ({
 				throw new Error('Failed to submit the answer.');
 			}
 		} catch (error) {
-			console.log(error);
 			setPopup(true);
 			setPopupText('An error occurred while submitting your answer. Please try again later.');
 			setPopupSource('error');
@@ -83,8 +80,9 @@ const PopupBackground = ({
 				variants={variants}
 				transition={{ duration: 0.2 }} // Время анимации
 			>
-				{/* Блок Popup */}
+				{/* Popup контэйнер для отступов по бокам */}
 				<div className='popup-background__frame'>
+					{/* Обертка контента */}
 					<div className='popup-background__wrapper'>
 						{/* Кнопка закрытия Popup */}
 						<button
@@ -95,7 +93,7 @@ const PopupBackground = ({
 							<CloseIcon />
 						</button>
 
-						{/* Иконка и Текст если popup success */}
+						{/* Popup SUCCESS */}
 						{popupSource === 'success' && (
 							<>
 								{/* Иконка */}
@@ -108,7 +106,7 @@ const PopupBackground = ({
 							</>
 						)}
 
-						{/* Иконка и Текст если popup error */}
+						{/* Popup ERROR */}
 						{popupSource === 'error' && (
 							<>
 								{/* Иконка */}
@@ -121,22 +119,23 @@ const PopupBackground = ({
 							</>
 						)}
 
-						{/* Иконка и Текст если popup notifications */}
+						{/* Popup NOTIFICATIONS */}
 						{popupSource === 'notifications-page' && (
 							<>
 								{/* Иконка */}
 								<div className='popup-background__svg popup-background__notifications-svg mb--16 '>
 									{popupSvg}
 								</div>
+
 								{/* Разделительная линия */}
 								<hr className='mb--22' />
 
-								{/* Текст уведомления */}
+								{/* Текст */}
 								<p className='lh--140 popup-background__text'>{popupText}</p>
 							</>
 						)}
 
-						{/* Заголовок, Текстареа, Кнопка если popup comments */}
+						{/* Popup COMMENTS */}
 						{popupSource === 'answer' && (
 							<>
 								{/* Заголовок */}
@@ -160,10 +159,9 @@ const PopupBackground = ({
 								</button>
 							</>
 						)}
-						{/* Открыть Report Popup  */}
-						{popupSource === 'report-page' && (
-							<ReportPopup setPopup={setPopup} setPopupSource={setPopupSource} />
-						)}
+
+						{/* Popup REPORT */}
+						{popupSource === 'report-page' && <ReportPopup setPopupSource={setPopupSource} />}
 					</div>
 				</div>
 			</motion.div>

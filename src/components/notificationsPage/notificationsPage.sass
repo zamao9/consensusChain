@@ -3,7 +3,7 @@
 	max-width: 395px
 	margin: 0 auto
 
-	/* Обертка Заголовка, Кнопки фильтрации */
+	/* Заголовок и кнопка фильтрации */
 	&__header
 		display: flex
 		align-items: center
@@ -21,7 +21,7 @@
 		-webkit-box-orient: vertical
 		transition: 0.2s ease
 
-	/* Кнопка фильтрации */
+	/* Обертка кнопки фильтрации */
 	&__button-wrapper
 		flex-shrink: 0
 		display: flex
@@ -32,79 +32,12 @@
 		width: 56px
 		height: 56px
 
+	/* Кнопка фильтрации */
 	&__button
 		width: 40px !important
 		height: 40px !important
 
-	/* Список уведомлений */
-	&__list
-		position: relative
-		display: grid
-		gap: 16px
-		& li
-			width: 100%
-
-	/* Элементы списка уведомлений */
-	&__item
-		position: relative
-		display: flex
-		flex-direction: column
-		gap: 16px
-		width: 100%
-		padding: 14px 60px 14px 20px
-		@include index.border15
-		background-color: index.$c-bg-900
-		overflow: hidden
-		transition: 0.2s ease
-		&:focus-visible
-			.notifications-page__title
-				color: index.$c-text-active
-			.notifications-page__date
-				color: index.$c-text-active
-			.notifications-page__icon
-				box-shadow: 2px 2px 4px rgba(index.$c-black, 0.32) inset, -2px -2px 4px rgba(index.$c-white, 0.16) inset
-		&.is-read
-			color: index.$c-text-disabled
-			& svg
-				stroke: index.$c-text-disabled
-			.notifications-page__title
-				color: index.$c-text-disabled
-			.notifications-page__date-wrapper
-				color: index.$c-text-disabled
-			.notifications-page__icon
-				@include index.bg-button
-			&.is-read:focus-visible
-				.notifications-page__date-wrapper
-					color: index.$c-text-disabled
-				.notifications-page__icon
-					& svg
-						stroke: index.$c-text-disabled !important
-
-	/* Дата элемента */
-	&__date-wrapper
-		display: flex
-		align-items: center
-		justify-content: space-between
-		width: 100%
-		color: index.$c-text
-		transition: 0.2s ease
-
-	/* Тип иконки */
-	&__icon
-		position: absolute
-		top: 0
-		right: 0
-		display: flex
-		align-items: center
-		justify-content: center
-		width: 40px
-		height: 100%
-		pointer-events: none
-		@include index.bg-button-active
-		border-left: 1px solid index.$c-stroke
-		transition: 0.2s ease
-
-	/* Список элементов Фильтрации */
+	/* Список фильтрации */
 	.notifications-filter
 		position: absolute
 		z-index: 1
@@ -119,11 +52,13 @@
 		box-shadow: 0 0 10px 4px index.$c-bg-main
 		transition: 0.2s ease
 
+		/* Элемент списка фильтрации */
 		&__item
 			display: flex
 			align-items: center
 			justify-content: space-between
 
+		/* Радио кнопка фильтра */
 		.radio
 			position: relative
 			width: 44px
@@ -146,6 +81,76 @@
 				background-color: index.$c-bg-button-active
 				.radio__button
 					left: 20px
+
+	/* Список уведомлений */
+	&__list
+		position: relative
+		display: grid
+		gap: 16px
+		& li
+			width: 100%
+
+	/* Элементы списка уведомлений */
+	&__item
+		position: relative
+		display: flex
+		flex-direction: column
+		gap: 16px
+		width: 100%
+		padding: 14px 60px 14px 20px
+		@include index.border15
+		background-color: index.$c-bg-900
+		overflow: hidden
+		transition: 0.2s ease
+		/* Фокус с клавиатуры */
+		&:focus-visible
+			.notifications-page__title
+				color: index.$c-text-active
+			.notifications-page__date
+				color: index.$c-text-active
+			.notifications-page__icon
+				box-shadow: 2px 2px 4px rgba(index.$c-black, 0.32) inset, -2px -2px 4px rgba(index.$c-white, 0.16) inset
+		&.is-read
+			color: index.$c-text-disabled
+			& svg
+				stroke: index.$c-text-disabled
+			.notifications-page__title
+				color: index.$c-text-disabled
+			.notifications-page__date-wrapper
+				color: index.$c-text-disabled
+			.notifications-page__icon
+				@include index.bg-button
+			/* Фокус с клавиатуры */
+			&.is-read:focus-visible
+				.notifications-page__date-wrapper
+					color: index.$c-text-disabled
+				.notifications-page__icon
+					& svg
+						stroke: index.$c-text-disabled !important
+
+	/* Обертка даты и времени элемента */
+	&__date-wrapper
+		display: flex
+		align-items: center
+		justify-content: space-between
+		width: 100%
+		color: index.$c-text
+		transition: 0.2s ease
+
+	/* Тип иконки */
+	&__icon
+		position: absolute
+		top: 0
+		right: 0
+		display: flex
+		align-items: center
+		justify-content: center
+		width: 40px
+		height: 100%
+		pointer-events: none
+		@include index.bg-button-active
+		border-left: 1px solid index.$c-stroke
+		transition: 0.2s ease
 
 @media (any-hover:hover)
 	.notifications-page

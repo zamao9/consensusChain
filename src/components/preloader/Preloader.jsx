@@ -1,7 +1,7 @@
+import './preloader.sass';
 import React, { useEffect } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import ClipLoader from 'react-spinners/ClipLoader';
-import './preloader.sass';
 
 const Preloader = ({ isVisible, color = '#CECECE', size = 60, message = 'Loading...' }) => {
 	// Блокируем скролл при монтировании и разблокируем при размонтировании

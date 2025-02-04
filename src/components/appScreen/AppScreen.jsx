@@ -43,7 +43,6 @@ const AppScreen = () => {
 		// Проверяем, что объект Telegram существует и содержит нужные данные
 		if (typeof Telegram !== 'undefined' && Telegram.WebApp) {
 			const initData = Telegram.WebApp.initData;
-			console.log('initData', initData);
 
 			if (initData) {
 				const parsedInitData = new URLSearchParams(initData);
@@ -147,15 +146,17 @@ const AppScreen = () => {
 
 	return (
 		<>
-			{/* Страница Header */}
+			{/* HEADER */}
 			<Header curItem={curItem} setItem={setItem} setPage={setPage} setTab={setTab} />
 
-			<main className='section main'>
-				{/* Marquees */}
+			{/* SECTION */}
+			<main className='section'>
+				{/* MARQUEES */}
 				<Marquees />
 
+				{/* CONTAINER */}
 				<div className='container'>
-					{/* Стриница Popup */}
+					{/* POPUP */}
 					{popup === true && (
 						<PopupBackground
 							setPopup={setPopup}
@@ -168,13 +169,24 @@ const AppScreen = () => {
 						/>
 					)}
 
-					{/*  Preloader */}
+					{/*  PRELOADER */}
 					{curPage === 'preloader' && (
 						<Preloader
 							isVisible={true}
 							color='#FF5733'
 							size={60}
 							message='Please wait, fetching data...'
+						/>
+					)}
+
+					{/* NOTIFICATIONS */}
+					{curPage === 'notifications-page' && (
+						<NotificationsPage
+							popup={popup}
+							setPopup={setPopup}
+							setPopupSvg={setPopupSvg}
+							setPopupText={setPopupText}
+							setPopupSource={setPopupSource}
 						/>
 					)}
 
@@ -186,18 +198,7 @@ const AppScreen = () => {
 					{/* REPLIES SENT */}
 					{curPage === 'replies-sent-page' && <RepliesSentPage />}
 
-					{/* Страница Notifications */}
-					{curPage === 'notifications-page' && (
-						<NotificationsPage
-							popup={popup}
-							setPopup={setPopup}
-							setPopupSvg={setPopupSvg}
-							setPopupText={setPopupText}
-							setPopupSource={setPopupSource}
-						/>
-					)}
-
-					{/* Страница Ask */}
+					{/* ASK */}
 					{curPage === 'ask-page' && (
 						<AskPage
 							setPopup={setPopup}
@@ -206,7 +207,7 @@ const AppScreen = () => {
 						/>
 					)}
 
-					{/* Страница Questions */}
+					{/* QUESTIONS-PAGE */}
 					{curPage === 'questions-page' && (
 						<QuestionsPage
 							setPage={setPage}
@@ -217,21 +218,21 @@ const AppScreen = () => {
 						/>
 					)}
 
-					{/* Страница Tasks */}
-					{curPage === 'tasks-page' && <TasksPage />}
-
-					{/* Страница Comments */}
+					{/* COMMENTS */}
 					{curPage === 'comments-page' && (
 						<CommentsPage
 							setPopup={setPopup}
 							setPopupText={setPopupText}
 							setPopupSource={setPopupSource}
-							answer={answer}
 						/>
 					)}
+
+					{/* TASKS */}
+					{curPage === 'tasks-page' && <TasksPage />}
 				</div>
 			</main>
-			{/* Footer */}
+
+			{/* FOOTER */}
 			<Footer curItem={curItem} setItem={setItem} setPage={setPage} />
 		</>
 	);
