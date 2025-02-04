@@ -243,6 +243,9 @@ async def get_questions(user_id: int, all_questions: bool = True) -> List[Dict]:
         # Определяем запрос для выборки вопросов
         query = "WHERE q.user_id = $1" if not all_questions else ""
 
+        # Формируем параметры для запроса
+        params = (user_id, user_id) if not all_questions else (user_id,)
+
         # Получаем вопросы из базы данных с подсчетом комментариев и проверкой ответа пользователя
         questions = await conn.fetch(f"""
             SELECT 
@@ -266,7 +269,7 @@ async def get_questions(user_id: int, all_questions: bool = True) -> List[Dict]:
             FROM questions q
             LEFT JOIN users u ON q.user_id = u.user_id
             {query};
-        """, *(user_id,) if not all_questions else (user_id,))
+        """, *params)
 
         # Формируем список вопросов
         result = []
