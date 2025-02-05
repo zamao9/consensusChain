@@ -42,7 +42,6 @@ import {
 	setPopupSource,
 } from '../../feature/userInterface/userInterfaceSlice';
 
-
 const AppScreen = () => {
 	const dispatch = useAppDispatch();
 	const [userData, setUserData] = useState(null);
@@ -154,7 +153,6 @@ const AppScreen = () => {
 	const popupSource = useAppSelector(selectPopupSource);
 	const [popupSvg, setPopupSvg] = useState(''); // svg в Popup
 
-
 	useEffect(() => {
 		if (popup) {
 			document.body.classList.add('no-scroll');
@@ -194,7 +192,12 @@ const AppScreen = () => {
 
 					{/* PRELOADER */}
 					{curPage === 'preloader' && (
-						<Preloader isVisible={true} color='#FF5733' size={60} message='Please wait, fetching data...' />
+						<Preloader
+							isVisible={true}
+							color='#FF5733'
+							size={60}
+							message='Please wait, fetching data...'
+						/>
 					)}
 
 					{/* NOTIFICATIONS */}

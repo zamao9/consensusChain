@@ -7,15 +7,9 @@ import { useAppDispatch, useAppSelector } from '../../hooks/store';
 import { selectUserId } from '../../feature/profile/profileSelector';
 import { selectSelectedQuestion } from '../../feature/questions/questionsSelector';
 import { updateQuestion } from '../../feature/questions/questionsSlice';
+import { selectPopupText } from '../../feature/userInterface/userIntarfaceSelector';
 
-const PopupBackground = ({
-	setPopup,
-	popupSvg,
-	popupText,
-	popupSource,
-	setPopupSource,
-	setPopupText,
-}) => {
+const PopupBackground = ({ setPopup, popupSvg, popupSource, setPopupSource, setPopupText }) => {
 	const dispatch = useAppDispatch();
 	const userId = useAppSelector(selectUserId);
 	const variants = {
@@ -26,6 +20,8 @@ const PopupBackground = ({
 	const questionsItem = useAppSelector(selectSelectedQuestion);
 	const questionId = questionsItem !== null ? questionsItem.question_id : '0';
 	const [questionText, setQuestionText] = useState('');
+	const popupText = useAppSelector(selectPopupText);
+	console.log(popupText);
 
 	const handleCommentSubmit = async () => {
 		if (!questionText.trim()) {
@@ -73,7 +69,7 @@ const PopupBackground = ({
 				throw new Error('Failed to submit the answer.');
 			}
 		} catch (error) {
-			console.log(error)
+			console.log(error);
 			setPopup(true);
 			setPopupText('An error occurred while submitting your answer. Please try again later.');
 			setPopupSource('error');
@@ -100,8 +96,8 @@ const PopupBackground = ({
 							type='button'
 							className='popup-background__close'
 							onClick={() => {
-								setPopup(false)
-								setPopupSource("cancel")
+								setPopup(false);
+								setPopupSource('cancel');
 							}}
 						>
 							<CloseIcon />

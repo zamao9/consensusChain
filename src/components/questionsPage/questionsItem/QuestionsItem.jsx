@@ -123,7 +123,11 @@ const QuestionsItem = ({
 					},
 				})
 			);
-			setQuestionsItem((prev) => ({ ...prev, like: revertedLikeStatus, likeCount: revertedLikeCount }));
+			setQuestionsItem((prev) => ({
+				...prev,
+				like: revertedLikeStatus,
+				likeCount: revertedLikeCount,
+			}));
 
 			// Показываем сообщение об ошибке
 			setPopup(true);
@@ -202,11 +206,9 @@ const QuestionsItem = ({
 					updates: { report: true },
 				})
 			);
-			dispatch(setQuestionsItem({ ...questionsItem, report: true }));
+			setQuestionsItem({ ...questionsItem, report: true });
 
 			console.log('handleReport: Setting success message...');
-			dispatch(setPopupText('Your report has been successfully sent.'));
-			dispatch(setPopupSource('success'));
 		} catch (error) {
 			console.error('handleReport: Error occurred:', error.message);
 
@@ -292,8 +294,9 @@ const QuestionsItem = ({
 		<li className='questions-page__item'>
 			{comments === 'questions-page' && (
 				<div
-					className={`button questions-page__button questions-page__popular ${questionsItem.popular === false ? 'none' : ''
-						}`}
+					className={`button questions-page__button questions-page__popular ${
+						questionsItem.popular === false ? 'none' : ''
+					}`}
 				>
 					<StarIcon />
 				</div>
@@ -314,28 +317,37 @@ const QuestionsItem = ({
 			</div>
 			<div className='questions-page__buttons-wrapper'>
 				<div className='questions-page__buttons'>
+					{/* Кнопка репорта */}
 					<button
 						type='button'
-						className={`button questions-page__button questions-page__report ${questionsItem.report ? 'active' : ''
-							}`}
+						className={`button questions-page__button questions-page__report ${
+							questionsItem.report ? 'active' : ''
+						}`}
 						onClick={handleReport}
 						disabled={questionsItem.report}
 					>
 						<ReportIcon />
 					</button>
+
+					{/* Кнопка отслеживания */}
 					<button
 						type='button'
-						className={`button questions-page__button questions-page__trace ${questionsItem.trace ? 'active' : ''
-							}`}
+						className={`button questions-page__button questions-page__trace ${
+							questionsItem.trace ? 'active' : ''
+						}`}
 						onClick={handleTrace}
 					>
 						<NotificationIcon />
 					</button>
+
+					{/* Обертка кнопки лайка и счетчика */}
 					<div className='questions-page__like-wrapper'>
+						{/* Кнопка лайка */}
 						<button
 							type='button'
-							className={`button questions-page__button questions-page__like ${questionsItem.like ? 'active' : ''
-								}`}
+							className={`button questions-page__button questions-page__like ${
+								questionsItem.like ? 'active' : ''
+							}`}
 							onClick={handleLike}
 						>
 							<LikeIcon />
@@ -386,7 +398,6 @@ const QuestionsItem = ({
 							setPopup(true);
 							setPopupText('Your reply was successfully sent.');
 							setPopupSource('answer');
-
 						}}
 					>
 						Answer

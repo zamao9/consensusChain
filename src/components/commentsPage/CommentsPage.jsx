@@ -3,11 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks/store';
 import { DislikeIcon, LikeIcon, ProfileIcon } from '../../constants/SvgIcons';
 import QuestionsItem from '../questionsPage/questionsItem/QuestionsItem';
-import {
-	setComments,
-	toggleDislike,
-	toggleLike,
-} from '../../feature/comments/commentsSlice';
+import { setComments, toggleDislike, toggleLike } from '../../feature/comments/commentsSlice';
 import { selectCommentsByQuestionId } from '../../feature/comments/commentsSelector';
 import { selectUserId } from '../../feature/profile/profileSelector';
 import {
@@ -24,8 +20,8 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 	const [questionsItem, setQuestionsItem] = useState(questionItem);
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [nextCommentVisible, setNextCommentVisible] = useState(false);
-	console.log(questionsItem)
-	console.log("nextQuestion", nextQuestion)
+	console.log(questionsItem);
+	console.log('nextQuestion', nextQuestion);
 	// Получаем ID текущего вопроса
 	const questionId = questionsItem?.question_id || null;
 
@@ -183,7 +179,9 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 		// Определяем направление движения
 		const direction = offsetX > 0 ? 'right' : 'left';
 
-		// Логика сглаживания и анимации
+		setHoverState({ isDragging: true, direction });
+
+		// Остальная логика сглаживания и анимации
 		const deadZone = 20;
 		let adjustedOffsetX = offsetX;
 		if (Math.abs(offsetX) < deadZone) {
@@ -192,6 +190,7 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 
 		const maxRotation = 15;
 		const targetRotation = Math.min(Math.max(adjustedOffsetX / 10, -maxRotation), maxRotation);
+
 		const maxOffsetX = 500;
 		const targetOffsetX = Math.min(Math.max(adjustedOffsetX, -maxOffsetX), maxOffsetX);
 
@@ -204,7 +203,10 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 	const handleDragEnd = () => {
 		if (!isDragging) return;
 
-		// Логика завершения перетаскивания
+		// Сбрасываем состояние hoverState
+		setHoverState({ isDragging: false, direction: null });
+
+		// Остальная логика завершения перетаскивания
 		const threshold = 100;
 		if (position.x > threshold) {
 			dislikeComment(comments[currentIndex].commentId);
@@ -225,6 +227,11 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 			setNextCommentVisible(false);
 		}
 	};
+
+	const [hoverState, setHoverState] = useState({
+		isDragging: false,
+		direction: null, // 'left' или 'right'
+	});
 
 	return (
 		<div className='comments-page'>
@@ -259,27 +266,25 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 							{/* Обертка данных ответа */}
 							<div className='comment-card'>
 								{/* Текст ответа */}
-								<h2 className='answers__title lh--140 mb--16'>
-									{comments[currentIndex].text}
-								</h2>
+								<h2 className='answers__title lh--140 mb--16'>{comments[currentIndex].text}</h2>
 
 								{/* Реакции на ответ */}
 								<div className='reactions-counter mb--32'>
 									{/* Лайк */}
 									<div
-										className={`reactions-counter__icon-wrapper ${comments[currentIndex].likedByUser ? 'active' : ''
-											}`}
+										className={`reactions-counter__icon-wrapper ${
+											comments[currentIndex].likedByUser ? 'active' : ''
+										}`}
 									>
 										<LikeIcon />
-										<span className='reactions-counter__count'>
-											{comments[currentIndex].likes}
-										</span>
+										<span className='reactions-counter__count'>{comments[currentIndex].likes}</span>
 									</div>
 
 									{/* Дизлайк */}
 									<div
-										className={`reactions-counter__icon-wrapper ${comments[currentIndex].dislikedByUser ? 'active' : ''
-											}`}
+										className={`reactions-counter__icon-wrapper ${
+											comments[currentIndex].dislikedByUser ? 'active' : ''
+										}`}
 									>
 										<DislikeIcon />
 										<span className='reactions-counter__count'>
@@ -297,16 +302,23 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 
 							{/* Кнопки реакций */}
 							<div className='reactions'>
+								{/* Кнопка лайка */}
 								<button
 									type='button'
-									className='reactions__button'
+									className={`reactions__button ${
+										hoverState.isDragging && hoverState.direction === 'left' ? 'like-hover' : ''
+									}`}
 									onClick={() => handleReaction('like')}
 								>
 									<LikeIcon />
 								</button>
+
+								{/* Кнопка дизлайка */}
 								<button
 									type='button'
-									className='reactions__button'
+									className={`reactions__button ${
+										hoverState.isDragging && hoverState.direction === 'right' ? 'dislike-hover' : ''
+									}`}
 									onClick={() => handleReaction('dislike')}
 								>
 									<DislikeIcon />
@@ -321,9 +333,7 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 				{/* Нижний ответ */}
 				{nextCommentVisible && currentIndex < comments.length - 1 && (
 					<div className='answers answers__next-comment-card'>
-						<h2 className='answers__title lh--140 mb--16'>
-							{comments[currentIndex + 1]?.text}
-						</h2>
+						<h2 className='answers__title lh--140 mb--16'>{comments[currentIndex + 1]?.text}</h2>
 						<div className='reactions-counter mb--32'>
 							<div className='reactions-counter__icon-wrapper'>
 								<LikeIcon />

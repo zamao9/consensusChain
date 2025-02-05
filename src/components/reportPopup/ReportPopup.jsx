@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import './reportPopup.sass';
 import { ArrowLeftIcon } from '../../constants/SvgIcons';
+import { setPopupText } from '../../feature/userInterface/userInterfaceSlice';
+import { useAppDispatch } from '../../hooks/store';
 
 const ReportPopup = ({ setPopupSource }) => {
+	const dispatch = useAppDispatch();
 	const reportFlow = [
 		{
 			id: 'ads',
@@ -103,10 +106,10 @@ const ReportPopup = ({ setPopupSource }) => {
 			text: reportText,
 		});
 
-		alert('Your report has been successfully sent!');
-
 		setCurrentPath([]);
 		setReportText('');
+		dispatch(setPopupText('Your report has been successfully sent'));
+		setPopupSource('success');
 	};
 
 	// Текущий уровень вложенности, вычисленный из currentPath
@@ -157,7 +160,7 @@ const ReportPopup = ({ setPopupSource }) => {
 						<button
 							className='button'
 							onClick={() => {
-								setPopupSource('success');
+								handleSubmit();
 							}}
 						>
 							Send report

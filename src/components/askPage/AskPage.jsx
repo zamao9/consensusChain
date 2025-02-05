@@ -155,30 +155,32 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 					{/* Кнокпа публичных вопросов */}
 					<button
 						type='button'
-						className={`ask-page__privacy-button ask-page__public-button ${!currPrivacyBtn ? 'active' : ''
-							}`}
+						className={`ask-page__privacy-button ask-page__public-button ${
+							!currPrivacyBtn ? 'active' : ''
+						}`}
 						onClick={() => setPrivacyBtn(false)}
 					>
 						Public
 					</button>
 
 					{/* Кнокпа приватных вопросов */}
-					<button
+					{/* <button
 						type='button'
-						className={`ask-page__privacy-button ask-page__private-button ${currPrivacyBtn ? 'active' : ''
-							}`}
+						className={`ask-page__privacy-button ask-page__private-button ${
+							currPrivacyBtn ? 'active' : ''
+						}`}
 						onClick={() => setPrivacyBtn(true)}
 					>
 						Private
-					</button>
+					</button> */}
 				</div>
 
 				{/* Поле для ввода никнейма для приватного вопроса */}
-				{currPrivacyBtn && (
+				{/* {currPrivacyBtn && (
 					<div className={`filters__button filters__private ${currPrivacyBtn ? 'active' : false}`}>
 						<input type='text' required placeholder='@nickname' />
 					</div>
-				)}
+				)} */}
 			</div>
 
 			{/* Кнопка для отправки вопроса */}
