@@ -51,7 +51,8 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 		// Проверяем, выбран ли хотя бы один тег
 		const selectedTags = filtersItems
 			.filter((item) => item.active)
-			.map((item) => (item.label === 'Other' ? otherTag : item.label));
+			.map((item) => (item.label === 'Other' ? otherTag : item.label))
+			.map((tag) => tag.charAt(0).toUpperCase() + tag.slice(1)); // Преобразуем первую букву в верхний регистр
 
 		if (selectedTags.length === 0 || (selectedTags.includes('') && filtersItems[10].active)) {
 			// alert('Please select at least one tag.');
@@ -62,7 +63,6 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 		}
 
 		if (isSubmitting) return;
-
 		setIsSubmitting(true);
 
 		// Создаем payload для отправки на сервер
@@ -155,9 +155,8 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 					{/* Кнокпа публичных вопросов */}
 					<button
 						type='button'
-						className={`ask-page__privacy-button ask-page__public-button ${
-							!currPrivacyBtn ? 'active' : ''
-						}`}
+						className={`ask-page__privacy-button ask-page__public-button ${!currPrivacyBtn ? 'active' : ''
+							}`}
 						onClick={() => setPrivacyBtn(false)}
 					>
 						Public
@@ -166,9 +165,8 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 					{/* Кнокпа приватных вопросов */}
 					<button
 						type='button'
-						className={`ask-page__privacy-button ask-page__private-button ${
-							currPrivacyBtn ? 'active' : ''
-						}`}
+						className={`ask-page__privacy-button ask-page__private-button ${currPrivacyBtn ? 'active' : ''
+							}`}
 						onClick={() => setPrivacyBtn(true)}
 					>
 						Private

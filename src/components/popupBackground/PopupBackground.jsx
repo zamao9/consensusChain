@@ -3,9 +3,10 @@ import ReportPopup from '../reportPopup/ReportPopup';
 import { CloseIcon, SuccessIcon } from '../../constants/SvgIcons';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
-import { useAppSelector } from '../../hooks/store';
+import { useAppDispatch, useAppSelector } from '../../hooks/store';
 import { selectUserId } from '../../feature/profile/profileSelector';
 import { selectSelectedQuestion } from '../../feature/questions/questionsSelector';
+import { updateQuestion } from '../../feature/questions/questionsSlice';
 
 const PopupBackground = ({
 	setPopup,
@@ -14,8 +15,8 @@ const PopupBackground = ({
 	popupSource,
 	setPopupSource,
 	setPopupText,
-	setAnswer,
 }) => {
+	const dispatch = useAppDispatch();
 	const userId = useAppSelector(selectUserId);
 	const variants = {
 		hidden: { opacity: 0 }, // Начальное состояние (скрыто)
@@ -57,12 +58,22 @@ const PopupBackground = ({
 					'Your answer has been successfully submitted. It may take up to 24 hours to review your response. You will receive a notification once the review process is complete.'
 				);
 				setPopupSource('success'); // переключает попап на success
-				setAnswer(true);
-				setQuestionText(''); // очищает текстовое поле
+				setQuestionText('');
+				dispatch(
+					updateQuestion({
+						question_id: questionsItem.question_id,
+						updates: {
+							answered: true,
+						},
+					})
+				);
+
+				// очищает текстовое поле
 			} else {
 				throw new Error('Failed to submit the answer.');
 			}
 		} catch (error) {
+			console.log(error)
 			setPopup(true);
 			setPopupText('An error occurred while submitting your answer. Please try again later.');
 			setPopupSource('error');
@@ -88,7 +99,10 @@ const PopupBackground = ({
 						<button
 							type='button'
 							className='popup-background__close'
-							onClick={() => setPopup(false)}
+							onClick={() => {
+								setPopup(false)
+								setPopupSource("cancel")
+							}}
 						>
 							<CloseIcon />
 						</button>

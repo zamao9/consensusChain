@@ -3,38 +3,57 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks/store';
 import { DislikeIcon, LikeIcon, ProfileIcon } from '../../constants/SvgIcons';
 import QuestionsItem from '../questionsPage/questionsItem/QuestionsItem';
-import { setComments, toggleDislike, toggleLike } from '../../feature/comments/commentsSlice';
+import {
+	setComments,
+	toggleDislike,
+	toggleLike,
+} from '../../feature/comments/commentsSlice';
 import { selectCommentsByQuestionId } from '../../feature/comments/commentsSelector';
 import { selectUserId } from '../../feature/profile/profileSelector';
-import { selectSelectedQuestion } from '../../feature/questions/questionsSelector';
+import {
+	selectNotAnsweredQuestion,
+	selectSelectedQuestion,
+} from '../../feature/questions/questionsSelector';
+import { updateQuestion } from '../../feature/questions/questionsSlice';
 
 const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 	const dispatch = useAppDispatch();
 	const userId = useAppSelector(selectUserId);
-	const questionsItem = useAppSelector(selectSelectedQuestion);
-	const questionId = questionsItem?.question_id || null;
-	const [position, setPosition] = useState({ x: 0, y: 0, rotation: 0 });
-	const [isDragging, setIsDragging] = useState(false);
-	const [nextCommentVisible, setNextCommentVisible] = useState(false);
+	const questionItem = useAppSelector(selectSelectedQuestion);
+	const nextQuestion = useAppSelector(selectNotAnsweredQuestion); // Следующий неотвеченный вопрос
+	const [questionsItem, setQuestionsItem] = useState(questionItem);
 	const [currentIndex, setCurrentIndex] = useState(0);
+	const [nextCommentVisible, setNextCommentVisible] = useState(false);
+	console.log(questionsItem)
+	console.log("nextQuestion", nextQuestion)
+	// Получаем ID текущего вопроса
+	const questionId = questionsItem?.question_id || null;
 
-	// Ссылка на текущий элемент
-	const cardRef = useRef(null);
+	// Получаем комментарии для текущего вопроса
+	const comments = useAppSelector(selectCommentsByQuestionId(questionId));
 
+	// Функция для получения комментариев с сервера
 	const getComments = async () => {
+		if (!questionId) {
+			console.warn('No questionId available to fetch comments.');
+			return;
+		}
+
 		try {
 			const response = await fetch(
-				`https://web-production-c0b1.up.railway.app/questions/${questionId}/comments?user_id=5499493097`,
+				`https://web-production-c0b1.up.railway.app/questions/${questionId}/comments?user_id=${userId}`,
 				{
-					method: 'GET', // Используем GET запрос
+					method: 'GET',
 					headers: {
 						'Content-Type': 'application/json',
 					},
 				}
 			);
+
 			if (!response.ok) {
 				throw new Error('Failed to fetch comments');
 			}
+
 			const data = await response.json();
 			dispatch(setComments(data)); // Сохраняем комментарии в состоянии
 		} catch (error) {
@@ -43,12 +62,12 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 		}
 	};
 
+	// Вызываем getComments при изменении questionId
 	useEffect(() => {
-		getComments(); // Получаем комментарии при загрузке▲
+		if (questionId) {
+			getComments(); // Получаем комментарии для нового вопроса
+		}
 	}, [questionId]);
-
-	// Получаем комментарии для конкретного вопроса
-	const comments = useAppSelector(selectCommentsByQuestionId(questionId));
 
 	// Функция для отправки лайка на сервер
 	const likeComment = async (commentId) => {
@@ -74,6 +93,7 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 			alert('Error liking comment');
 		}
 	};
+
 	// Функция для отправки дизлайка на сервер
 	const dislikeComment = async (commentId) => {
 		try {
@@ -98,7 +118,53 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 			alert('Error disliking comment');
 		}
 	};
-	// Обработчики свайпов
+
+	// Обработчик реакций (лайк/дизлайк)
+	const handleReaction = async (reactionType) => {
+		if (!questionsItem) return;
+
+		try {
+			if (reactionType === 'like') {
+				await likeComment(comments[currentIndex]?.commentId);
+
+				// Проверяем, есть ли следующий неотвеченный вопрос
+				if (nextQuestion) {
+					dispatch(
+						updateQuestion({
+							question_id: questionsItem.question_id,
+							updates: {
+								answered: true,
+							},
+						})
+					);
+					setQuestionsItem(nextQuestion); // Обновляем questionsItem на новый вопрос
+				} else {
+					console.warn('No more unanswered questions available.');
+					alert('No more unanswered questions available.');
+				}
+			} else if (reactionType === 'dislike') {
+				await dislikeComment(comments[currentIndex]?.commentId);
+
+				// Переключаемся на следующий комментарий
+				if (currentIndex < comments.length - 1) {
+					setTimeout(() => {
+						setCurrentIndex(currentIndex + 1);
+					}, 300);
+				} else {
+					setCurrentIndex(0); // Возвращаемся к первому комментарию
+				}
+			}
+		} catch (error) {
+			console.error('Error handling reaction:', error);
+			alert('An error occurred while processing your reaction.');
+		}
+	};
+
+	// Логика свайпов
+	const [position, setPosition] = useState({ x: 0, y: 0, rotation: 0 });
+	const [isDragging, setIsDragging] = useState(false);
+	const cardRef = useRef(null);
+
 	const handleDragStart = () => {
 		setIsDragging(true);
 		setNextCommentVisible(true); // Показываем следующий комментарий при начале перетаскивания
@@ -109,39 +175,36 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 	const handleDragMove = (e) => {
 		if (!isDragging) return;
 
-		// Получаем координаты мыши или тача
 		const clientX = e.touches ? e.touches[0].clientX : e.clientX;
 		const rect = cardRef.current.getBoundingClientRect();
-		const centerX = rect.left + rect.width / 2; // Центр карточки по оси X
-		const offsetX = clientX - centerX; // Смещение относительно центра
+		const centerX = rect.left + rect.width / 2;
+		const offsetX = clientX - centerX;
 
-		// Добавляем "мертвую зону"
+		// Определяем направление движения
+		const direction = offsetX > 0 ? 'right' : 'left';
+
+		// Логика сглаживания и анимации
 		const deadZone = 20;
 		let adjustedOffsetX = offsetX;
 		if (Math.abs(offsetX) < deadZone) {
 			adjustedOffsetX = 0;
 		}
 
-		// Ограничиваем угол поворота
 		const maxRotation = 15;
 		const targetRotation = Math.min(Math.max(adjustedOffsetX / 10, -maxRotation), maxRotation);
-
-		// Ограничиваем смещение по оси X
 		const maxOffsetX = 500;
 		const targetOffsetX = Math.min(Math.max(adjustedOffsetX, -maxOffsetX), maxOffsetX);
 
-		// Применяем сглаживание
-		const smoothedX = lerp(position.x, targetOffsetX, 0.2); // 0.2 — коэффициент сглаживания
+		const smoothedX = lerp(position.x, targetOffsetX, 0.2);
 		const smoothedRotation = lerp(position.rotation, targetRotation, 0.2);
 
 		setPosition({ x: smoothedX, y: 0, rotation: smoothedRotation });
 	};
 
-	// Обработчик окончания перетаскивания
 	const handleDragEnd = () => {
 		if (!isDragging) return;
 
-		// Активируем действие, если смещение превышает порог
+		// Логика завершения перетаскивания
 		const threshold = 100;
 		if (position.x > threshold) {
 			dislikeComment(comments[currentIndex].commentId);
@@ -149,15 +212,13 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 			likeComment(comments[currentIndex].commentId);
 		}
 
-		// Сбрасываем состояние
 		setPosition({ x: 0, y: 0, rotation: 0 });
 		setIsDragging(false);
 
-		// Переход к следующему комментарию
 		if (currentIndex < comments.length - 1) {
 			setTimeout(() => {
 				setCurrentIndex(currentIndex + 1);
-				setNextCommentVisible(false); // Скрываем следующий комментарий после завершения анимации
+				setNextCommentVisible(false);
 			}, 300);
 		} else {
 			setCurrentIndex(0);
@@ -167,20 +228,19 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 
 	return (
 		<div className='comments-page'>
-			{/* Комментарии */}
+			{/* Отображение текущего вопроса */}
 			<QuestionsItem
 				questionItem={questionsItem}
 				comments={'comments-page'}
 				setPopup={setPopup}
 				setPopupText={setPopupText}
 				setPopupSource={setPopupSource}
-				answer={questionsItem.answered}
+				answer={questionsItem?.answered}
 				isCurrentElement={true}
 			/>
 
 			{/* Обертка свайпа ответов */}
 			<div className='answers-block'>
-				{/* Верхний ответ */}
 				<div
 					className='answers mt--16'
 					ref={cardRef}
@@ -194,36 +254,34 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 					onTouchMove={handleDragMove}
 					onTouchEnd={handleDragEnd}
 				>
-					{comments.length > 0 ? (
+					{comments.length > 0 && comments !== null ? (
 						<>
 							{/* Обертка данных ответа */}
 							<div className='comment-card'>
 								{/* Текст ответа */}
-								<h2 className='answers__title lh--140 mb--16'>{comments[currentIndex].text}</h2>
+								<h2 className='answers__title lh--140 mb--16'>
+									{comments[currentIndex].text}
+								</h2>
 
 								{/* Реакции на ответ */}
 								<div className='reactions-counter mb--32'>
-									{/* Обертка Лайк / Дизлайк */}
+									{/* Лайк */}
 									<div
-										className={`reactions-counter__icon-wrapper ${
-											comments[currentIndex].likedByUser ? 'active' : ''
-										}`}
+										className={`reactions-counter__icon-wrapper ${comments[currentIndex].likedByUser ? 'active' : ''
+											}`}
 									>
 										<LikeIcon />
-
-										{/* Счетчик Лайка */}
-										<span className='reactions-counter__count'>{comments[currentIndex].likes}</span>
+										<span className='reactions-counter__count'>
+											{comments[currentIndex].likes}
+										</span>
 									</div>
 
-									{/* Обертка Лайк / Дизлайк */}
+									{/* Дизлайк */}
 									<div
-										className={`reactions-counter__icon-wrapper ${
-											comments[currentIndex].dislikedByUser ? 'active' : ''
-										}`}
+										className={`reactions-counter__icon-wrapper ${comments[currentIndex].dislikedByUser ? 'active' : ''
+											}`}
 									>
 										<DislikeIcon />
-
-										{/* Счетчик Лайка */}
 										<span className='reactions-counter__count'>
 											{comments[currentIndex].dislikes}
 										</span>
@@ -232,14 +290,13 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 									{/* Профиль ответчика */}
 									<div className='user reactions-counter__user'>
 										<ProfileIcon />
-										<span className='user__name'>{questionsItem.user_name}</span>
+										<span className='user__name'>{questionsItem?.user_name}</span>
 									</div>
 								</div>
 							</div>
 
-							{/* Кнопки для десктопной версии */}
+							{/* Кнопки реакций */}
 							<div className='reactions'>
-								{/* Кнопки лайка */}
 								<button
 									type='button'
 									className='reactions__button'
@@ -247,8 +304,6 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 								>
 									<LikeIcon />
 								</button>
-
-								{/* Кнопки дизлайка */}
 								<button
 									type='button'
 									className='reactions__button'
@@ -265,13 +320,10 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 
 				{/* Нижний ответ */}
 				{nextCommentVisible && currentIndex < comments.length - 1 && (
-					<div
-						className='answers answers__next-comment-card'
-						style={{
-							opacity: nextCommentVisible ? 1 : 0,
-						}}
-					>
-						<h2 className='answers__title lh--140 mb--16'>{comments[currentIndex + 1]?.text}</h2>
+					<div className='answers answers__next-comment-card'>
+						<h2 className='answers__title lh--140 mb--16'>
+							{comments[currentIndex + 1]?.text}
+						</h2>
 						<div className='reactions-counter mb--32'>
 							<div className='reactions-counter__icon-wrapper'>
 								<LikeIcon />
@@ -287,7 +339,7 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 							</div>
 							<div className='user reactions-counter__user'>
 								<ProfileIcon />
-								<span className='user__name'>{questionsItem.user_name}</span>
+								<span className='user__name'>{questionsItem?.user_name}</span>
 							</div>
 						</div>
 					</div>

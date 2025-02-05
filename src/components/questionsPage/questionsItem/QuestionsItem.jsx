@@ -13,6 +13,7 @@ import { ClipLoader } from 'react-spinners';
 import { selectUserId } from '../../../feature/profile/profileSelector';
 import { selectSelectedQuestion } from '../../../feature/questions/questionsSelector';
 import CountUp from 'react-countup';
+import { selectPopupSource } from '../../../feature/userInterface/userIntarfaceSelector';
 
 const QuestionsItem = ({
 	questionItem,
@@ -20,7 +21,6 @@ const QuestionsItem = ({
 	setPopup,
 	setPopupText,
 	setPopupSource,
-	answer,
 	setPage,
 	setItem,
 	isCurrentElement,
@@ -29,6 +29,9 @@ const QuestionsItem = ({
 	const userId = useAppSelector(selectUserId);
 	const [isProcessing, setIsProcessing] = useState(false);
 	const selectedQuestion = useAppSelector(selectSelectedQuestion);
+	const popupSource = useAppSelector(selectPopupSource);
+
+	//console.log(popupSource)
 
 	// Обновляем локальное состояние при изменении вопроса или флага isCurrentElement
 	useEffect(() => {
@@ -42,6 +45,8 @@ const QuestionsItem = ({
 	const [questionsItem, setQuestionsItem] = useState(
 		isCurrentElement ? selectedQuestion : questionItem
 	);
+
+	const answer = questionsItem.answered;
 
 	const [startValue, setStartValue] = useState(0);
 	const [endValue, setEndValue] = useState(questionsItem.likeCount);
@@ -61,10 +66,28 @@ const QuestionsItem = ({
 	// Функция для отправки запроса на лайк или дизлайк
 	const handleLike = async () => {
 		if (isProcessing) return;
-		setIsProcessing(true);
+
+		// Определяем новое состояние лайка
 		const likeStatus = !questionsItem.like;
 		const updatedLikeCount = likeStatus ? questionsItem.likeCount + 1 : questionsItem.likeCount - 1;
+
+		// Сразу обновляем состояние клиента
+		dispatch(
+			updateQuestion({
+				question_id: questionsItem.question_id,
+				updates: {
+					like: likeStatus,
+					likeCount: updatedLikeCount,
+				},
+			})
+		);
+		setQuestionsItem((prev) => ({ ...prev, like: likeStatus, likeCount: updatedLikeCount }));
+
+		// Устанавливаем флаг обработки
+		setIsProcessing(true);
+
 		try {
+			// Отправляем запрос на сервер
 			const response = await fetch(
 				`https://web-production-c0b1.up.railway.app/questions/${questionsItem.question_id.toString()}/like`,
 				{
@@ -77,32 +100,83 @@ const QuestionsItem = ({
 					},
 				}
 			);
-			if (response.ok) {
-				dispatch(
-					updateQuestion({
-						question_id: questionsItem.question_id,
-						updates: {
-							like: likeStatus,
-							likeCount: updatedLikeCount,
-						},
-					})
-				);
-				setQuestionsItem((prev) => ({ ...prev, like: likeStatus, likeCount: updatedLikeCount }));
-			} else {
+
+			// Если сервер вернул ошибку, возвращаем предыдущее состояние
+			if (!response.ok) {
 				throw new Error('Failed to like the question');
 			}
 		} catch (error) {
 			console.error('Error liking question:', error);
+
+			// Откатываем изменения в состоянии клиента
+			const revertedLikeStatus = !likeStatus;
+			const revertedLikeCount = revertedLikeStatus
+				? questionsItem.likeCount + 1
+				: questionsItem.likeCount - 1;
+
+			dispatch(
+				updateQuestion({
+					question_id: questionsItem.question_id,
+					updates: {
+						like: revertedLikeStatus,
+						likeCount: revertedLikeCount,
+					},
+				})
+			);
+			setQuestionsItem((prev) => ({ ...prev, like: revertedLikeStatus, likeCount: revertedLikeCount }));
+
+			// Показываем сообщение об ошибке
+			setPopup(true);
+			setPopupText('An error occurred while processing your like. Please try again.');
+			setPopupSource('error');
 		} finally {
+			// Снимаем флаг обработки
 			setIsProcessing(false);
 		}
 	};
 
-	// Функция для отправки запроса на репорт
+	const [resolvePromise, setResolvePromise] = useState(null); // Для управления Promise
+	const [rejectPromise, setRejectPromise] = useState(null);
+
+	useEffect(() => {
+		console.log('useEffect: popupSource changed to:', popupSource);
+
+		// Если есть активный Promise и popupSource изменился, завершаем его
+		if (resolvePromise && popupSource === 'success') {
+			console.log('useEffect: Resolving promise because popupSource is "success".');
+			resolvePromise();
+			setResolvePromise(null);
+			setRejectPromise(null);
+		} else if (rejectPromise && popupSource === 'cancel') {
+			console.log('useEffect: Rejecting promise because popupSource is "cancel".');
+			rejectPromise(new Error('Report canceled'));
+			setResolvePromise(null);
+			setRejectPromise(null);
+		}
+	}, [popupSource, resolvePromise, rejectPromise]);
+
 	const handleReport = async () => {
-		if (isProcessing) return;
+		if (isProcessing) {
+			console.log('handleReport: isProcessing is already true. Exiting...');
+			return;
+		}
+
+		console.log('handleReport: Setting isProcessing to true...');
 		setIsProcessing(true);
+
 		try {
+			console.log('handleReport: Showing popup and setting popupSource to "report-page"');
+			dispatch(setPopup(true));
+			dispatch(setPopupText('')); // Очищаем текст ошибки
+			dispatch(setPopupSource('report-page'));
+
+			console.log('handleReport: Waiting for popupSource confirmation...');
+			await new Promise((resolve, reject) => {
+				setResolvePromise(() => resolve);
+				setRejectPromise(() => reject);
+			});
+
+			console.log('handleReport: Sending request to the server...');
 			const response = await fetch(
 				`https://web-production-c0b1.up.railway.app/questions/${questionsItem.question_id.toString()}/report`,
 				{
@@ -115,32 +189,64 @@ const QuestionsItem = ({
 					},
 				}
 			);
-			if (response.ok) {
-				dispatch(
-					updateQuestion({
-						question_id: questionsItem.question_id,
-						updates: { report: !questionsItem.report },
-					})
-				);
-				setQuestionsItem((prev) => ({ ...prev, report: !prev.report }));
-				setPopup(true);
-				setPopupText('Your report has been successfully sent.');
-				setPopupSource('report-page');
-			} else {
+
+			if (!response.ok) {
+				console.log('handleReport: Server returned an error. Throwing exception...');
 				throw new Error('Failed to report the question');
 			}
+
+			console.log('handleReport: Updating client state...');
+			dispatch(
+				updateQuestion({
+					question_id: questionsItem.question_id,
+					updates: { report: true },
+				})
+			);
+			dispatch(setQuestionsItem({ ...questionsItem, report: true }));
+
+			console.log('handleReport: Setting success message...');
+			dispatch(setPopupText('Your report has been successfully sent.'));
+			dispatch(setPopupSource('success'));
 		} catch (error) {
-			console.error('Error reporting question:', error);
+			console.error('handleReport: Error occurred:', error.message);
+
+			if (error.message === 'Report canceled') {
+				console.log('handleReport: Report was canceled. Setting cancel message...');
+				dispatch(setPopupText('Report canceled.'));
+			} else {
+				console.log('handleReport: Setting error message...');
+				dispatch(setPopupText('An error occurred while processing your report. Please try again.'));
+			}
+
+			dispatch(setPopupSource('error'));
+			setIsProcessing(false); // Сбрасываем флаг при ошибке
+			console.log('handleReport: isProcessing set to false in catch block.');
 		} finally {
+			console.log('handleReport: Finally block reached. Ensuring isProcessing is false...');
 			setIsProcessing(false);
 		}
 	};
-
 	// Функция для отправки запроса на отслеживание вопроса
 	const handleTrace = async () => {
 		if (isProcessing) return;
+
+		// Определяем новое состояние отслеживания
+		const traceStatus = !questionsItem.trace;
+
+		// Сразу обновляем состояние клиента
+		dispatch(
+			updateQuestion({
+				question_id: questionsItem.question_id,
+				updates: { trace: traceStatus },
+			})
+		);
+		setQuestionsItem((prev) => ({ ...prev, trace: traceStatus }));
+
+		// Устанавливаем флаг обработки
 		setIsProcessing(true);
+
 		try {
+			// Отправляем запрос на сервер
 			const response = await fetch(
 				`https://web-production-c0b1.up.railway.app/questions/${questionsItem.question_id.toString()}/trace`,
 				{
@@ -153,20 +259,29 @@ const QuestionsItem = ({
 					},
 				}
 			);
-			if (response.ok) {
-				dispatch(
-					updateQuestion({
-						question_id: questionsItem.question_id,
-						updates: { trace: !questionsItem.trace },
-					})
-				);
-				setQuestionsItem((prev) => ({ ...prev, trace: !prev.trace }));
-			} else {
+
+			// Если сервер вернул ошибку, возвращаем предыдущее состояние
+			if (!response.ok) {
 				throw new Error('Failed to trace the question');
 			}
 		} catch (error) {
 			console.error('Error tracing question:', error);
+
+			// Откатываем изменения в состоянии клиента
+			dispatch(
+				updateQuestion({
+					question_id: questionsItem.question_id,
+					updates: { trace: !traceStatus },
+				})
+			);
+			setQuestionsItem((prev) => ({ ...prev, trace: !traceStatus }));
+
+			// Показываем сообщение об ошибке
+			setPopup(true);
+			setPopupText('An error occurred while processing your trace request. Please try again.');
+			setPopupSource('error');
 		} finally {
+			// Снимаем флаг обработки
 			setIsProcessing(false);
 		}
 	};
@@ -177,9 +292,8 @@ const QuestionsItem = ({
 		<li className='questions-page__item'>
 			{comments === 'questions-page' && (
 				<div
-					className={`button questions-page__button questions-page__popular ${
-						questionsItem.popular === false ? 'none' : ''
-					}`}
+					className={`button questions-page__button questions-page__popular ${questionsItem.popular === false ? 'none' : ''
+						}`}
 				>
 					<StarIcon />
 				</div>
@@ -202,9 +316,8 @@ const QuestionsItem = ({
 				<div className='questions-page__buttons'>
 					<button
 						type='button'
-						className={`button questions-page__button questions-page__report ${
-							questionsItem.report ? 'active' : ''
-						}`}
+						className={`button questions-page__button questions-page__report ${questionsItem.report ? 'active' : ''
+							}`}
 						onClick={handleReport}
 						disabled={questionsItem.report}
 					>
@@ -212,9 +325,8 @@ const QuestionsItem = ({
 					</button>
 					<button
 						type='button'
-						className={`button questions-page__button questions-page__trace ${
-							questionsItem.trace ? 'active' : ''
-						}`}
+						className={`button questions-page__button questions-page__trace ${questionsItem.trace ? 'active' : ''
+							}`}
 						onClick={handleTrace}
 					>
 						<NotificationIcon />
@@ -222,9 +334,8 @@ const QuestionsItem = ({
 					<div className='questions-page__like-wrapper'>
 						<button
 							type='button'
-							className={`button questions-page__button questions-page__like ${
-								questionsItem.like ? 'active' : ''
-							}`}
+							className={`button questions-page__button questions-page__like ${questionsItem.like ? 'active' : ''
+								}`}
 							onClick={handleLike}
 						>
 							<LikeIcon />
@@ -275,6 +386,7 @@ const QuestionsItem = ({
 							setPopup(true);
 							setPopupText('Your reply was successfully sent.');
 							setPopupSource('answer');
+
 						}}
 					>
 						Answer

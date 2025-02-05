@@ -6,6 +6,7 @@ import commentsReducer from './feature/comments/commentsSlice';
 import profileReducer from './feature/profile/profileSlice';
 import achievementsReducer from './feature/achievements/achievementsSlice';
 import tasksReducer from './feature/tasks/tasksSlice';
+import userInterfaceReducer from './feature/userInterface/userInterfaceSlice';
 
 export const store = configureStore({
 	reducer: {
@@ -15,5 +16,6 @@ export const store = configureStore({
 		profile: profileReducer,
 		achievements: achievementsReducer,
 		tasks: tasksReducer,
+		userInterface: userInterfaceReducer,
 	},
 });

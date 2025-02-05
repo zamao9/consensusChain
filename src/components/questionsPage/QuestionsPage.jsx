@@ -25,6 +25,7 @@ const QuestionsPage = ({
 	setPopupText,
 	currSubmitBtn,
 	setPopupSource,
+	popupSource,
 }) => {
 	const dispatch = useAppDispatch();
 	const userId = useAppSelector(selectUserId);
@@ -132,6 +133,7 @@ const QuestionsPage = ({
 								setPopupText={setPopupText}
 								setPopupSource={setPopupSource}
 								currSubmitBtn={currSubmitBtn}
+								popupSource={popupSource}
 							/>
 						))}
 					</ul>

@@ -25,6 +25,24 @@ import {
 	setRegistrationDate,
 } from '../../feature/profile/profileSlice';
 
+import {
+	selectCurItem,
+	selectCurPage,
+	selectPopup,
+	selectTab,
+	selectPopupText,
+	selectPopupSource,
+} from '../../feature/userInterface/userIntarfaceSelector';
+import {
+	setCurItem,
+	setCurPage,
+	setPopup,
+	setTab,
+	setPopupText,
+	setPopupSource,
+} from '../../feature/userInterface/userInterfaceSlice';
+
+
 const AppScreen = () => {
 	const dispatch = useAppDispatch();
 	const [userData, setUserData] = useState(null);
@@ -127,14 +145,15 @@ const AppScreen = () => {
 		return <div>{error}</div>; // Отображаем ошибки, если они есть
 	}
 
-	const [curItem, setItem] = useState('ask-page'); // активный элемент навигации
-	const [curPage, setPage] = useState('ask-page'); // активная страница
-	const [popup, setPopup] = useState(false); // активация Popup
-	const [tab, setTab] = useState('first'); // табы
+	// Получаем состояние из Redux
+	const curItem = useAppSelector(selectCurItem);
+	const curPage = useAppSelector(selectCurPage);
+	const popup = useAppSelector(selectPopup);
+	const tab = useAppSelector(selectTab);
+	const popupText = useAppSelector(selectPopupText);
+	const popupSource = useAppSelector(selectPopupSource);
 	const [popupSvg, setPopupSvg] = useState(''); // svg в Popup
-	const [popupText, setPopupText] = useState(''); // текст в Popup
-	const [popupSource, setPopupSource] = useState(null);
-	const [answer, setAnswer] = useState(false);
+
 
 	useEffect(() => {
 		if (popup) {
@@ -143,11 +162,17 @@ const AppScreen = () => {
 			document.body.classList.remove('no-scroll');
 		}
 	}, [popup]);
+	//console.log(popupSource)
 
 	return (
 		<>
 			{/* HEADER */}
-			<Header curItem={curItem} setItem={setItem} setPage={setPage} setTab={setTab} />
+			<Header
+				curItem={curItem}
+				setItem={(item) => dispatch(setCurItem(item))}
+				setPage={(page) => dispatch(setCurPage(page))}
+				setTab={(tab) => dispatch(setTab(tab))}
+			/>
 
 			{/* SECTION */}
 			<main className='section'>
@@ -157,42 +182,38 @@ const AppScreen = () => {
 				{/* CONTAINER */}
 				<div className='container'>
 					{/* POPUP */}
-					{popup === true && (
+					{popup && (
 						<PopupBackground
-							setPopup={setPopup}
-							popupSvg={popupSvg}
+							setPopup={(value) => dispatch(setPopup(value))}
 							popupText={popupText}
-							setPopupText={setPopupText}
+							setPopupText={(text) => dispatch(setPopupText(text))}
 							popupSource={popupSource}
-							setPopupSource={setPopupSource}
-							setAnswer={setAnswer}
+							setPopupSource={(source) => dispatch(setPopupSource(source))}
 						/>
 					)}
 
-					{/*  PRELOADER */}
+					{/* PRELOADER */}
 					{curPage === 'preloader' && (
-						<Preloader
-							isVisible={true}
-							color='#FF5733'
-							size={60}
-							message='Please wait, fetching data...'
-						/>
+						<Preloader isVisible={true} color='#FF5733' size={60} message='Please wait, fetching data...' />
 					)}
 
 					{/* NOTIFICATIONS */}
 					{curPage === 'notifications-page' && (
 						<NotificationsPage
-							popup={popup}
-							setPopup={setPopup}
-							setPopupSvg={setPopupSvg}
-							setPopupText={setPopupText}
-							setPopupSource={setPopupSource}
+							setPopup={(value) => dispatch(setPopup(value))}
+							setPopupText={(text) => dispatch(setPopupText(text))}
+							setPopupSource={(source) => dispatch(setPopupSource(source))}
 						/>
 					)}
 
 					{/* PROFILE */}
 					{curPage === 'profile-page' && (
-						<ProfilePage tab={tab} setTab={setTab} setPage={setPage} setItem={setItem} />
+						<ProfilePage
+							tab={tab}
+							setTab={(tab) => dispatch(setTab(tab))}
+							setPage={(page) => dispatch(setCurPage(page))}
+							setItem={(item) => dispatch(setCurItem(item))}
+						/>
 					)}
 
 					{/* REPLIES SENT */}
@@ -201,29 +222,30 @@ const AppScreen = () => {
 					{/* ASK */}
 					{curPage === 'ask-page' && (
 						<AskPage
-							setPopup={setPopup}
-							setPopupText={setPopupText}
-							setPopupSource={setPopupSource}
+							setPopup={(value) => dispatch(setPopup(value))}
+							setPopupText={(text) => dispatch(setPopupText(text))}
+							setPopupSource={(source) => dispatch(setPopupSource(source))}
 						/>
 					)}
 
 					{/* QUESTIONS-PAGE */}
 					{curPage === 'questions-page' && (
 						<QuestionsPage
-							setPage={setPage}
-							setItem={setItem}
-							setPopup={setPopup}
-							setPopupText={setPopupText}
-							setPopupSource={setPopupSource}
+							setPage={(page) => dispatch(setCurPage(page))}
+							setItem={(item) => dispatch(setCurItem(item))}
+							setPopup={(value) => dispatch(setPopup(value))}
+							setPopupText={(text) => dispatch(setPopupText(text))}
+							setPopupSource={(source) => dispatch(setPopupSource(source))}
+							popupSource={popupSource}
 						/>
 					)}
 
 					{/* COMMENTS */}
 					{curPage === 'comments-page' && (
 						<CommentsPage
-							setPopup={setPopup}
-							setPopupText={setPopupText}
-							setPopupSource={setPopupSource}
+							setPopup={(value) => dispatch(setPopup(value))}
+							setPopupText={(text) => dispatch(setPopupText(text))}
+							setPopupSource={(source) => dispatch(setPopupSource(source))}
 						/>
 					)}
 
@@ -233,7 +255,11 @@ const AppScreen = () => {
 			</main>
 
 			{/* FOOTER */}
-			<Footer curItem={curItem} setItem={setItem} setPage={setPage} />
+			<Footer
+				curItem={curItem}
+				setItem={(item) => dispatch(setCurItem(item))}
+				setPage={(page) => dispatch(setCurPage(page))}
+			/>
 		</>
 	);
 };

@@ -1,11 +1,7 @@
 import { createSelector } from 'reselect';
 
-// Базовый селектор для получения ветки состояния, где хранятся вопросы
-// Это "точка входа" для более сложных селекторов
 const selectquestions = (state) => state.questions;
 
-// Селектор для получения всех вопросов из состояния
-// Если данных нет, возвращается пустой массив
 export const selectQuestions = createSelector(
 	[selectquestions], // Входной селектор
 	(questions) => {
@@ -28,22 +24,35 @@ export const selectSelectedQuestion = createSelector(
 	}
 );
 
-// Селектор для получения текущей страницы
-// Извлекает значение currentPage из ветки состояния questions
+export const selectNotAnsweredQuestion = createSelector(
+	[selectQuestions], // Входной селектор
+	(questions) => {
+		if (!Array.isArray(questions)) {
+			console.warn('Questions data is not an array:', questions); // Предупреждение о некорректных данных
+			return null; // Возвращаем null, если данные некорректны
+		}
+
+		// Находим первый вопрос с ответами (commentsCount > 0)
+		const questionWithComments = questions.find((q) => q.commentsCount > 0 && !q.answered);
+		if (questionWithComments) {
+			return questionWithComments;
+		}
+
+		// Если нет вопросов с ответами, возвращаем первый неотвеченный вопрос
+		return questions.find((q) => !q.answered) || null;
+	}
+);
+
 export const selectCurrentPage = createSelector(
 	[selectquestions],
 	(questions) => questions.currentPage
 );
 
-// Селектор для получения количества вопросов на одной странице
-// Извлекает значение questionsPerPage из ветки состояния questions
 export const selectQuestionsPerPage = createSelector(
 	[selectquestions],
 	(questions) => questions.questionsPerPage
 );
 
-// Селектор для вычисления общего количества страниц
-// Делит общее количество вопросов на количество вопросов на странице и округляет в большую сторону
 export const selectTotalPages = createSelector(
 	[selectQuestions, selectQuestionsPerPage], // Использует другие селекторы в качестве входных
 	(questions, questionsPerPage) => {
@@ -55,8 +64,6 @@ export const selectTotalPages = createSelector(
 	}
 );
 
-// Селектор для получения списка вопросов текущей страницы
-// Использует текущую страницу, количество вопросов на странице и весь список вопросов
 export const selectCurrentQuestionPageList = createSelector(
 	[selectQuestions, selectCurrentPage, selectQuestionsPerPage],
 	(questions, currentPage, questionsPerPage) => {
