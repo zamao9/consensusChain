@@ -13,13 +13,13 @@
 	backdrop-filter: blur(10px)
 	-webkit-backdrop-filter: blur(10px)
 
-	/* Popup контэйнер для отступов по бокам */
+	/* Popup container for side padding */
 	&__frame
 		width: 100%
 		max-width: 425px
 		padding: 0 15px
 
-	/* Обертка контента */
+	/* Content Wrapper */
 	&__wrapper
 		position: relative
 		display: flex
@@ -31,7 +31,7 @@
 		background-color: index.$c-bg-900
 		padding: 80px 20px
 
-	/* Кнопка закрытия */
+	/* Popup close button */
 	&__close
 		position: absolute
 		top: 15px
@@ -44,11 +44,11 @@
 		cursor: pointer
 		@include index.link
 
-	/* Заголовок Popup */
+	/* Title */
 	&__title
 		font-weight: 400 !important
 
-	/* Иконка */
+	/* Icon */
 	&__svg
 		width: 100px
 		height: 100px
@@ -65,7 +65,7 @@
 		& svg
 			stroke: index.$c-red
 
-	/* Текст */
+	/* Text */
 	&__text
 		text-align: center
 

@@ -3,14 +3,14 @@
 	max-width: 395px
 	margin: 0 auto
 
-	/* Заголовок и кнопка фильтрации */
+	/* Header and filter button */
 	&__header
 		display: flex
 		align-items: center
 		justify-content: space-between
 		width: 100%
 
-	/* Заголовок */
+	/* Title */
 	&__title
 		color: index.$c-text
 		text-align: left
@@ -21,7 +21,7 @@
 		-webkit-box-orient: vertical
 		transition: 0.2s ease
 
-	/* Обертка кнопки фильтрации */
+	/* Filter Button Wrapper */
 	&__button-wrapper
 		flex-shrink: 0
 		display: flex
@@ -32,12 +32,12 @@
 		width: 56px
 		height: 56px
 
-	/* Кнопка фильтрации */
+	/* Filter Button */
 	&__button
 		width: 40px !important
 		height: 40px !important
 
-	/* Список фильтрации */
+	/* Filter list */
 	.notifications-filter
 		position: absolute
 		z-index: 1
@@ -52,13 +52,13 @@
 		box-shadow: 0 0 10px 4px index.$c-bg-main
 		transition: 0.2s ease
 
-		/* Элемент списка фильтрации */
+		/* Filter list item */
 		&__item
 			display: flex
 			align-items: center
 			justify-content: space-between
 
-		/* Радио кнопка фильтра */
+		/* Radio filter button */
 		.radio
 			position: relative
 			width: 44px
@@ -82,7 +82,7 @@
 				.radio__button
 					left: 20px
 
-	/* Список уведомлений */
+	/* Notification list */
 	&__list
 		position: relative
 		display: grid
@@ -90,7 +90,7 @@
 		& li
 			width: 100%
 
-	/* Элементы списка уведомлений */
+	/* Notification list items */
 	&__item
 		position: relative
 		display: flex
@@ -102,7 +102,7 @@
 		background-color: index.$c-bg-900
 		overflow: hidden
 		transition: 0.2s ease
-		/* Фокус с клавиатуры */
+		/* Keyboard focus */
 		&:focus-visible
 			.notifications-page__title
 				color: index.$c-text-active
@@ -120,7 +120,7 @@
 				color: index.$c-text-disabled
 			.notifications-page__icon
 				@include index.bg-button
-			/* Фокус с клавиатуры */
+			/* Keyboard focus */
 			&.is-read:focus-visible
 				.notifications-page__date-wrapper
 					color: index.$c-text-disabled
@@ -128,7 +128,7 @@
 					& svg
 						stroke: index.$c-text-disabled !important
 
-	/* Обертка даты и времени элемента */
+	/* Wrapping the date and time of the item */
 	&__date-wrapper
 		display: flex
 		align-items: center
@@ -137,7 +137,7 @@
 		color: index.$c-text
 		transition: 0.2s ease
 
-	/* Тип иконки */
+	/* Icon type */
 	&__icon
 		position: absolute
 		top: 0

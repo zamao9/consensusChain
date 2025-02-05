@@ -13,15 +13,14 @@ const PopupBackground = ({ setPopup, popupSvg, popupSource, setPopupSource, setP
 	const dispatch = useAppDispatch();
 	const userId = useAppSelector(selectUserId);
 	const variants = {
-		hidden: { opacity: 0 }, // Начальное состояние (скрыто)
-		visible: { opacity: 1 }, // Конечное состояние (видимо)
+		hidden: { opacity: 0 }, // Initial state (hidden)
+		visible: { opacity: 1 }, // End state (apparently)
 	};
-	const [active, setActive] = useState(true); // активировать попап или нет
+	const [active, setActive] = useState(true); // whether or not to activate the popup
 	const questionsItem = useAppSelector(selectSelectedQuestion);
 	const questionId = questionsItem !== null ? questionsItem.question_id : '0';
 	const [questionText, setQuestionText] = useState('');
 	const popupText = useAppSelector(selectPopupText);
-	console.log(popupText);
 
 	const handleCommentSubmit = async () => {
 		if (!questionText.trim()) {
@@ -53,7 +52,7 @@ const PopupBackground = ({ setPopup, popupSvg, popupSource, setPopupSource, setP
 				setPopupText(
 					'Your answer has been successfully submitted. It may take up to 24 hours to review your response. You will receive a notification once the review process is complete.'
 				);
-				setPopupSource('success'); // переключает попап на success
+				setPopupSource('success'); // switches the popup to success
 				setQuestionText('');
 				dispatch(
 					updateQuestion({
@@ -64,7 +63,7 @@ const PopupBackground = ({ setPopup, popupSvg, popupSource, setPopupSource, setP
 					})
 				);
 
-				// очищает текстовое поле
+				// clears the text field
 			} else {
 				throw new Error('Failed to submit the answer.');
 			}
@@ -78,20 +77,20 @@ const PopupBackground = ({ setPopup, popupSvg, popupSource, setPopupSource, setP
 
 	return (
 		<AnimatePresence>
-			{/* Задний фон Popup */}
+			{/* Background Popup */}
 			<motion.div
 				className='popup-background'
-				initial='hidden' // Начальное состояние
-				animate={active === true ? 'visible' : ''} // Конечное состояние
-				exit='hidden' // Состояние при выходе
+				initial='hidden' // Initial state
+				animate={active === true ? 'visible' : ''} // End state
+				exit='hidden' // Exit status
 				variants={variants}
-				transition={{ duration: 0.2 }} // Время анимации
+				transition={{ duration: 0.2 }} // Animation time
 			>
-				{/* Popup контэйнер для отступов по бокам */}
+				{/* Popup container for side padding */}
 				<div className='popup-background__frame'>
-					{/* Обертка контента */}
+					{/* Content Wrapper */}
 					<div className='popup-background__wrapper'>
-						{/* Кнопка закрытия Popup */}
+						{/* Popup close button */}
 						<button
 							type='button'
 							className='popup-background__close'
@@ -106,12 +105,12 @@ const PopupBackground = ({ setPopup, popupSvg, popupSource, setPopupSource, setP
 						{/* Popup SUCCESS */}
 						{popupSource === 'success' && (
 							<>
-								{/* Иконка */}
+								{/* Icon */}
 								<div className='popup-background__svg popup-background__success mb--10'>
 									<SuccessIcon />
 								</div>
 
-								{/* Текст */}
+								{/* Text */}
 								<p className='lh--140 popup-background__text'>{popupText}</p>
 							</>
 						)}
@@ -119,12 +118,12 @@ const PopupBackground = ({ setPopup, popupSvg, popupSource, setPopupSource, setP
 						{/* Popup ERROR */}
 						{popupSource === 'error' && (
 							<>
-								{/* Иконка */}
+								{/* Icon */}
 								<div className='popup-background__svg popup-background__error mb--10'>
 									<CloseIcon />
 								</div>
 
-								{/* Текст */}
+								{/* Text */}
 								<p className='lh--140 popup-background__text'>{popupText}</p>
 							</>
 						)}
@@ -132,15 +131,15 @@ const PopupBackground = ({ setPopup, popupSvg, popupSource, setPopupSource, setP
 						{/* Popup NOTIFICATIONS */}
 						{popupSource === 'notifications-page' && (
 							<>
-								{/* Иконка */}
+								{/* Icon */}
 								<div className='popup-background__svg popup-background__notifications-svg mb--16 '>
 									{popupSvg}
 								</div>
 
-								{/* Разделительная линия */}
+								{/* Dividing line */}
 								<hr className='mb--22' />
 
-								{/* Текст */}
+								{/* Text */}
 								<p className='lh--140 popup-background__text'>{popupText}</p>
 							</>
 						)}
@@ -148,13 +147,13 @@ const PopupBackground = ({ setPopup, popupSvg, popupSource, setPopupSource, setP
 						{/* Popup COMMENTS */}
 						{popupSource === 'answer' && (
 							<>
-								{/* Заголовок */}
+								{/* Title */}
 								<h2 className='title mb--16 lh--140 popup-background__title'>Your answer</h2>
 
-								{/* Разделительная линия */}
+								{/* Dividing line */}
 								<hr className='mb--16' />
 
-								{/* Текстареа */}
+								{/* Textarea */}
 								<textarea
 									placeholder='. . .'
 									className='text mb--16 lh--140 popup-background__textarea'
@@ -163,7 +162,7 @@ const PopupBackground = ({ setPopup, popupSvg, popupSource, setPopupSource, setP
 									required
 								/>
 
-								{/* Кнопка отправки */}
+								{/* Submit button */}
 								<button type='submit' className='button' onClick={handleCommentSubmit}>
 									Submit
 								</button>

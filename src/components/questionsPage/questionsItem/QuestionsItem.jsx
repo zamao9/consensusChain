@@ -9,7 +9,6 @@ import {
 	StarIcon,
 } from '../../../constants/SvgIcons';
 import { useAppDispatch, useAppSelector } from '../../../hooks/store';
-import { ClipLoader } from 'react-spinners';
 import { selectUserId } from '../../../feature/profile/profileSelector';
 import { selectSelectedQuestion } from '../../../feature/questions/questionsSelector';
 import CountUp from 'react-countup';
@@ -31,14 +30,12 @@ const QuestionsItem = ({
 	const selectedQuestion = useAppSelector(selectSelectedQuestion);
 	const popupSource = useAppSelector(selectPopupSource);
 
-	//console.log(popupSource)
-
-	// Обновляем локальное состояние при изменении вопроса или флага isCurrentElement
+	// Update the local state when a question or flag changes isCurrentElement
 	useEffect(() => {
 		if (isCurrentElement) {
-			setQuestionsItem(selectedQuestion); // Обновляем текущий вопрос
+			setQuestionsItem(selectedQuestion); // Updating the current issue
 		} else {
-			setQuestionsItem(questionItem); // Используем переданный вопрос
+			setQuestionsItem(questionItem); // Let's use the transmitted question
 		}
 	}, [isCurrentElement, selectedQuestion, questionItem]);
 
@@ -50,28 +47,27 @@ const QuestionsItem = ({
 
 	const [startValue, setStartValue] = useState(0);
 	const [endValue, setEndValue] = useState(questionsItem.likeCount);
-	//console.log('startValue = ', startValue, ' endValue = ', endValue);
 
 	useEffect(() => {
 		if (startValue === 0 && endValue === 0) {
-			// Первый рендер: анимация начинается с 0 до текущего значения userBalance
+			// First render: animation starts from 0 to the current userBalance value
 			setEndValue(questionsItem.likeCount);
 		} else {
-			// Последующие обновления: анимация от предыдущего значения до нового
+			// Subsequent updates: animation from the previous value to the new value
 			setStartValue(endValue);
 			setEndValue(questionsItem.likeCount);
 		}
 	}, [questionsItem.likeCount]);
 
-	// Функция для отправки запроса на лайк или дизлайк
+	// Function to send a request for likes or dislikes
 	const handleLike = async () => {
 		if (isProcessing) return;
 
-		// Определяем новое состояние лайка
+		// Determining the new condition of the husky
 		const likeStatus = !questionsItem.like;
 		const updatedLikeCount = likeStatus ? questionsItem.likeCount + 1 : questionsItem.likeCount - 1;
 
-		// Сразу обновляем состояние клиента
+		// Immediately update the state of the client
 		dispatch(
 			updateQuestion({
 				question_id: questionsItem.question_id,
@@ -83,11 +79,11 @@ const QuestionsItem = ({
 		);
 		setQuestionsItem((prev) => ({ ...prev, like: likeStatus, likeCount: updatedLikeCount }));
 
-		// Устанавливаем флаг обработки
+		// Set the processing flag
 		setIsProcessing(true);
 
 		try {
-			// Отправляем запрос на сервер
+			// Send the request to the server
 			const response = await fetch(
 				`https://web-production-c0b1.up.railway.app/questions/${questionsItem.question_id.toString()}/like`,
 				{
@@ -101,14 +97,14 @@ const QuestionsItem = ({
 				}
 			);
 
-			// Если сервер вернул ошибку, возвращаем предыдущее состояние
+			// If the server returned an error, return the previous state
 			if (!response.ok) {
 				throw new Error('Failed to like the question');
 			}
 		} catch (error) {
 			console.error('Error liking question:', error);
 
-			// Откатываем изменения в состоянии клиента
+			// Roll back changes to the client state
 			const revertedLikeStatus = !likeStatus;
 			const revertedLikeCount = revertedLikeStatus
 				? questionsItem.likeCount + 1
@@ -129,30 +125,27 @@ const QuestionsItem = ({
 				likeCount: revertedLikeCount,
 			}));
 
-			// Показываем сообщение об ошибке
+			// Show error message
 			setPopup(true);
 			setPopupText('An error occurred while processing your like. Please try again.');
 			setPopupSource('error');
 		} finally {
-			// Снимаем флаг обработки
+			// Clearing the processing flag
 			setIsProcessing(false);
 		}
 	};
 
-	const [resolvePromise, setResolvePromise] = useState(null); // Для управления Promise
+	const [resolvePromise, setResolvePromise] = useState(null); // To control Promise
 	const [rejectPromise, setRejectPromise] = useState(null);
 
 	useEffect(() => {
-		console.log('useEffect: popupSource changed to:', popupSource);
-
-		// Если есть активный Promise и popupSource изменился, завершаем его
+		// If there is an active Promise and the popupSource has changed, terminate it
 		if (resolvePromise && popupSource === 'success') {
 			console.log('useEffect: Resolving promise because popupSource is "success".');
 			resolvePromise();
 			setResolvePromise(null);
 			setRejectPromise(null);
 		} else if (rejectPromise && popupSource === 'cancel') {
-			console.log('useEffect: Rejecting promise because popupSource is "cancel".');
 			rejectPromise(new Error('Report canceled'));
 			setResolvePromise(null);
 			setRejectPromise(null);
@@ -171,7 +164,7 @@ const QuestionsItem = ({
 		try {
 			console.log('handleReport: Showing popup and setting popupSource to "report-page"');
 			dispatch(setPopup(true));
-			dispatch(setPopupText('')); // Очищаем текст ошибки
+			dispatch(setPopupText('')); // Clearing the error text
 			dispatch(setPopupSource('report-page'));
 
 			console.log('handleReport: Waiting for popupSource confirmation...');
@@ -221,21 +214,21 @@ const QuestionsItem = ({
 			}
 
 			dispatch(setPopupSource('error'));
-			setIsProcessing(false); // Сбрасываем флаг при ошибке
+			setIsProcessing(false); // Reset flag on error
 			console.log('handleReport: isProcessing set to false in catch block.');
 		} finally {
 			console.log('handleReport: Finally block reached. Ensuring isProcessing is false...');
 			setIsProcessing(false);
 		}
 	};
-	// Функция для отправки запроса на отслеживание вопроса
+	// Function for sending a request to track an issue
 	const handleTrace = async () => {
 		if (isProcessing) return;
 
-		// Определяем новое состояние отслеживания
+		// Defining the new tracking state
 		const traceStatus = !questionsItem.trace;
 
-		// Сразу обновляем состояние клиента
+		// Immediately update the state of the client
 		dispatch(
 			updateQuestion({
 				question_id: questionsItem.question_id,
@@ -244,11 +237,11 @@ const QuestionsItem = ({
 		);
 		setQuestionsItem((prev) => ({ ...prev, trace: traceStatus }));
 
-		// Устанавливаем флаг обработки
+		// Set the processing flag
 		setIsProcessing(true);
 
 		try {
-			// Отправляем запрос на сервер
+			// Send the request to the server
 			const response = await fetch(
 				`https://web-production-c0b1.up.railway.app/questions/${questionsItem.question_id.toString()}/trace`,
 				{
@@ -262,14 +255,14 @@ const QuestionsItem = ({
 				}
 			);
 
-			// Если сервер вернул ошибку, возвращаем предыдущее состояние
+			// If the server returned an error, return the previous state
 			if (!response.ok) {
 				throw new Error('Failed to trace the question');
 			}
 		} catch (error) {
 			console.error('Error tracing question:', error);
 
-			// Откатываем изменения в состоянии клиента
+			// Roll back changes to the client state
 			dispatch(
 				updateQuestion({
 					question_id: questionsItem.question_id,
@@ -278,12 +271,12 @@ const QuestionsItem = ({
 			);
 			setQuestionsItem((prev) => ({ ...prev, trace: !traceStatus }));
 
-			// Показываем сообщение об ошибке
+			// Show error message
 			setPopup(true);
 			setPopupText('An error occurred while processing your trace request. Please try again.');
 			setPopupSource('error');
 		} finally {
-			// Снимаем флаг обработки
+			// Clearing the processing flag
 			setIsProcessing(false);
 		}
 	};
@@ -291,8 +284,11 @@ const QuestionsItem = ({
 	const commentsCount = questionsItem.commentsCount;
 
 	return (
+		// Questions item
 		<li className='questions-page__item'>
+			{/* If questions page */}
 			{comments === 'questions-page' && (
+				// Popularity icon
 				<div
 					className={`button questions-page__button questions-page__popular ${
 						questionsItem.popular === false ? 'none' : ''
@@ -301,7 +297,11 @@ const QuestionsItem = ({
 					<StarIcon />
 				</div>
 			)}
+
+			{/* Question title */}
 			<h2 className='title lh--140 questions-page__title'>{questionsItem.title}</h2>
+
+			{/* Tags */}
 			<ul className='tags'>
 				{questionsItem.tags.map((tag, id) => (
 					<li className='tags__item' key={id} id={id}>
@@ -310,14 +310,17 @@ const QuestionsItem = ({
 				))}
 			</ul>
 
-			{/* Автор вопроса */}
+			{/* Question author */}
 			<div className='user questions-page__user'>
 				<ProfileIcon />
 				<span className='user__name'>{questionsItem.user_name}</span>
 			</div>
+
+			{/* Wrapper for Report, Track, Like, Comment and Leave Comment Buttons   */}
 			<div className='questions-page__buttons-wrapper'>
+				{/* Wrapper for Report, Tracking, Likes */}
 				<div className='questions-page__buttons'>
-					{/* Кнопка репорта */}
+					{/* Report button */}
 					<button
 						type='button'
 						className={`button questions-page__button questions-page__report ${
@@ -329,7 +332,7 @@ const QuestionsItem = ({
 						<ReportIcon />
 					</button>
 
-					{/* Кнопка отслеживания */}
+					{/* Tracking button */}
 					<button
 						type='button'
 						className={`button questions-page__button questions-page__trace ${
@@ -340,9 +343,9 @@ const QuestionsItem = ({
 						<NotificationIcon />
 					</button>
 
-					{/* Обертка кнопки лайка и счетчика */}
+					{/* Wrapper of the like and counter button */}
 					<div className='questions-page__like-wrapper'>
-						{/* Кнопка лайка */}
+						{/* Like button */}
 						<button
 							type='button'
 							className={`button questions-page__button questions-page__like ${
@@ -352,6 +355,8 @@ const QuestionsItem = ({
 						>
 							<LikeIcon />
 						</button>
+
+						{/* Likes counter */}
 						<span className='questions-page__like-count'>
 							<CountUp start={startValue} end={endValue} duration={5} delay={0}>
 								{({ countUpRef }) => (
@@ -364,15 +369,14 @@ const QuestionsItem = ({
 					</div>
 				</div>
 
-				{/* Кнопка комментариев */}
+				{/* If comments button */}
 				{comments === 'questions-page' && (
+					// Comment Wrapper
 					<div className='questions-page__wrapper'>
-						{/* Обертка комментариев */}
-
-						{/* Количесвто комментариев */}
+						{/* Comments count */}
 						<span className='questions-page__comments-count'>{commentsCount}</span>
 
-						{/* Кнопка комментариев */}
+						{/* Comments button */}
 						<button
 							type='button'
 							className='button questions-page__button questions-page__button-comments questions-page__comments'
@@ -382,14 +386,14 @@ const QuestionsItem = ({
 								setItem('');
 							}}
 						>
-							{/* Иконка комментариев */}
 							<CommentsIcon />
 						</button>
 					</div>
 				)}
 
-				{/* Кнопка оставить комментарий */}
+				{/* If leave a comment button */}
 				{comments === 'comments-page' && !answer && (
+					// Leave a comment button
 					<button
 						type='button'
 						className='questions-page__button questions-page__leave-a-comment'

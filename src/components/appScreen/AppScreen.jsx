@@ -1,8 +1,8 @@
+import './appScreen.sass';
 import Footer from '../footer/Footer';
 import Header from '../header/Header';
 import Marquees from '../marquees/Marquees';
 import AskPage from '../askPage/AskPage';
-import './appScreen.sass';
 import { useState, useEffect } from 'react';
 import QuestionsPage from '../questionsPage/QuestionsPage';
 import TasksPage from '../tasksPage/TasksPage';
@@ -182,6 +182,7 @@ const AppScreen = () => {
 					{/* POPUP */}
 					{popup && (
 						<PopupBackground
+							popupSvg={popupSvg}
 							setPopup={(value) => dispatch(setPopup(value))}
 							popupText={popupText}
 							setPopupText={(text) => dispatch(setPopupText(text))}
@@ -203,6 +204,7 @@ const AppScreen = () => {
 					{/* NOTIFICATIONS */}
 					{curPage === 'notifications-page' && (
 						<NotificationsPage
+							setPopupSvg={setPopupSvg}
 							setPopup={(value) => dispatch(setPopup(value))}
 							setPopupText={(text) => dispatch(setPopupText(text))}
 							setPopupSource={(source) => dispatch(setPopupSource(source))}

@@ -1,3 +1,4 @@
+import './questionsPage.sass';
 import React, { useState, useEffect } from 'react';
 import {
 	ArrowLeftIcon,
@@ -5,7 +6,6 @@ import {
 	DblArrowLeftIcon,
 	DblArrowRightIcon,
 } from '../../constants/SvgIcons';
-import './questionsPage.sass';
 import QuestionsItem from './questionsItem/QuestionsItem';
 import { useAppDispatch, useAppSelector } from '../../hooks/store';
 import {
@@ -17,23 +17,14 @@ import { setCurrentPage, setQuestions } from '../../feature/questions/questionsS
 import Preloader from '../preloader/Preloader';
 import { selectUserId } from '../../feature/profile/profileSelector';
 
-const QuestionsPage = ({
-	setItem,
-	setPage,
-	setQuestionsItem,
-	setPopup,
-	setPopupText,
-	currSubmitBtn,
-	setPopupSource,
-	popupSource,
-}) => {
+const QuestionsPage = ({ setItem, setPage, setPopup, setPopupText, setPopupSource }) => {
 	const dispatch = useAppDispatch();
 	const userId = useAppSelector(selectUserId);
 	const [isLoading, setIsLoading] = useState(true);
 	const [data, setData] = useState(null);
 	const [tab, setTab] = useState('first');
 
-	// Функция для получения вопросов пользователя
+	// Function for receiving user questions
 	const fetchQuestions = async (userId, allQuestions) => {
 		try {
 			const response = await fetch(
@@ -42,25 +33,23 @@ const QuestionsPage = ({
 			if (!response.ok) throw new Error('Failed to fetch questions');
 			const questions = await response.json();
 
-			//console.log(questions);
-
-			// Устанавливаем вопросы в Redux
+			// Setting up questions in Redux
 			dispatch(setQuestions(questions));
 
-			setData(questions); // Сохраняем вопросы в локальном состоянии
+			setData(questions); // Keeping questions local
 		} catch (error) {
 			console.error('Error fetching questions:', error);
 		} finally {
-			setIsLoading(false); // Заканчиваем загрузку
+			setIsLoading(false); // Finishing the download
 		}
 	};
 
-	// Получаем вопросы при изменении userId
+	// Getting questions when userId changes
 	useEffect(() => {
 		if (userId) {
 			setIsLoading(true);
 			if (tab === 'first') {
-				fetchQuestions(userId, true); // Вызываем функцию для получения вопросов
+				fetchQuestions(userId, true); // Getting questions when userId changes
 			} else if (tab === 'third') {
 				fetchQuestions(userId, false);
 			}
@@ -70,11 +59,11 @@ const QuestionsPage = ({
 		};
 	}, [userId, tab]);
 
-	// Получение данных из хранилища
+	// Retrieving data from storage
 	const currentPage = useAppSelector(selectCurrentPage);
 	const displayedQuestions = useAppSelector(selectCurrentQuestionPageList);
 	const totalPages = useAppSelector(selectTotalPages);
-	// Функции для перехода между страницами
+	// Functions for switching between pages
 	const goToFirstPage = () => dispatch(setCurrentPage(1));
 	const goToLastPage = () => dispatch(setCurrentPage(totalPages));
 	const goToNextPage = () => dispatch(setCurrentPage(Math.min(currentPage + 1, totalPages)));
@@ -92,7 +81,9 @@ const QuestionsPage = ({
 			) : (
 				// Если загрузка завершена (`isLoading` стало false), показываем загруженные данные.
 				<>
+					{/* Tabs */}
 					<ul className='tabs mb--32'>
+						{/* Tabs Item */}
 						<li>
 							<button
 								className={`button tabs__item ${tab === 'first' ? 'active' : ''}`}
@@ -101,6 +92,8 @@ const QuestionsPage = ({
 								All
 							</button>
 						</li>
+
+						{/* Tabs Item */}
 						{/* <li>
 							<button
 								className={`button tabs__item ${tab === 'second' ? 'active' : ''}`}
@@ -109,6 +102,8 @@ const QuestionsPage = ({
 								Private
 							</button>
 						</li> */}
+
+						{/* Tabs Item */}
 						<li>
 							<button
 								className={`button tabs__item ${tab === 'third' ? 'active' : ''}`}
@@ -119,26 +114,25 @@ const QuestionsPage = ({
 						</li>
 					</ul>
 
-					{/* Список вопросов */}
+					{/* List of questions */}
 					<ul className=' mb--32 questions-page__list'>
+						{/* Questions item */}
 						{displayedQuestions.map((element) => (
 							<QuestionsItem
 								questionItem={element}
-								isCurrentElement={false}
-								setPage={setPage}
-								setItem={setItem}
-								key={element.question_id}
 								comments={'questions-page'}
 								setPopup={setPopup}
 								setPopupText={setPopupText}
 								setPopupSource={setPopupSource}
-								currSubmitBtn={currSubmitBtn}
-								popupSource={popupSource}
+								setPage={setPage}
+								setItem={setItem}
+								isCurrentElement={false}
+								key={element.question_id}
 							/>
 						))}
 					</ul>
 
-					{/* Пагинация */}
+					{/* Pagination */}
 					<div className='pagination'>
 						<button
 							className={`pagination__button ${currentPage === 1 ? 'disabled' : ''}`}
@@ -153,7 +147,7 @@ const QuestionsPage = ({
 							<ArrowLeftIcon />
 						</button>
 
-						{/* Счетчик страниц */}
+						{/* Page counter */}
 						<div className='pagination__counter'>
 							{currentPage} / {totalPages}
 						</div>
@@ -173,7 +167,6 @@ const QuestionsPage = ({
 					</div>
 				</>
 			)}
-			{/* Табы */}
 		</div>
 	);
 };

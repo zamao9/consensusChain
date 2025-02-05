@@ -7,7 +7,7 @@ const Marquees = () => {
 		const canvas = canvasRef.current;
 		const ctx = canvas.getContext('2d');
 
-		// Список вопросов
+		// List of questions
 		const questions = [
 			'What are the core goals of Consensus Chain in the next six months?',
 			'How does the token distribution system work within the app?',
@@ -21,82 +21,82 @@ const Marquees = () => {
 			'What future partnerships or integrations are we looking into to enhance the app?',
 		];
 
-		// Получаем цвет фона из CSS
+		// Get background colour from CSS
 		const bgColor = getComputedStyle(document.body).backgroundColor;
 
-		// Настройка размеров холста
+		// Adjusting the canvas size
 		canvas.width = window.innerWidth;
 		canvas.height = window.innerHeight;
 
-		// Параметры анимации
-		const fontSize = 16; // Размер шрифта
-		const rows = Math.floor(canvas.height / fontSize); // Количество строк
+		// Animation parameters
+		const fontSize = 16; // Font size
+		const rows = Math.floor(canvas.height / fontSize); // Number of lines
 
-		// Создаем массив состояний для каждой строки
+		// Create an array of states for each row
 		const rowStates = Array.from({ length: rows }, (_, i) => ({
-			x: canvas.width + Math.random() * canvas.width, // Начальная позиция за пределами экрана
-			y: i, // Фиксированная строка
-			speed: Math.random() + 1, // Случайная скорость для каждой строки
-			text: questions[Math.floor(Math.random() * questions.length)], // Случайный вопрос
-			isActive: true, // Флаг, указывающий, что строка активна
-			nextSpawnTime: 0, // Время, когда можно создать новый текст
+			x: canvas.width + Math.random() * canvas.width, // Starting position outside the screen
+			y: i, // Fixed string
+			speed: Math.random() + 1, // Random speed for each line
+			text: questions[Math.floor(Math.random() * questions.length)], // Random question
+			isActive: true, // Flag indicating that the string is active
+			nextSpawnTime: 0, // Time when you can create a new text
 		}));
 
-		// Функция отрисовки
+		// Drawing function
 		const draw = () => {
-			// Добавляем полупрозрачный фон для эффекта "следа"
-			ctx.fillStyle = bgColor; // Используем цвет фона страницы
+			// Add a semi-transparent background for the ‘footprint’ effect
+			ctx.fillStyle = bgColor; // Use the background colour of the page
 			ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-			// Отрисовываем вопросы
+			// Drawing questions
 			for (let i = 4; i < (rowStates.length - 3) / 2; i++) {
 				const row = rowStates[i];
 
-				if (!row.isActive) continue; // Пропускаем неактивные строки
+				if (!row.isActive) continue; // Skip inactive lines
 
-				// Рассчитываем позицию
+				// Calculating the position
 				const xPos = row.x;
 				const yPos = row.y * 2 * fontSize;
 
-				// Добавляем эффект мягкости с помощью теней
-				ctx.shadowColor = 'rgba(179, 179, 179, 0.5)'; // Цвет тени
-				ctx.shadowBlur = 2; // Размытие тени
-				ctx.fillStyle = 'rgba(179, 179, 179, 0.1)'; // Полупрозрачный зелёный цвет
+				// Add a soft effect with shadows
+				ctx.shadowColor = 'rgba(179, 179, 179, 0.5)'; // The colour of the shadow
+				ctx.shadowBlur = 2; // Shadow blurring
+				ctx.fillStyle = 'rgba(179, 179, 179, 0.1)'; // Translucent green colour
 				ctx.font = `${fontSize}px montserrat`;
 				ctx.fillText(row.text, xPos, yPos);
-				ctx.shadowBlur = 0; // Сбрасываем тень после отрисовки
+				ctx.shadowBlur = 0; // Resetting the shadow after rendering
 
-				// Обновляем позицию
-				row.x -= row.speed; // Движение справа налево
+				// Updating the position
+				row.x -= row.speed; // Right-to-left traffic
 
-				// Если текст полностью выходит за пределы экрана
+				// If the text goes completely off the screen
 				if (xPos + ctx.measureText(row.text).width < 0) {
-					row.isActive = false; // Отмечаем строку как неактивную
-					row.nextSpawnTime = Date.now() + Math.random(); // Задержка перед появлением нового текста
+					row.isActive = false; // Mark the line as inactive
+					row.nextSpawnTime = Date.now() + Math.random(); // Delay before new text appears
 				}
 			}
 
-			// Проверяем, можно ли создать новый текст в свободных строках
+			// Check if it is possible to create new text in free lines
 			const now = Date.now();
 			for (let i = 0; i < rowStates.length; i++) {
 				const row = rowStates[i];
 				if (!row.isActive && now >= row.nextSpawnTime) {
-					row.x = canvas.width + ctx.measureText(row.text).width; // За пределами экрана
-					row.text = questions[Math.floor(Math.random() * questions.length)]; // Новый случайный вопрос
-					row.speed = Math.random() + 1; // Новая случайная скорость
-					row.isActive = true; // Активируем строку
+					row.x = canvas.width + ctx.measureText(row.text).width; // Off-screen.
+					row.text = questions[Math.floor(Math.random() * questions.length)]; // A new random question
+					row.speed = Math.random() + 1; // New random speed
+					row.isActive = true; // Activate the line
 				}
 			}
 		};
 
-		// Анимация
+		// Animation
 		const animate = () => {
 			draw();
 			requestAnimationFrame(animate);
 		};
 		animate();
 
-		// Очистка при размонтировании
+		// Cleaning during unmounting
 		return () => cancelAnimationFrame(animate);
 	}, []);
 
@@ -109,8 +109,8 @@ const Marquees = () => {
 				left: 0,
 				width: '100%',
 				height: '100%',
-				zIndex: -1, // Размещаем за основным контентом
-				pointerEvents: 'none', // Делаем холст невзаимодействуемым
+				zIndex: -1,
+				pointerEvents: 'none',
 			}}
 		/>
 	);

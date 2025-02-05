@@ -1,4 +1,4 @@
-import { link } from 'framer-motion/client';
+import './repliesSentPage.sass';
 import {
 	ArrowLeftIcon,
 	ArrowRightIcon,
@@ -7,14 +7,13 @@ import {
 	DislikeIcon,
 	LikeIcon,
 } from '../../constants/SvgIcons';
-import './repliesSentPage.sass';
 import { useAppSelector } from '../../hooks/store';
 import { selectCurrentPage } from '../../feature/questions/questionsSelector';
 
 const RepliesSentPage = () => {
 	const currentPage = useAppSelector(selectCurrentPage);
 
-	// структура отправленных ответов
+	// sent response structure
 	const RepliesSentData = [
 		{
 			id: 1,
@@ -47,32 +46,35 @@ const RepliesSentPage = () => {
 
 	return (
 		<div className='replies-sent-page'>
+			{/* Title of sent replies */}
 			<h2 className='title mb--22'>Replies Sent</h2>
-			{/* Список элементов отправленных ответов */}
+
+			{/* List of sent reply items */}
 			<ul className='replies-sent-page__list mb--32'>
-				{/* Элементы списка отправленных ответов */}
+				{/* Items in the list of sent replies */}
 				{RepliesSentData.map((element) => (
 					<li className='replies-sent-page__item' key={element.id}>
-						{/* Текст элементов */}
+						{/* Element Text */}
 						<p className='lh--140 replies-sent-page__text'>{element.text}</p>
 
-						{/* Обертка Реакций, Ссылки */}
+						{/* Wrapper for Reactions, Links */}
 						<div className='replies-sent-page__footer'>
-							{/* Обертка Реакций */}
+							{/* Wrapper for Reactions */}
 							<div className='replies-sent-page__reactions'>
-								{/* Реакция */}
+								{/* Reactions */}
 								<div className='replies-sent-page__reaction'>
 									<LikeIcon />
 									<span>{element.likes}</span>
 								</div>
-								{/* Реакция */}
+
+								{/* Reactions */}
 								<div className='replies-sent-page__reaction'>
 									<DislikeIcon />
 									<span>{element.dislikes}</span>
 								</div>
 							</div>
 
-							{/* Ссылка */}
+							{/* Link */}
 							<button className='replies-sent-page__link' onClick={element.link}>
 								Go to
 							</button>
@@ -81,7 +83,7 @@ const RepliesSentPage = () => {
 				))}
 			</ul>
 
-			{/* Пагинация */}
+			{/* Pagination */}
 			<div className='pagination'>
 				<button
 					className={`pagination__button ${currentPage === 1 ? 'disabled' : ''}`}
@@ -96,7 +98,7 @@ const RepliesSentPage = () => {
 					<ArrowLeftIcon />
 				</button>
 
-				{/* Счетчик страниц */}
+				{/* Page counter */}
 				<div className='pagination__counter'>1 / 3</div>
 
 				<button className={`pagination__button `} onClick={() => console.log('next')}>

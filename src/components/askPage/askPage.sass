@@ -7,21 +7,11 @@
 	max-width: 395px
 	margin: 0 auto
 
-	&__button-wrapper
-		width: 100%
-		padding: 8px
-		@include index.border15
-		background-color: index.$c-bg-900
-		@media (any-hover:hover)
-
-	&__button
-		@media (any-hover:hover)
-			&:hover
-				@include index.button-hover
-
+	/* Title */
 	&__title
 		width: 100%
 
+	/* Wrapper for Filters */
 	.filters
 		display: flex
 		flex-direction: column
@@ -31,6 +21,7 @@
 		@include index.border15
 		background-color: index.$c-bg-900
 
+		/* Filters list */
 		&__list
 			display: flex
 			flex-wrap: wrap
@@ -39,6 +30,7 @@
 		& li
 			flex-grow: 1
 
+		/* Filters Item */
 		&__item
 			width: 100%
 			padding: 8px
@@ -53,7 +45,8 @@
 			&.active
 				@include index.button-active
 
-		&__button
+		/* Entry field */
+		&__input
 			width: 100%
 			&:focus
 				outline: 1px solid index.$c-stroke
@@ -77,15 +70,18 @@
 				&:not(:placeholder-shown)
 					outline: 1px solid index.$c-stroke
 
+		/* Private entry field */
 		&__private
 			& input
 				padding-right: 40px
 
+	/* Privacy buttons */
 	&__privacy-buttons
 		display: flex
 		align-items: center
 		gap: 8px
 
+	/* Public questions button */
 	&__privacy-button
 		display: flex
 		align-items: center
@@ -101,6 +97,20 @@
 		cursor: pointer
 		&.active
 			@include index.button-active
+
+	/* Wrapper for send aquestion button */
+	&__button-wrapper
+		width: 100%
+		padding: 8px
+		@include index.border15
+		background-color: index.$c-bg-900
+		@media (any-hover:hover)
+
+	/* Button to send a question */
+	&__button
+		@media (any-hover:hover)
+			&:hover
+				@include index.button-hover
 
 /* Hover */
 @media (any-hover:hover)

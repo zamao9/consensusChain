@@ -6,16 +6,17 @@ import { useAppSelector } from '../../hooks/store';
 import { selectUserBalance } from '../../feature/profile/profileSelector';
 
 const Header = ({ curItem, setItem, setPage, setTab }) => {
-	const userBalance = useAppSelector(selectUserBalance); // Получаем значение баланса через селектор
+	// get balance by selector
+	const userBalance = useAppSelector(selectUserBalance);
 	const [startValue, setStartValue] = useState(0);
 	const [endValue, setEndValue] = useState(userBalance);
 
 	useEffect(() => {
 		if (startValue === 0 && endValue === 0) {
-			// Первый рендер: анимация начинается с 0 до текущего значения userBalance
+			// First render: animation begin from 0 to current  текущего value userBalance
 			setEndValue(userBalance);
 		} else {
-			// Последующие обновления: анимация от предыдущего значения до нового
+			// Subsequent updates: animation from the previous value to the new value
 			setStartValue(endValue);
 			setEndValue(userBalance);
 		}
@@ -23,13 +24,13 @@ const Header = ({ curItem, setItem, setPage, setTab }) => {
 
 	return (
 		<header className='header'>
-			{/* Лого */}
+			{/* Logo */}
 			<div className='header__logo'>
 				<Logo />
 			</div>
-			{/* Обертка Баланса, Уведомлений, Профиля */}
+			{/*  Wrapper for Balance, Notifications, Profile */}
 			<div className='header__profile'>
-				{/* Баланс */}
+				{/* Balance */}
 				<div className='balance'>
 					<span>
 						<CountUp start={startValue} end={endValue} duration={2} delay={0} suffix=' CT'>
@@ -42,9 +43,9 @@ const Header = ({ curItem, setItem, setPage, setTab }) => {
 					</span>
 				</div>
 
-				{/* Обертка Уведомлений, Профиля */}
+				{/* Wrapper for Notifications, Profile */}
 				<div className='header__buttons'>
-					{/* Кнопка уведомлений */}
+					{/* Button for Notifications */}
 					<button
 						className={`header__button header-item1 ${
 							curItem === 'notifications-page' ? 'active' : ''
@@ -57,7 +58,7 @@ const Header = ({ curItem, setItem, setPage, setTab }) => {
 						<NotificationIcon />
 					</button>
 
-					{/* Кнопка профиля */}
+					{/* Button for Profile */}
 					<button
 						className={`header__button header-item2 ${curItem === 'profile-page' ? 'active' : ''}`}
 						onClick={() => {

@@ -4,13 +4,13 @@ import { CSSTransition } from 'react-transition-group';
 import ClipLoader from 'react-spinners/ClipLoader';
 
 const Preloader = ({ isVisible, color = '#CECECE', size = 60, message = 'Loading...' }) => {
-	// Блокируем скролл при монтировании и разблокируем при размонтировании
+	// Lock the scroll when mounting and unlock when unmounting
 	useEffect(() => {
 		if (isVisible) {
-			document.body.classList.add('no-scroll'); // Блокируем скролл
+			document.body.classList.add('no-scroll'); // Blocking the scroll
 		}
 		return () => {
-			document.body.classList.remove('no-scroll'); // Разблокируем скролл
+			document.body.classList.remove('no-scroll'); // Unlocking the scroll
 		};
 	}, [isVisible]);
 

@@ -18,13 +18,13 @@ import { setNotificationList, markAsRead } from '../../feature/notifications/not
 import { selectAllNotifications } from '../../feature/notifications/notificationsSelector';
 import Preloader from '../preloader/Preloader';
 
-const NotificationsPage = ({ popup, setPopup, setPopupSvg, setPopupText, setPopupSource }) => {
+const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource }) => {
 	const dispatch = useAppDispatch();
 	const userId = useAppSelector(selectUserId);
 	const [isLoading, setIsLoading] = useState(true);
 	const [curItem, setItem] = useState(false);
-	const [currentPage, setCurrentPage] = useState(1); // Текущая страница
-	const [itemsPerPage] = useState(3); // Количество элементов на странице
+	const [currentPage, setCurrentPage] = useState(1); // Current page
+	const [itemsPerPage] = useState(3); // Number of elements on the page
 
 	const [radio, setRadio] = useState([
 		{ key: 1, type: 'trace', text: 'Trace notices', status: true },
@@ -33,7 +33,7 @@ const NotificationsPage = ({ popup, setPopup, setPopupSvg, setPopupText, setPopu
 		{ key: 4, type: 'like', text: 'Like notices', status: true },
 	]);
 
-	// Загрузка уведомлений с сервера
+	// Downloading notifications from the server
 	useEffect(() => {
 		const fetchNotifications = async () => {
 			try {
@@ -55,7 +55,7 @@ const NotificationsPage = ({ popup, setPopup, setPopupSvg, setPopupText, setPopu
 		fetchNotifications();
 	}, [dispatch, userId]);
 
-	// Клик на элементы списка уведомлений
+	// Clicking on items in the notification list
 	const updateNotifications = async (id) => {
 		try {
 			const response = await fetch(
@@ -76,7 +76,7 @@ const NotificationsPage = ({ popup, setPopup, setPopupSvg, setPopupText, setPopu
 		}
 	};
 
-	// Радио кнопки клик
+	// Radio click buttons
 	const radioHandler = (key) => {
 		setRadio((prev) =>
 			prev.map((element) =>
@@ -87,7 +87,7 @@ const NotificationsPage = ({ popup, setPopup, setPopupSvg, setPopupText, setPopu
 
 	const notificationsData = useAppSelector(selectAllNotifications);
 
-	// Фильтрация и сортировка уведомлений
+	// Filtering and sorting notifications
 	const filteredNotifications = notificationsData
 		.filter((notification) => {
 			const typeStatus = radio.find((opt) => opt.type === notification.type)?.status;
@@ -95,32 +95,28 @@ const NotificationsPage = ({ popup, setPopup, setPopupSvg, setPopupText, setPopu
 		})
 		.sort((a, b) => (a.isRead ? 1 : -1));
 
-	// Пагинация
+	// Pagination
 	const totalPages = Math.ceil(filteredNotifications.length / itemsPerPage);
 	const indexOfLastItem = currentPage * itemsPerPage;
 	const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 	const currentNotifications = filteredNotifications.slice(indexOfFirstItem, indexOfLastItem);
 
-	// Обработчики пагинации
+	// Pagination handlers
 	const goToFirstPage = () => setCurrentPage(1);
 	const goToPreviousPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
 	const goToNextPage = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));
 	const goToLastPage = () => setCurrentPage(totalPages);
 
-	// При открытой фильтрации запретить скролл
+	// When filtering is open, disallow scrolling
 	useEffect(() => {
-		console.log('popupStatus:', popup);
-		console.log('curItemStatus:', curItem);
 		if (curItem) {
 			document.body.classList.add('no-scroll');
-			console.log('on');
 		} else {
 			document.body.classList.remove('no-scroll');
-			console.log('off');
 		}
 	}, [curItem]);
 
-	const notificationsTime = '18:25'; // заменить
+	const notificationsTime = '18:25'; // substitute
 
 	return (
 		<div className='notifications-page'>
@@ -133,14 +129,14 @@ const NotificationsPage = ({ popup, setPopup, setPopupSvg, setPopupText, setPopu
 				/>
 			) : (
 				<>
-					{/* Заголовок и кнопка фильтрации */}
+					{/* Header and filter button */}
 					<div className='notifications-page__header mb--32'>
-						{/* Заголовок */}
+						{/* Title */}
 						<h2 className='title lh--140 notifications-page__title'>Notifications</h2>
 
-						{/* Обертка кнопки фильтрации */}
+						{/* Filter Button Wrapper */}
 						<div className='notifications-page__button-wrapper'>
-							{/* Кнопка фильтрации */}
+							{/* Filter Button */}
 							<button
 								className={`button notifications-page__button ${curItem ? 'active' : ''}`}
 								onClick={() => setItem(!curItem)}
@@ -150,17 +146,17 @@ const NotificationsPage = ({ popup, setPopup, setPopupSvg, setPopupText, setPopu
 						</div>
 					</div>
 
-					{/* Список фильтрации */}
+					{/* Filter list */}
 					{curItem && (
 						<AnimatePresence>
 							<motion.ul className='notifications-filter'>
-								{/* Элемент списка фильтрации */}
+								{/* Filter list item */}
 								{radio.map((element) => (
 									<li className='notifications-filter__item' key={element.key}>
-										{/* Текст фильтра */}
+										{/* Filter Text */}
 										<span>{element.text}</span>
 
-										{/* Радио кнопка фильтра */}
+										{/* Radio filter button */}
 										<button
 											type='button'
 											className={`radio ${element.status ? 'active' : ''}`}
@@ -174,11 +170,11 @@ const NotificationsPage = ({ popup, setPopup, setPopupSvg, setPopupText, setPopu
 						</AnimatePresence>
 					)}
 
-					{/* Список уведомлений */}
+					{/* Notification list */}
 					<ul className='mb--32 notifications-page__list'>
 						{currentNotifications.map((element) => (
 							<li key={element.id}>
-								{/* Элементы списка уведомлений */}
+								{/* Notification list items */}
 								<button
 									type='button'
 									className={`notifications-page__item ${element.isRead ? 'is-read' : ''}`}
@@ -195,24 +191,24 @@ const NotificationsPage = ({ popup, setPopup, setPopupSvg, setPopupText, setPopu
 										setPopupSource('notifications-page');
 									}}
 								>
-									{/* Текст списка уведомлений */}
+									{/* Notification list text */}
 									<h2 className='title lh--140 fw--400 notifications-page__title'>
 										{element.title}
 									</h2>
 
-									{/* Разделительная линия */}
+									{/* Dividing line */}
 									<hr />
 
-									{/* Обертка даты и времени элемента */}
+									{/* Wrapping the date and time of the item */}
 									<div className='notifications-page__date-wrapper'>
-										{/* Дата элемента */}
+										{/* Date of element */}
 										<span className='notifications-page__date'>{element.createdAt}</span>
 
-										{/* Время элемента */}
+										{/* Element time */}
 										<span className='notifications-page__time'>{notificationsTime}</span>
 									</div>
 
-									{/* Тип иконки */}
+									{/* Icon type */}
 									<div className='notifications-page__icon'>
 										{(element.type === 'system' && <SettingsIcon />) ||
 											(element.type === 'trace' && <CommentsIcon />) ||
@@ -224,7 +220,7 @@ const NotificationsPage = ({ popup, setPopup, setPopupSvg, setPopupText, setPopu
 						))}
 					</ul>
 
-					{/* Пагинация */}
+					{/* Pagination */}
 					<div className='pagination'>
 						<button
 							className={`pagination__button ${currentPage === 1 ? 'disabled' : ''}`}

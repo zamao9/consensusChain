@@ -4,7 +4,7 @@
 	max-width: 416px
 	margin: 0 auto
 
-	/* Обертка Никнейма, Дата регистрации */
+	/* Wrapper Nickname, Registration Dates */
 	.user
 		padding: 14px 20px
 		@include index.border15
@@ -14,7 +14,7 @@
 		flex-direction: column
 		gap: 10px
 
-		/* Никнейм */
+		/* Nickname */
 		&__name
 			display: flex
 			align-items: center
@@ -23,14 +23,14 @@
 				width: 30px
 				height: 30px
 
-	/* Обертка Поддержки, ... */
+	/* Wrapper Support */
 	.links
 		display: flex
 		flex-wrap: wrap
 		gap: 16px
 		width: 100%
 
-		/* Линки */
+		/* Links */
 		&__item
 			display: flex
 			align-items: center
@@ -48,24 +48,24 @@
 			@include index.link
 			border-color: transparent !important
 
-	/* Обертка статистики */
+	/* Statistics Wrapper */
 	.stats
 		padding: 14px 20px
 		@include index.border15
 		background-color: index.$c-bg-900
 
-		/* Список статистики */
+		/* Statistics List */
 		&__list
 			display: flex
 			flex-direction: column
 			gap: 8px
 
-		/* Элемент списка статистики */
+		/* Elements of the list of statistics */
 		&__item
 			display: flex
 			gap: 8px
 
-		/* Данные элементов статистики */
+		/* Data from statistical elements */
 		&__data
 			display: flex
 			align-items: center
@@ -78,6 +78,7 @@
 			border: 1px solid index.$c-stroke
 			line-height: 140%
 
+		/* Link of statistical elements */
 		&__button
 			flex-shrink: 0
 			display: flex
@@ -87,12 +88,12 @@
 			height: 35px
 			@include index.link
 
-	/* Список Ачивок */
+	/* Achievement List */
 	.achievements
 		display: grid
 		gap: 16px
 
-		/* Элемент списка Ачивок */
+		/* Achievements list item */
 		&__item
 			display: flex
 			align-items: center
@@ -104,16 +105,17 @@
 				.achievements__title, .achievements__text
 					color: index.$c-text-disabled
 
-		/* Контент элемента */
+		/* Element content */
 		&__content
 			display: grid
 			gap: 8px
 			width: 100%
 
+		/* Achievement Title */
 		&__title
 			font-weight: 400
 
-		/* Иконка выполненой ачивки */
+		/* Completed Achievement Icon */
 		&__icon
 			flex-shrink: 0
 			display: flex
@@ -124,7 +126,7 @@
 			& svg
 				stroke: index.$c-text-disabled
 
-		/* Прогресс ачивки */
+		/* Achievement Progression */
 		&__progress
 			flex-shrink: 0
 			flex-grow: 1

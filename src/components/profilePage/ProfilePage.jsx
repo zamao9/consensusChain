@@ -1,12 +1,5 @@
-import { useState } from 'react';
 import './profilePage.sass';
-import {
-	ArrowRightIcon,
-	ProfileIcon,
-	SettingsIcon,
-	SuccessIcon,
-	SupportIcon,
-} from '../../constants/SvgIcons';
+import { ArrowRightIcon, ProfileIcon, SuccessIcon, SupportIcon } from '../../constants/SvgIcons';
 import { useAppDispatch, useAppSelector } from '../../hooks/store';
 import {
 	selectAnswersCount,
@@ -17,11 +10,7 @@ import {
 	selectUserName,
 	selectUserRating,
 } from '../../feature/profile/profileSelector';
-import { incrementRating, setName, setRating } from '../../feature/profile/profileSlice';
-import {
-	selectAchievements,
-	selectAchievementsWithProgress,
-} from '../../feature/achievements/achievementsSelector';
+import { selectAchievementsWithProgress } from '../../feature/achievements/achievementsSelector';
 
 const ProfilePage = ({ tab, setTab, setPage, setItem }) => {
 	const dispatch = useAppDispatch();
@@ -29,7 +18,7 @@ const ProfilePage = ({ tab, setTab, setPage, setItem }) => {
 	const profileRegistrationDate = useAppSelector(selectRegistrationDate);
 	const achievementsData = useAppSelector(selectAchievementsWithProgress);
 
-	// Структура Линков
+	// Link structure
 	const linksData = [
 		{
 			key: 1,
@@ -40,7 +29,7 @@ const ProfilePage = ({ tab, setTab, setPage, setItem }) => {
 		},
 	];
 
-	// Структура Статистики
+	// Structure of Statistics
 	const statsData = [
 		{
 			key: 1,
@@ -92,8 +81,9 @@ const ProfilePage = ({ tab, setTab, setPage, setItem }) => {
 
 	return (
 		<div className='profile-page'>
-			{/* Табы */}
+			{/* Tabs */}
 			<ul className='tabs mb--32'>
+				{/* Tabs Item */}
 				<li>
 					<button
 						className={`button tabs__item ${tab === 'first' ? 'active' : ''}`}
@@ -102,6 +92,8 @@ const ProfilePage = ({ tab, setTab, setPage, setItem }) => {
 						Account
 					</button>
 				</li>
+
+				{/* Tabs Item */}
 				<li>
 					<button
 						className={`button tabs__item ${tab === 'second' ? 'active' : ''}`}
@@ -112,26 +104,26 @@ const ProfilePage = ({ tab, setTab, setPage, setItem }) => {
 				</li>
 			</ul>
 
-			{/* Если Таб Account отображать */}
+			{/* If first tab */}
 			{tab === 'first' && (
 				<>
-					{/* Обертка Никнейма, Даты регистрации */}
+					{/* Wrapper Nickname, Registration Dates */}
 					<div className='user mb--16'>
-						{/* Никнейм */}
+						{/* Nickname */}
 						<div className='user__name'>
 							<ProfileIcon />
 							<span className='title fw--400 user__title'>{profileName}</span>
 						</div>
 
-						{/* Дата регистрации */}
+						{/* Registration Dates */}
 						<div>
 							Registered: <span>{profileRegistrationDate}</span>
 						</div>
 					</div>
 
-					{/* Обертка Поддержки, ... */}
+					{/* Wrapper Support */}
 					<ul className='links mb--16'>
-						{/* Линки */}
+						{/* Links */}
 						{linksData.map((element) => (
 							<li className='links__item' key={element.key}>
 								<button className='links__button' onClick={element.handler}>
@@ -141,20 +133,20 @@ const ProfilePage = ({ tab, setTab, setPage, setItem }) => {
 						))}
 					</ul>
 
-					{/* Обертка статистики */}
+					{/* Statistics Wrapper */}
 					<div className='stats'>
-						{/* Список статистики */}
+						{/* Statistics List */}
 						<ul className='stats__list'>
-							{/* Элементы списка статистики */}
+							{/* Elements of the list of statistics */}
 							{statsData.map((element) => (
 								<li className='stats__item' key={element.key}>
-									{/* Данные элементов статистики */}
+									{/* Data from statistical elements */}
 									<div className='stats__data'>
 										<span className='stats__name'>{element.name}</span>
 										<span className='stats__count'>{element.count}</span>
 									</div>
 
-									{/* Линк элементов статистики */}
+									{/* Link of statistical elements */}
 									<button className='stats__button' onClick={element.handler}>
 										{element.svg}
 									</button>
@@ -165,24 +157,27 @@ const ProfilePage = ({ tab, setTab, setPage, setItem }) => {
 				</>
 			)}
 
-			{/* Если Таб Achievements */}
+			{/* If second tab */}
 			{tab === 'second' && (
 				<>
-					{/* Список Ачивок */}
+					{/* Achievement List */}
 					<ul className='achievements'>
-						{/* Элемент списка Ачивок */}
+						{/* Achievements list item */}
 						{achievementsData.map((element) => (
 							<li
 								className={`achievements__item ${element.done === true ? 'done' : ''}`}
 								key={element.id}
 							>
-								{/* Контент элемента*/}
+								{/* Element content*/}
 								<div className='achievements__content'>
+									{/* Achievement Title */}
 									<h2 className='title lh--140 achievements__title'>{element.title}</h2>
+
+									{/* Achievement Text */}
 									<p className='lh--140 achievements__text'>{element.text}</p>
 								</div>
 
-								{/* Иконка выполненой ачивки */}
+								{/* Completed Achievement Icon */}
 								{element.done === true && (
 									<div className='achievements__icon'>
 										<SuccessIcon />

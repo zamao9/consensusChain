@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import './askPage.sass';
+import { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks/store';
 import { selectUserId } from '../../feature/profile/profileSelector';
 
@@ -7,7 +7,7 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 	const dispatch = useAppDispatch();
 	const userId = useAppSelector(selectUserId);
 
-	// Инициализация списка тегов
+	// Initialising the tag list
 	const initialItems = [
 		{ key: 1, label: 'Business', active: false },
 		{ key: 2, label: 'Education', active: false },
@@ -19,23 +19,23 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 		{ key: 8, label: 'Science', active: false },
 		{ key: 9, label: 'Technology', active: false },
 		{ key: 10, label: 'Travel', active: false },
-		{ key: 11, label: 'Other', active: false }, // Тег "Other"
+		{ key: 11, label: 'Other', active: false }, // Tag "Other"
 	];
 
-	// Состояния
+	// States
 	const [filtersItems, setFiltersItems] = useState(initialItems);
 	const [currPrivacyBtn, setPrivacyBtn] = useState(false);
 	const [questionText, setQuestionText] = useState('');
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [otherTag, setOtherTag] = useState(''); // Новый тег "Other"
+	const [otherTag, setOtherTag] = useState(''); // New tag "Other"
 
-	// Обработчик клика по тегу
+	// Tag click handler
 	const handleTagClick = (key) => {
 		setFiltersItems((prevItems) => {
 			const activeCount = prevItems.filter((item) => item.active).length;
 			return prevItems.map((item) => {
 				if (item.key === key) {
-					// Проверяем, можно ли активировать тег
+					// Check if the tag can be activated
 					if (!item.active && activeCount >= 3) return item;
 					return { ...item, active: !item.active };
 				}
@@ -44,15 +44,15 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 		});
 	};
 
-	// Обработчик отправки формы
+	// Form submission handler
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
-		// Проверяем, выбран ли хотя бы один тег
+		// Check if at least one tag is selected
 		const selectedTags = filtersItems
 			.filter((item) => item.active)
 			.map((item) => (item.label === 'Other' ? otherTag : item.label))
-			.map((tag) => tag.charAt(0).toUpperCase() + tag.slice(1)); // Преобразуем первую букву в верхний регистр
+			.map((tag) => tag.charAt(0).toUpperCase() + tag.slice(1)); // Convert the first letter to upper case
 
 		if (selectedTags.length === 0 || (selectedTags.includes('') && filtersItems[10].active)) {
 			// alert('Please select at least one tag.');
@@ -65,10 +65,10 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 		if (isSubmitting) return;
 		setIsSubmitting(true);
 
-		// Создаем payload для отправки на сервер
+		// Create a payload to send to the server
 		const payload = {
 			user_id: userId.toString(),
-			title: questionText, // Изменено поле на title для соответствия API
+			title: questionText, // Changed field to title for API compliance
 			is_private: currPrivacyBtn,
 			tags: selectedTags,
 		};
@@ -82,7 +82,7 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 				},
 			});
 
-			// Проверяем успешность ответа
+			// Checking the success of the answer
 			if (response.ok) {
 				setPopup(true);
 				setPopupText(
@@ -90,30 +90,33 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 				);
 				setPopupSource('success');
 
-				// Сброс полей формы
+				// Resetting form fields
 				setQuestionText('');
 				setFiltersItems(initialItems);
 				setPrivacyBtn(false);
-				setOtherTag(''); // Очищаем поле "Other"
+				setOtherTag(''); // Clearing the field "Other"
 			} else {
 				const errorData = await response.json();
 				throw new Error(errorData.message || 'Failed to submit the question.');
 			}
 		} catch (error) {
-			// Обработка ошибок
+			// Error handling
 			setPopup(true);
 			setPopupText('An error occurred while submitting the question. Please try again.');
 			setPopupSource('error');
 			console.error('Error submitting the question:', error);
 		} finally {
-			// Снимаем флаг отправки
+			// Clear the send flag
 			setIsSubmitting(false);
 		}
 	};
 
 	return (
 		<form onSubmit={handleSubmit} className='ask-page'>
+			{/* Title */}
 			<h2 className='title mb--22 ask-page__title'>Ask your question</h2>
+
+			{/* Textarea */}
 			<textarea
 				placeholder='. . .'
 				className='text mb--22 lh--140 ask-page__textarea'
@@ -121,9 +124,14 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 				value={questionText}
 				onChange={(e) => setQuestionText(e.target.value)}
 			/>
+
+			{/* Title */}
 			<h2 className='title mb--22 ask-page__title'>Filters</h2>
+			{/* Wrapper for Filters */}
 			<div className='filters'>
+				{/* Filters list */}
 				<ul className='filters__list'>
+					{/* Filters Item */}
 					{filtersItems.map((element) => (
 						<li key={element.key}>
 							<button
@@ -135,9 +143,12 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 							</button>
 						</li>
 					))}
-					{/* Показываем текстовое поле, если выбран тег "Other" */}
+
+					{/* Show the text field if the tag is selected "Other" */}
 					{filtersItems[10].active && (
-						<div className='mt--8 filters__button filters__other'>
+						// Tag entry field
+						<div className='mt--8 filters__input filters__other'>
+							{' '}
 							<input
 								type='text'
 								required
@@ -149,10 +160,12 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 					)}
 				</ul>
 
+				{/* Dividing line */}
 				<hr />
 
+				{/* Privacy buttons */}
 				<div className='ask-page__privacy-buttons'>
-					{/* Кнокпа публичных вопросов */}
+					{/* Public questions button */}
 					<button
 						type='button'
 						className={`ask-page__privacy-button ask-page__public-button ${
@@ -163,7 +176,7 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 						Public
 					</button>
 
-					{/* Кнокпа приватных вопросов */}
+					{/* Private questions button */}
 					{/* <button
 						type='button'
 						className={`ask-page__privacy-button ask-page__private-button ${
@@ -175,16 +188,17 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 					</button> */}
 				</div>
 
-				{/* Поле для ввода никнейма для приватного вопроса */}
+				{/* Nickname entry field */}
 				{/* {currPrivacyBtn && (
-					<div className={`filters__button filters__private ${currPrivacyBtn ? 'active' : false}`}>
+					<div className={`filters__input filters__private ${currPrivacyBtn ? 'active' : false}`}>
 						<input type='text' required placeholder='@nickname' />
 					</div>
 				)} */}
 			</div>
 
-			{/* Кнопка для отправки вопроса */}
+			{/* Wrapper for send aquestion button */}
 			<div className='mt--32 ask-page__button-wrapper'>
+				{/* Button to send a question */}
 				<button className='button ask-page__button' type='submit' disabled={isSubmitting}>
 					Submit
 				</button>
