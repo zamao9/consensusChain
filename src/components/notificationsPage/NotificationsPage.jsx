@@ -183,9 +183,9 @@ const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource
 										setPopup(true);
 										setPopupSvg(
 											(element.type === 'system' && <SettingsIcon />) ||
-												(element.type === 'trace' && <CommentsIcon />) ||
-												(element.type === 'report' && <ReportIcon />) ||
-												(element.type === 'like' && <LikeIcon />)
+											(element.type === 'trace' && <CommentsIcon />) ||
+											(element.type === 'report' && <ReportIcon />) ||
+											(element.type === 'like' && <LikeIcon />)
 										);
 										setPopupText(element.description);
 										setPopupSource('notifications-page');
@@ -202,10 +202,10 @@ const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource
 									{/* Wrapping the date and time of the item */}
 									<div className='notifications-page__date-wrapper'>
 										{/* Date of element */}
-										<span className='notifications-page__date'>{element.createdAt}</span>
+										<span className='notifications-page__date'>{element.createdAt.date}</span>
 
 										{/* Element time */}
-										<span className='notifications-page__time'>{notificationsTime}</span>
+										<span className='notifications-page__time'>{element.createdAt.time}</span>
 									</div>
 
 									{/* Icon type */}

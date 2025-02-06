@@ -117,7 +117,7 @@ const QuestionsPage = ({ setItem, setPage, setPopup, setPopupText, setPopupSourc
 					{/* List of questions */}
 					<ul className=' mb--32 questions-page__list'>
 						{/* Questions item */}
-						{displayedQuestions.map((element) => (
+						{displayedQuestions.map((element, index) => (
 							<QuestionsItem
 								questionItem={element}
 								comments={'questions-page'}
@@ -128,6 +128,7 @@ const QuestionsPage = ({ setItem, setPage, setPopup, setPopupText, setPopupSourc
 								setItem={setItem}
 								isCurrentElement={false}
 								key={element.question_id}
+								animationDelay={index * 200} // Pass delay for animation
 							/>
 						))}
 					</ul>

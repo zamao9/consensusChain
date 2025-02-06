@@ -23,12 +23,24 @@ const QuestionsItem = ({
 	setPage,
 	setItem,
 	isCurrentElement,
+	animationDelay,
 }) => {
 	const dispatch = useAppDispatch();
 	const userId = useAppSelector(selectUserId);
-	const [isProcessing, setIsProcessing] = useState(false);
+	const [isProcessingLike, setIsProcessingLike] = useState(false);
+	const [isProcessingTrace, setIsProcessingTrace] = useState(false);
+	const [isProcessingReport, setIsProcessingReport] = useState(false);
 	const selectedQuestion = useAppSelector(selectSelectedQuestion);
 	const popupSource = useAppSelector(selectPopupSource);
+	const [isVisible, setIsVisible] = useState(false);
+	// Trigger visibility after the delay
+	useEffect(() => {
+		const timeoutId = setTimeout(() => {
+			setIsVisible(true);
+		}, animationDelay);
+
+		return () => clearTimeout(timeoutId); // Cleanup timeout
+	}, [animationDelay]);
 
 	// Update the local state when a question or flag changes isCurrentElement
 	useEffect(() => {
@@ -45,23 +57,9 @@ const QuestionsItem = ({
 
 	const answer = questionsItem.answered;
 
-	const [startValue, setStartValue] = useState(0);
-	const [endValue, setEndValue] = useState(questionsItem.likeCount);
-
-	useEffect(() => {
-		if (startValue === 0 && endValue === 0) {
-			// First render: animation starts from 0 to the current userBalance value
-			setEndValue(questionsItem.likeCount);
-		} else {
-			// Subsequent updates: animation from the previous value to the new value
-			setStartValue(endValue);
-			setEndValue(questionsItem.likeCount);
-		}
-	}, [questionsItem.likeCount]);
-
 	// Function to send a request for likes or dislikes
 	const handleLike = async () => {
-		if (isProcessing) return;
+		if (isProcessingLike) return;
 
 		// Determining the new condition of the husky
 		const likeStatus = !questionsItem.like;
@@ -80,7 +78,7 @@ const QuestionsItem = ({
 		setQuestionsItem((prev) => ({ ...prev, like: likeStatus, likeCount: updatedLikeCount }));
 
 		// Set the processing flag
-		setIsProcessing(true);
+		setIsProcessingLike(true);
 
 		try {
 			// Send the request to the server
@@ -131,7 +129,7 @@ const QuestionsItem = ({
 			setPopupSource('error');
 		} finally {
 			// Clearing the processing flag
-			setIsProcessing(false);
+			setIsProcessingLike(false);
 		}
 	};
 
@@ -153,13 +151,13 @@ const QuestionsItem = ({
 	}, [popupSource, resolvePromise, rejectPromise]);
 
 	const handleReport = async () => {
-		if (isProcessing) {
+		if (isProcessingReport) {
 			console.log('handleReport: isProcessing is already true. Exiting...');
 			return;
 		}
 
 		console.log('handleReport: Setting isProcessing to true...');
-		setIsProcessing(true);
+		setIsProcessingTrace(true);
 
 		try {
 			console.log('handleReport: Showing popup and setting popupSource to "report-page"');
@@ -214,16 +212,16 @@ const QuestionsItem = ({
 			}
 
 			dispatch(setPopupSource('error'));
-			setIsProcessing(false); // Reset flag on error
+			setIsProcessingTrace(false); // Reset flag on error
 			console.log('handleReport: isProcessing set to false in catch block.');
 		} finally {
 			console.log('handleReport: Finally block reached. Ensuring isProcessing is false...');
-			setIsProcessing(false);
+			setIsProcessingTrace(false);
 		}
 	};
 	// Function for sending a request to track an issue
 	const handleTrace = async () => {
-		if (isProcessing) return;
+		if (isProcessingTrace) return;
 
 		// Defining the new tracking state
 		const traceStatus = !questionsItem.trace;
@@ -238,7 +236,7 @@ const QuestionsItem = ({
 		setQuestionsItem((prev) => ({ ...prev, trace: traceStatus }));
 
 		// Set the processing flag
-		setIsProcessing(true);
+		setIsProcessingTrace(true);
 
 		try {
 			// Send the request to the server
@@ -277,22 +275,49 @@ const QuestionsItem = ({
 			setPopupSource('error');
 		} finally {
 			// Clearing the processing flag
-			setIsProcessing(false);
+			setIsProcessingTrace(false);
 		}
 	};
 
 	const commentsCount = questionsItem.commentsCount;
+	// Like counter animation
+	const [startValueLike, setStartValueLike] = useState(0);
+	const [endValueLike, setEndValueLike] = useState(questionItem.likeCount);
+
+	useEffect(() => {
+		if (startValueLike === 0 && endValueLike === 0) {
+			setEndValueLike(questionItem.likeCount);
+		} else {
+			setStartValueLike(endValueLike);
+			setEndValueLike(questionItem.likeCount);
+		}
+	}, [questionItem.likeCount]);
+
+	// Comments counter animation
+	const [commentsStartValue, setCommentsStartValue] = useState(0);
+	const [commentsEndValue, setCommentsEndValue] = useState(questionItem.commentsCount);
+
+	useEffect(() => {
+		if (commentsStartValue === 0 && commentsEndValue === 0) {
+			setCommentsEndValue(questionItem.commentsCount);
+		} else {
+			setCommentsStartValue(commentsEndValue);
+			setCommentsEndValue(questionItem.commentsCount);
+		}
+	}, [questionItem.commentsCount]);
 
 	return (
 		// Questions item
-		<li className='questions-page__item'>
+		<li
+			className={`questions-page__item ${isVisible ? 'visible' : ''}`}
+			style={{ transition: 'opacity 0.5s ease-in-out', opacity: isVisible ? 1 : 0 }}
+		>
 			{/* If questions page */}
 			{comments === 'questions-page' && (
 				// Popularity icon
 				<div
-					className={`button questions-page__button questions-page__popular ${
-						questionsItem.popular === false ? 'none' : ''
-					}`}
+					className={`button questions-page__button questions-page__popular ${questionsItem.popular === false ? 'none' : ''
+						}`}
 				>
 					<StarIcon />
 				</div>
@@ -323,9 +348,8 @@ const QuestionsItem = ({
 					{/* Report button */}
 					<button
 						type='button'
-						className={`button questions-page__button questions-page__report ${
-							questionsItem.report ? 'active' : ''
-						}`}
+						className={`button questions-page__button questions-page__report ${questionsItem.report ? 'active' : ''
+							}`}
 						onClick={handleReport}
 						disabled={questionsItem.report}
 					>
@@ -335,9 +359,8 @@ const QuestionsItem = ({
 					{/* Tracking button */}
 					<button
 						type='button'
-						className={`button questions-page__button questions-page__trace ${
-							questionsItem.trace ? 'active' : ''
-						}`}
+						className={`button questions-page__button questions-page__trace ${questionsItem.trace ? 'active' : ''
+							}`}
 						onClick={handleTrace}
 					>
 						<NotificationIcon />
@@ -348,9 +371,8 @@ const QuestionsItem = ({
 						{/* Like button */}
 						<button
 							type='button'
-							className={`button questions-page__button questions-page__like ${
-								questionsItem.like ? 'active' : ''
-							}`}
+							className={`button questions-page__button questions-page__like ${questionsItem.like ? 'active' : ''
+								}`}
 							onClick={handleLike}
 						>
 							<LikeIcon />
@@ -358,12 +380,8 @@ const QuestionsItem = ({
 
 						{/* Likes counter */}
 						<span className='questions-page__like-count'>
-							<CountUp start={startValue} end={endValue} duration={5} delay={0}>
-								{({ countUpRef }) => (
-									<div>
-										<span ref={countUpRef} />
-									</div>
-								)}
+							<CountUp start={startValueLike} end={endValueLike} duration={2} delay={0}>
+								{({ countUpRef }) => <span ref={countUpRef} />}
 							</CountUp>
 						</span>
 					</div>
@@ -374,7 +392,10 @@ const QuestionsItem = ({
 					// Comment Wrapper
 					<div className='questions-page__wrapper'>
 						{/* Comments count */}
-						<span className='questions-page__comments-count'>{commentsCount}</span>
+						<span className='questions-page__comments-count'>
+							<CountUp start={commentsStartValue} end={commentsEndValue} duration={2} delay={0}>
+								{({ countUpRef }) => <span ref={countUpRef} />}
+							</CountUp></span>
 
 						{/* Comments button */}
 						<button
