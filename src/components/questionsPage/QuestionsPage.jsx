@@ -5,6 +5,8 @@ import {
 	ArrowRightIcon,
 	DblArrowLeftIcon,
 	DblArrowRightIcon,
+	FilterIcon,
+	SearchIcon,
 } from '../../constants/SvgIcons';
 import QuestionsItem from './questionsItem/QuestionsItem';
 import { useAppDispatch, useAppSelector } from '../../hooks/store';
@@ -17,12 +19,41 @@ import { setCurrentPage, setQuestions } from '../../feature/questions/questionsS
 import Preloader from '../preloader/Preloader';
 import { selectUserId } from '../../feature/profile/profileSelector';
 
-const QuestionsPage = ({ setItem, setPage, setPopup, setPopupText, setPopupSource }) => {
+const QuestionsPage = ({ curItem, setItem, setPage, setPopup, setPopupText, setPopupSource }) => {
 	const dispatch = useAppDispatch();
 	const userId = useAppSelector(selectUserId);
 	const [isLoading, setIsLoading] = useState(true);
 	const [data, setData] = useState(null);
 	const [tab, setTab] = useState('first');
+	const [filterButton, setFilterButton] = useState(false); // click on filter button
+
+	// Initialising the languages list
+	const initialLanguage = [
+		{
+			id: 1,
+			label: 'English',
+			status: true,
+		},
+		{
+			id: 2,
+			label: 'French',
+			status: false,
+		},
+		{
+			id: 3,
+			label: 'Russian',
+			status: false,
+		},
+	];
+	const [languageFilter, setLanguageFilter] = useState(initialLanguage);
+
+	// Languages click handler
+	const handleLanguageChange = (id) => {
+		const updatedLanguages = languageFilter.map((lang) =>
+			lang.id === id ? { ...lang, status: true } : { ...lang, status: false }
+		);
+		setLanguageFilter(updatedLanguages);
+	};
 
 	// Function for receiving user questions
 	const fetchQuestions = async (userId, allQuestions) => {
@@ -69,6 +100,15 @@ const QuestionsPage = ({ setItem, setPage, setPopup, setPopupText, setPopupSourc
 	const goToNextPage = () => dispatch(setCurrentPage(Math.min(currentPage + 1, totalPages)));
 	const goToPreviousPage = () => dispatch(setCurrentPage(Math.max(currentPage - 1, 1)));
 
+	// When filtering is open, disallow scrolling
+	useEffect(() => {
+		if (filterButton) {
+			document.body.classList.add('no-scroll');
+		} else {
+			document.body.classList.remove('no-scroll');
+		}
+	}, [filterButton]);
+
 	return (
 		<div className='questions-page'>
 			{isLoading ? (
@@ -81,20 +121,22 @@ const QuestionsPage = ({ setItem, setPage, setPopup, setPopupText, setPopupSourc
 			) : (
 				// Если загрузка завершена (`isLoading` стало false), показываем загруженные данные.
 				<>
-					{/* Tabs */}
-					<ul className='tabs mb--32'>
-						{/* Tabs Item */}
-						<li>
-							<button
-								className={`button tabs__item ${tab === 'first' ? 'active' : ''}`}
-								onClick={() => setTab('first')}
-							>
-								All
-							</button>
-						</li>
+					{/* Tabs and Filters wrapper */}
+					<div className='tabs-filter-wrapper mb--32'>
+						{/* Tabs */}
+						<ul className='tabs'>
+							{/* Tabs Item */}
+							<li>
+								<button
+									className={`button tabs__item ${tab === 'first' ? 'active' : ''}`}
+									onClick={() => setTab('first')}
+								>
+									All
+								</button>
+							</li>
 
-						{/* Tabs Item */}
-						{/* <li>
+							{/* Tabs Item */}
+							{/* <li>
 							<button
 								className={`button tabs__item ${tab === 'second' ? 'active' : ''}`}
 								onClick={() => setTab('second')}
@@ -103,16 +145,61 @@ const QuestionsPage = ({ setItem, setPage, setPopup, setPopupText, setPopupSourc
 							</button>
 						</li> */}
 
-						{/* Tabs Item */}
-						<li>
+							{/* Tabs Item */}
+							<li>
+								<button
+									className={`button tabs__item ${tab === 'third' ? 'active' : ''}`}
+									onClick={() => setTab('third')}
+								>
+									Yours
+								</button>
+							</li>
+						</ul>
+
+						{/* Filter button wrapper */}
+						<div className='button-wrapper'>
+							{/* Filter Button */}
 							<button
-								className={`button tabs__item ${tab === 'third' ? 'active' : ''}`}
-								onClick={() => setTab('third')}
+								className={`button button-wrapper__button ${filterButton ? 'active' : ''}`}
+								onClick={() => setFilterButton(!filterButton)}
 							>
-								Yours
+								<FilterIcon />
 							</button>
-						</li>
-					</ul>
+						</div>
+					</div>
+
+					{/* Questions filter wrapper */}
+					{filterButton && (
+						<div className='questions-page__filter'>
+							{/* Search tag input */}
+							<div className='input questions-page__input'>
+								{/* Input */}
+								<input placeholder='Find a tag' type='text' />
+
+								{/* Icon */}
+								<SearchIcon />
+							</div>
+
+							{/* Dividing line */}
+							<hr />
+
+							{/* Languages filter list */}
+							<ul className='language-filter'>
+								{/* Languages filter items */}
+								{languageFilter.map((element) => (
+									<li className='language-filter-item' key={element.id}>
+										<button
+											type='button'
+											className={`filters-item ${element.status ? 'active' : ''}`}
+											onClick={() => handleLanguageChange(element.id)}
+										>
+											{element.label}
+										</button>
+									</li>
+								))}
+							</ul>
+						</div>
+					)}
 
 					{/* List of questions */}
 					<ul className=' mb--32 questions-page__list'>

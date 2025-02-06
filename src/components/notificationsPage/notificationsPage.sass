@@ -24,18 +24,6 @@
 	/* Filter Button Wrapper */
 	&__button-wrapper
 		flex-shrink: 0
-		display: flex
-		align-items: center
-		justify-content: center
-		@include index.border15
-		background-color: index.$c-bg-900
-		width: 56px
-		height: 56px
-
-	/* Filter Button */
-	&__button
-		width: 40px !important
-		height: 40px !important
 
 	/* Filter list */
 	.notifications-filter
@@ -48,8 +36,8 @@
 		width: 280px
 		padding: 28px 20px
 		@include index.border15
+		@include index.shadow
 		background-color: index.$c-bg-900
-		box-shadow: 0 0 10px 4px index.$c-bg-main
 		transition: 0.2s ease
 
 		/* Filter list item */

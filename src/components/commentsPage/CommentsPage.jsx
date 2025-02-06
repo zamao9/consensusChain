@@ -123,7 +123,7 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 		if (!questionsItem && isLoading) return;
 		try {
 			if (reactionType === 'like') {
-				const comentsId = comments[currentIndex]?.commentId
+				const comentsId = comments[currentIndex]?.commentId;
 				if (nextQuestion) {
 					dispatch(
 						updateQuestion({
@@ -203,8 +203,8 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 					? 'right'
 					: 'left'
 				: offsetY > 0
-					? 'down'
-					: 'up';
+				? 'down'
+				: 'up';
 
 		setHoverState({ isDragging: true, direction });
 
@@ -272,7 +272,7 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 					key={questionsItem?.question_id}
 					initial={{ opacity: 0, y: -50 }}
 					animate={{ opacity: 1, y: 0 }}
-					exit={{ opacity: 0, x: 200 }}
+					exit={{ opacity: 0, x: -200 }}
 					transition={{ duration: 0.5 }}
 				>
 					<QuestionsItem
@@ -297,111 +297,122 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 						message='Please wait, fetching data...'
 					/>
 				)}
-				{!isLoading && (<>
-					<div
-						className='answers mt--16'
-						ref={cardRef}
-						style={{
-							transform: `translate(${position.x}px, ${position.y}px) rotate(${position.rotation}deg)`,
-						}}
-						onMouseDown={handleDragStart}
-						onMouseMove={handleDragMove}
-						onMouseUp={handleDragEnd}
-						onTouchStart={handleDragStart}
-						onTouchMove={handleDragMove}
-						onTouchEnd={handleDragEnd}
-					>
-						{comments.length > 0 && comments !== null ? (
-							<>
-								{/* Обертка данных ответа */}
-								<div className='comment-card'>
-									{/* Текст ответа */}
-									<h2 className='answers__title lh--140 mb--16'>{comments[currentIndex].text}</h2>
+				{!isLoading && (
+					<>
+						<div
+							className='answers mt--16'
+							ref={cardRef}
+							style={{
+								transform: `translate(${position.x}px, ${position.y}px) rotate(${position.rotation}deg)`,
+							}}
+							onMouseDown={handleDragStart}
+							onMouseMove={handleDragMove}
+							onMouseUp={handleDragEnd}
+							onTouchStart={handleDragStart}
+							onTouchMove={handleDragMove}
+							onTouchEnd={handleDragEnd}
+						>
+							{comments.length > 0 && comments !== null ? (
+								<>
+									{/* Обертка данных ответа */}
+									<div className='comment-card'>
+										{/* Текст ответа */}
+										<h2 className='answers__title lh--140 mb--16'>{comments[currentIndex].text}</h2>
 
-									{/* Реакции на ответ */}
-									<div className='reactions-counter mb--32'>
-										{/* Лайк */}
-										<div
-											className={`reactions-counter__icon-wrapper ${comments[currentIndex].likedByUser ? 'active' : ''
+										{/* Реакции на ответ */}
+										<div className='reactions-counter mb--32'>
+											{/* Лайк */}
+											<div
+												className={`reactions-counter__icon-wrapper ${
+													comments[currentIndex].likedByUser ? 'active' : ''
 												}`}
-										>
-											<LikeIcon />
-											<span className='reactions-counter__count'>{comments[currentIndex].likes}</span>
-										</div>
+											>
+												<LikeIcon />
+												<span className='reactions-counter__count'>
+													{comments[currentIndex].likes}
+												</span>
+											</div>
 
-										{/* Дизлайк */}
-										<div
-											className={`reactions-counter__icon-wrapper ${comments[currentIndex].dislikedByUser ? 'active' : ''
+											{/* Дизлайк */}
+											<div
+												className={`reactions-counter__icon-wrapper ${
+													comments[currentIndex].dislikedByUser ? 'active' : ''
 												}`}
-										>
-											<DislikeIcon />
-											<span className='reactions-counter__count'>
-												{comments[currentIndex].dislikes}
-											</span>
-										</div>
+											>
+												<DislikeIcon />
+												<span className='reactions-counter__count'>
+													{comments[currentIndex].dislikes}
+												</span>
+											</div>
 
-										{/* Профиль ответчика */}
-										<div className='user reactions-counter__user'>
-											<ProfileIcon />
-											<span className='user__name'>{questionsItem?.user_name}</span>
+											{/* Профиль ответчика */}
+											<div className='user reactions-counter__user'>
+												<ProfileIcon />
+												<span className='user__name'>{questionsItem?.user_name}</span>
+											</div>
 										</div>
 									</div>
-								</div>
 
-								{/* Кнопки реакций */}
-								<div className='reactions'>
-									{/* Кнопка лайка */}
-									<button
-										type='button'
-										className={`reactions__button ${hoverState.isDragging && hoverState.direction === 'left' ? 'like-hover' : ''
+									{/* Кнопки реакций */}
+									<div className='reactions'>
+										{/* Кнопка лайка */}
+										<button
+											type='button'
+											className={`reactions__button ${
+												hoverState.isDragging && hoverState.direction === 'left' ? 'like-hover' : ''
 											}`}
-										onClick={() => handleReaction('like')}
-									>
+											onClick={() => handleReaction('like')}
+										>
+											<LikeIcon />
+										</button>
+
+										{/* Кнопка дизлайка */}
+										<button
+											type='button'
+											className={`reactions__button ${
+												hoverState.isDragging && hoverState.direction === 'right'
+													? 'dislike-hover'
+													: ''
+											}`}
+											onClick={() => handleReaction('dislike')}
+										>
+											<DislikeIcon />
+										</button>
+									</div>
+								</>
+							) : (
+								<p>No comments available for this question.</p>
+							)}
+						</div>
+
+						{/* Нижний ответ */}
+						{nextCommentVisible && currentIndex < comments.length - 1 && (
+							<div className='answers answers__next-comment-card'>
+								<h2 className='answers__title lh--140 mb--16'>
+									{comments[currentIndex + 1]?.text}
+								</h2>
+								<div className='reactions-counter mb--32'>
+									<div className='reactions-counter__icon-wrapper'>
 										<LikeIcon />
-									</button>
-
-									{/* Кнопка дизлайка */}
-									<button
-										type='button'
-										className={`reactions__button ${hoverState.isDragging && hoverState.direction === 'right' ? 'dislike-hover' : ''
-											}`}
-										onClick={() => handleReaction('dislike')}
-									>
+										<span className='reactions-counter__count'>
+											{comments[currentIndex + 1]?.likes}
+										</span>
+									</div>
+									<div className='reactions-counter__icon-wrapper'>
 										<DislikeIcon />
-									</button>
-								</div>
-							</>
-						) : (
-							<p>No comments available for this question.</p>
-						)}
-					</div>
-
-					{/* Нижний ответ */}
-					{nextCommentVisible && currentIndex < comments.length - 1 && (
-						<div className='answers answers__next-comment-card'>
-							<h2 className='answers__title lh--140 mb--16'>{comments[currentIndex + 1]?.text}</h2>
-							<div className='reactions-counter mb--32'>
-								<div className='reactions-counter__icon-wrapper'>
-									<LikeIcon />
-									<span className='reactions-counter__count'>
-										{comments[currentIndex + 1]?.likes}
-									</span>
-								</div>
-								<div className='reactions-counter__icon-wrapper'>
-									<DislikeIcon />
-									<span className='reactions-counter__count'>
-										{comments[currentIndex + 1]?.dislikes}
-									</span>
-								</div>
-								<div className='user reactions-counter__user'>
-									<ProfileIcon />
-									<span className='user__name'>{questionsItem?.user_name}</span>
+										<span className='reactions-counter__count'>
+											{comments[currentIndex + 1]?.dislikes}
+										</span>
+									</div>
+									<div className='user reactions-counter__user'>
+										<ProfileIcon />
+										<span className='user__name'>{questionsItem?.user_name}</span>
+									</div>
 								</div>
 							</div>
-						</div>
-					)}
-				</>)}
-
+						)}
+					</>
+				)}
 			</div>
 		</div>
 	);

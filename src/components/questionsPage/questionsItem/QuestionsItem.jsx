@@ -306,6 +306,8 @@ const QuestionsItem = ({
 		}
 	}, [questionItem.commentsCount]);
 
+	const questionsItemDate = '18.01.2025';
+
 	return (
 		// Questions item
 		<li
@@ -316,8 +318,9 @@ const QuestionsItem = ({
 			{comments === 'questions-page' && (
 				// Popularity icon
 				<div
-					className={`button questions-page__button questions-page__popular ${questionsItem.popular === false ? 'none' : ''
-						}`}
+					className={`button questions-page__button questions-page__popular ${
+						questionsItem.popular === false ? 'none' : ''
+					}`}
 				>
 					<StarIcon />
 				</div>
@@ -335,10 +338,16 @@ const QuestionsItem = ({
 				))}
 			</ul>
 
-			{/* Question author */}
-			<div className='user questions-page__user'>
-				<ProfileIcon />
-				<span className='user__name'>{questionsItem.user_name}</span>
+			{/* Wrapper for Question author, Date */}
+			<div className='user-date-wrapper'>
+				{/* Question author */}
+				<div className='user questions-page__user'>
+					<ProfileIcon />
+					<span className='user__name'>{questionsItem.user_name}</span>
+				</div>
+
+				{/* Questions item date */}
+				<span>{questionsItemDate}</span>
 			</div>
 
 			{/* Wrapper for Report, Track, Like, Comment and Leave Comment Buttons   */}
@@ -348,8 +357,9 @@ const QuestionsItem = ({
 					{/* Report button */}
 					<button
 						type='button'
-						className={`button questions-page__button questions-page__report ${questionsItem.report ? 'active' : ''
-							}`}
+						className={`button questions-page__button questions-page__report ${
+							questionsItem.report ? 'active' : ''
+						}`}
 						onClick={handleReport}
 						disabled={questionsItem.report}
 					>
@@ -359,8 +369,9 @@ const QuestionsItem = ({
 					{/* Tracking button */}
 					<button
 						type='button'
-						className={`button questions-page__button questions-page__trace ${questionsItem.trace ? 'active' : ''
-							}`}
+						className={`button questions-page__button questions-page__trace ${
+							questionsItem.trace ? 'active' : ''
+						}`}
 						onClick={handleTrace}
 					>
 						<NotificationIcon />
@@ -371,8 +382,9 @@ const QuestionsItem = ({
 						{/* Like button */}
 						<button
 							type='button'
-							className={`button questions-page__button questions-page__like ${questionsItem.like ? 'active' : ''
-								}`}
+							className={`button questions-page__button questions-page__like ${
+								questionsItem.like ? 'active' : ''
+							}`}
 							onClick={handleLike}
 						>
 							<LikeIcon />
@@ -395,7 +407,8 @@ const QuestionsItem = ({
 						<span className='questions-page__comments-count'>
 							<CountUp start={commentsStartValue} end={commentsEndValue} duration={2} delay={0}>
 								{({ countUpRef }) => <span ref={countUpRef} />}
-							</CountUp></span>
+							</CountUp>
+						</span>
 
 						{/* Comments button */}
 						<button

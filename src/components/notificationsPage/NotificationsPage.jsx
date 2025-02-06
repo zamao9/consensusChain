@@ -116,8 +116,6 @@ const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource
 		}
 	}, [curItem]);
 
-	const notificationsTime = '18:25'; // substitute
-
 	return (
 		<div className='notifications-page'>
 			{isLoading ? (
@@ -135,10 +133,12 @@ const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource
 						<h2 className='title lh--140 notifications-page__title'>Notifications</h2>
 
 						{/* Filter Button Wrapper */}
-						<div className='notifications-page__button-wrapper'>
+						<div className='button-wrapper notifications-page__button-wrapper'>
 							{/* Filter Button */}
 							<button
-								className={`button notifications-page__button ${curItem ? 'active' : ''}`}
+								className={`button button-wrapper__button notifications-page__button ${
+									curItem ? 'active' : ''
+								}`}
 								onClick={() => setItem(!curItem)}
 							>
 								<FilterIcon />
@@ -183,9 +183,9 @@ const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource
 										setPopup(true);
 										setPopupSvg(
 											(element.type === 'system' && <SettingsIcon />) ||
-											(element.type === 'trace' && <CommentsIcon />) ||
-											(element.type === 'report' && <ReportIcon />) ||
-											(element.type === 'like' && <LikeIcon />)
+												(element.type === 'trace' && <CommentsIcon />) ||
+												(element.type === 'report' && <ReportIcon />) ||
+												(element.type === 'like' && <LikeIcon />)
 										);
 										setPopupText(element.description);
 										setPopupSource('notifications-page');

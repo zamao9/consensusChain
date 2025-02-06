@@ -2,6 +2,7 @@ import './askPage.sass';
 import { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks/store';
 import { selectUserId } from '../../feature/profile/profileSelector';
+import { SearchIcon } from '../../constants/SvgIcons';
 
 const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 	const dispatch = useAppDispatch();
@@ -21,6 +22,27 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 		{ key: 10, label: 'Travel', active: false },
 		{ key: 11, label: 'Other', active: false }, // Tag "Other"
 	];
+
+	// Initialising the languages list
+	const initialLanguage = [
+		{
+			id: 1,
+			label: 'English',
+			status: true,
+		},
+		{
+			id: 2,
+			label: 'French',
+			status: false,
+		},
+		{
+			id: 3,
+			label: 'Russian',
+			status: false,
+		},
+	];
+
+	const [languageFilter, setLanguageFilter] = useState(initialLanguage);
 
 	// States
 	const [filtersItems, setFiltersItems] = useState(initialItems);
@@ -42,6 +64,14 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 				return item;
 			});
 		});
+	};
+
+	// Languages click handler
+	const handleLanguageChange = (id) => {
+		const updatedLanguages = languageFilter.map((lang) =>
+			lang.id === id ? { ...lang, status: true } : { ...lang, status: false }
+		);
+		setLanguageFilter(updatedLanguages);
 	};
 
 	// Form submission handler
@@ -130,13 +160,14 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 			{/* Wrapper for Filters */}
 			<div className='filters'>
 				{/* Filters list */}
+				{/* Filters list */}
 				<ul className='filters__list'>
 					{/* Filters Item */}
 					{filtersItems.map((element) => (
 						<li key={element.key}>
 							<button
 								type='button'
-								className={`filters__item ${element.active ? 'active' : ''}`}
+								className={`filters-item filters__item ${element.active ? 'active' : ''}`}
 								onClick={() => handleTagClick(element.key)}
 							>
 								{element.label}
@@ -147,7 +178,7 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 					{/* Show the text field if the tag is selected "Other" */}
 					{filtersItems[10].active && (
 						// Tag entry field
-						<div className='mt--8 filters__input filters__other'>
+						<div className='input mt--8 filters__other'>
 							{' '}
 							<input
 								type='text'
@@ -158,6 +189,27 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 							/>
 						</div>
 					)}
+				</ul>
+
+				{/* Dividing line */}
+				<hr />
+
+				{/* Languages filter list */}
+				<ul className='language-filter'>
+					{/* Languages filter items */}
+					{languageFilter.map((element) => (
+						<li key={element.id}>
+							<button
+								type='button'
+								className={`filters-item filters__item language-filter__item ${
+									element.status ? 'active' : ''
+								}`}
+								onClick={() => handleLanguageChange(element.id)}
+							>
+								{element.label}
+							</button>
+						</li>
+					))}
 				</ul>
 
 				{/* Dividing line */}
@@ -177,7 +229,7 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 					</button>
 
 					{/* Private questions button */}
-					{/* <button
+					<button
 						type='button'
 						className={`ask-page__privacy-button ask-page__private-button ${
 							currPrivacyBtn ? 'active' : ''
@@ -185,15 +237,16 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 						onClick={() => setPrivacyBtn(true)}
 					>
 						Private
-					</button> */}
+					</button>
 				</div>
 
 				{/* Nickname entry field */}
-				{/* {currPrivacyBtn && (
-					<div className={`filters__input filters__private ${currPrivacyBtn ? 'active' : false}`}>
+				{currPrivacyBtn && (
+					<div className={`input filters__private ${currPrivacyBtn ? 'active' : false}`}>
 						<input type='text' required placeholder='@nickname' />
+						<SearchIcon />
 					</div>
-				)} */}
+				)}
 			</div>
 
 			{/* Wrapper for send aquestion button */}
