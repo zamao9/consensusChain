@@ -595,12 +595,12 @@ async def update_task_status(user_id: int, task_id: int, status: str) -> Dict:
 async def get_notifications(user_id: int, unread_only: bool = True) -> List[Dict]:
     conn = await get_db_connection()
     try:
-        # Проверяем, существует ли пользователь
+        # Check if the user exists
         user = await conn.fetchval("SELECT user_id FROM users WHERE user_id = $1;", user_id)
         if not user:
             return {"error": "User not found"}
 
-        # Определяем запрос для выборки уведомлений
+        # Define the query for fetching notifications
         query = """
         SELECT 
             notification_id, 
@@ -608,17 +608,18 @@ async def get_notifications(user_id: int, unread_only: bool = True) -> List[Dict
             description, 
             type, 
             is_read, 
-            to_char(created_at, 'YYYY.MM.DD HH24:MI') AS formatted_date
+            TO_CHAR(created_at, 'YYYY.MM.DD') AS created_date,
+            TO_CHAR(created_at, 'HH24:MI') AS created_time
         FROM notifications
         WHERE user_id = $1
         """
         if unread_only:
             query += " AND is_read = FALSE"
 
-        # Получаем уведомления из базы данных
+        # Fetch notifications from the database
         notifications = await conn.fetch(query, user_id)
 
-        # Формируем список уведомлений
+        # Format the result list
         result = []
         for notification in notifications:
             result.append({
@@ -627,8 +628,11 @@ async def get_notifications(user_id: int, unread_only: bool = True) -> List[Dict
                 "description": notification["description"],
                 "type": notification["type"],
                 "isRead": notification["is_read"],
-                "animation": False,  # Поле animation всегда false при получении
-                "createdAt": notification["formatted_date"]  # Используем отформатированную дату
+                "animation": False,  # Animation field is always false when fetching
+                "createdAt": {
+                    "date": notification["created_date"],  # Separate date field
+                    "time": notification["created_time"]   # Separate time field
+                }
             })
 
         return result
