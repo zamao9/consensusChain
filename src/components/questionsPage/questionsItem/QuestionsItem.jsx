@@ -378,17 +378,15 @@ const QuestionsItem = ({
 					</button>
 
 					{/* Wrapper of the like and counter button */}
-					<div className='questions-page__like-wrapper'>
+					<button type='button' className='questions-page__like-wrapper' onClick={handleLike}>
 						{/* Like button */}
-						<button
-							type='button'
+						<div
 							className={`button questions-page__button questions-page__like ${
 								questionsItem.like ? 'active' : ''
 							}`}
-							onClick={handleLike}
 						>
 							<LikeIcon />
-						</button>
+						</div>
 
 						{/* Likes counter */}
 						<span className='questions-page__like-count'>
@@ -396,13 +394,21 @@ const QuestionsItem = ({
 								{({ countUpRef }) => <span ref={countUpRef} />}
 							</CountUp>
 						</span>
-					</div>
+					</button>
 				</div>
 
 				{/* If comments button */}
 				{comments === 'questions-page' && (
 					// Comment Wrapper
-					<div className='questions-page__wrapper'>
+					<button
+						type='button'
+						className='questions-page__comments-wrapper'
+						onClick={() => {
+							dispatch(setSelectedQuestionId(questionsItem.question_id));
+							setPage('comments-page');
+							setItem('');
+						}}
+					>
 						{/* Comments count */}
 						<span className='questions-page__comments-count'>
 							<CountUp start={commentsStartValue} end={commentsEndValue} duration={2} delay={0}>
@@ -411,18 +417,10 @@ const QuestionsItem = ({
 						</span>
 
 						{/* Comments button */}
-						<button
-							type='button'
-							className='button questions-page__button questions-page__button-comments questions-page__comments'
-							onClick={() => {
-								dispatch(setSelectedQuestionId(questionsItem.question_id));
-								setPage('comments-page');
-								setItem('');
-							}}
-						>
+						<div className='questions-page__button questions-page__button-comments questions-page__comments'>
 							<CommentsIcon />
-						</button>
-					</div>
+						</div>
+					</button>
 				)}
 
 				{/* If leave a comment button */}

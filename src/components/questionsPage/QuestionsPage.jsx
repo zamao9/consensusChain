@@ -18,6 +18,7 @@ import {
 import { setCurrentPage, setQuestions } from '../../feature/questions/questionsSlice';
 import Preloader from '../preloader/Preloader';
 import { selectUserId } from '../../feature/profile/profileSelector';
+import { AnimatePresence, motion } from 'framer-motion';
 
 const QuestionsPage = ({ curItem, setItem, setPage, setPopup, setPopupText, setPopupSource }) => {
 	const dispatch = useAppDispatch();
@@ -32,7 +33,7 @@ const QuestionsPage = ({ curItem, setItem, setPage, setPopup, setPopupText, setP
 		{
 			id: 1,
 			label: 'English',
-			status: true,
+			status: false,
 		},
 		{
 			id: 2,
@@ -163,42 +164,46 @@ const QuestionsPage = ({ curItem, setItem, setPage, setPopup, setPopupText, setP
 								className={`button button-wrapper__button ${filterButton ? 'active' : ''}`}
 								onClick={() => setFilterButton(!filterButton)}
 							>
-								<FilterIcon />
+								<div className='filter-icon'>
+									<div className='filter-icon__item'></div>
+								</div>
 							</button>
 						</div>
 					</div>
 
 					{/* Questions filter wrapper */}
 					{filterButton && (
-						<div className='questions-page__filter'>
-							{/* Search tag input */}
-							<div className='input questions-page__input'>
-								{/* Input */}
-								<input placeholder='Find a tag' type='text' />
+						<AnimatePresence>
+							<motion.div className='questions-page__filter'>
+								{/* Search tag input */}
+								<div className='input questions-page__input'>
+									{/* Input */}
+									<input placeholder='Find a tag' type='text' />
 
-								{/* Icon */}
-								<SearchIcon />
-							</div>
+									{/* Icon */}
+									<SearchIcon />
+								</div>
 
-							{/* Dividing line */}
-							<hr />
+								{/* Dividing line */}
+								<hr />
 
-							{/* Languages filter list */}
-							<ul className='language-filter'>
-								{/* Languages filter items */}
-								{languageFilter.map((element) => (
-									<li className='language-filter-item' key={element.id}>
-										<button
-											type='button'
-											className={`filters-item ${element.status ? 'active' : ''}`}
-											onClick={() => handleLanguageChange(element.id)}
-										>
-											{element.label}
-										</button>
-									</li>
-								))}
-							</ul>
-						</div>
+								{/* Languages filter list */}
+								<ul className='language-filter'>
+									{/* Languages filter items */}
+									{languageFilter.map((element) => (
+										<li className='language-filter-item' key={element.id}>
+											<button
+												type='button'
+												className={`filters-item ${element.status ? 'active' : ''}`}
+												onClick={() => handleLanguageChange(element.id)}
+											>
+												{element.label}
+											</button>
+										</li>
+									))}
+								</ul>
+							</motion.div>
+						</AnimatePresence>
 					)}
 
 					{/* List of questions */}

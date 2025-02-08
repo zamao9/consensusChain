@@ -25,6 +25,7 @@ const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource
 	const [curItem, setItem] = useState(false);
 	const [currentPage, setCurrentPage] = useState(1); // Current page
 	const [itemsPerPage] = useState(3); // Number of elements on the page
+	const [filterButton, setFilterButton] = useState(false); // click on filter button
 
 	const [radio, setRadio] = useState([
 		{ key: 1, type: 'trace', text: 'Trace notices', status: true },
@@ -137,17 +138,19 @@ const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource
 							{/* Filter Button */}
 							<button
 								className={`button button-wrapper__button notifications-page__button ${
-									curItem ? 'active' : ''
+									filterButton ? 'active' : ''
 								}`}
-								onClick={() => setItem(!curItem)}
+								onClick={() => setFilterButton(!filterButton)}
 							>
-								<FilterIcon />
+								<div className='filter-icon'>
+									<div className='filter-icon__item'></div>
+								</div>
 							</button>
 						</div>
 					</div>
 
 					{/* Filter list */}
-					{curItem && (
+					{filterButton && (
 						<AnimatePresence>
 							<motion.ul className='notifications-filter'>
 								{/* Filter list item */}
