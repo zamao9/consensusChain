@@ -168,7 +168,7 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 	const questionVariants = {
 		initial: { opacity: 0, y: -50 },
 		animate: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-		exit: { opacity: 0, x: 200, transition: { duration: 0.5 } },
+		exit: { opacity: 0, x: -200, transition: { duration: 0.5 } },
 	};
 
 	const [position, setPosition] = useState({ x: 0, y: 0, rotation: 0 });
@@ -205,8 +205,8 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 					? 'right'
 					: 'left'
 				: offsetY > 0
-					? 'down'
-					: 'up';
+				? 'down'
+				: 'up';
 
 		setHoverState({ isDragging: true, direction });
 
@@ -237,7 +237,7 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 
 		setHoverState({ isDragging: false, direction: null });
 
-		const threshold = 100;
+		const threshold = 30;
 
 		if (Math.abs(position.x) > threshold || Math.abs(position.y) > threshold) {
 			if (position.x > threshold) {
@@ -272,9 +272,9 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 			<AnimatePresence mode='wait'>
 				<motion.div
 					key={questionsItem?.question_id}
-					initial="initial"
-					animate="animate"
-					exit="exit"
+					initial='initial'
+					animate='animate'
+					exit='exit'
 					variants={questionVariants}
 				>
 					<QuestionsItem
@@ -325,8 +325,9 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 										<div className='reactions-counter mb--32'>
 											{/* Лайк */}
 											<div
-												className={`reactions-counter__icon-wrapper ${comments[currentIndex].likedByUser ? 'active' : ''
-													}`}
+												className={`reactions-counter__icon-wrapper ${
+													comments[currentIndex].likedByUser ? 'active' : ''
+												}`}
 											>
 												<LikeIcon />
 												<span className='reactions-counter__count'>
@@ -336,8 +337,9 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 
 											{/* Дизлайк */}
 											<div
-												className={`reactions-counter__icon-wrapper ${comments[currentIndex].dislikedByUser ? 'active' : ''
-													}`}
+												className={`reactions-counter__icon-wrapper ${
+													comments[currentIndex].dislikedByUser ? 'active' : ''
+												}`}
 											>
 												<DislikeIcon />
 												<span className='reactions-counter__count'>
@@ -358,8 +360,9 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 										{/* Кнопка лайка */}
 										<button
 											type='button'
-											className={`reactions__button ${hoverState.isDragging && hoverState.direction === 'left' ? 'like-hover' : ''
-												}`}
+											className={`reactions__button ${
+												hoverState.isDragging && hoverState.direction === 'left' ? 'like-hover' : ''
+											}`}
 											onClick={() => handleReaction('like')}
 										>
 											<LikeIcon />
@@ -368,10 +371,11 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 										{/* Кнопка дизлайка */}
 										<button
 											type='button'
-											className={`reactions__button ${hoverState.isDragging && hoverState.direction === 'right'
-												? 'dislike-hover'
-												: ''
-												}`}
+											className={`reactions__button ${
+												hoverState.isDragging && hoverState.direction === 'right'
+													? 'dislike-hover'
+													: ''
+											}`}
 											onClick={() => handleReaction('dislike')}
 										>
 											<DislikeIcon />

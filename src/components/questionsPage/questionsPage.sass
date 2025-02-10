@@ -124,6 +124,13 @@
 		color: index.$c-text
 		box-sizing: content-box
 		transition: 0.2s ease
+		&:focus
+			@include index.link-hover
+			.questions-page__comments-count
+				border-color: transparent !important
+			.questions-page__comments
+				background: transparent !important
+				border-color: transparent !important
 
 	/* Comments count */
 	&__comments-count
@@ -178,13 +185,6 @@
 				@include index.button-hover
 
 		&__comments-wrapper:hover
-			@include index.link-hover
-			.questions-page__comments-count
-				border-color: transparent !important
-			.questions-page__comments
-				background: transparent !important
-				border-color: transparent !important
-		&__comments-wrapper:focus
 			@include index.link-hover
 			.questions-page__comments-count
 				border-color: transparent !important

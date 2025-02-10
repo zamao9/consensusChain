@@ -144,11 +144,11 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 	return (
 		<form onSubmit={handleSubmit} className='ask-page'>
 			{/* Title */}
-			<h2 className='title mb--22 ask-page__title'>Ask your question</h2>
+			{/* <h2 className='title mb--22 ask-page__title'>Ask your question</h2> */}
 
 			{/* Textarea */}
 			<textarea
-				placeholder='. . .'
+				placeholder='Ask your question'
 				className='text mb--22 lh--140 ask-page__textarea'
 				required
 				value={questionText}
@@ -156,7 +156,7 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 			/>
 
 			{/* Title */}
-			<h2 className='title mb--22 ask-page__title'>Filters</h2>
+			{/* <h2 className='title mb--22 ask-page__title'>Filters</h2> */}
 			{/* Wrapper for Filters */}
 			<div className='filters'>
 				{/* Filters list */}
@@ -229,7 +229,7 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 					</button>
 
 					{/* Private questions button */}
-					<button
+					{/* <button
 						type='button'
 						className={`ask-page__privacy-button ask-page__private-button ${
 							currPrivacyBtn ? 'active' : ''
@@ -237,16 +237,16 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 						onClick={() => setPrivacyBtn(true)}
 					>
 						Private
-					</button>
+					</button> */}
 				</div>
 
 				{/* Nickname entry field */}
-				{currPrivacyBtn && (
+				{/* {currPrivacyBtn && (
 					<div className={`input filters__private ${currPrivacyBtn ? 'active' : false}`}>
 						<input type='text' required placeholder='@nickname' />
 						<SearchIcon />
 					</div>
-				)}
+				)} */}
 			</div>
 
 			{/* Wrapper for send aquestion button */}
