@@ -18,7 +18,7 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 	const dispatch = useAppDispatch();
 	const userId = useAppSelector(selectUserId);
 	const questionItem = useAppSelector(selectSelectedQuestion);
-	const nextQuestion = useAppSelector(selectNotAnsweredQuestion); // Следующий неотвеченный вопрос
+	const nextQuestion = useAppSelector(selectNotAnsweredQuestion(questionItem?.question_id)); // Следующий неотвеченный вопрос
 	const [questionsItem, setQuestionsItem] = useState(questionItem);
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [nextCommentVisible, setNextCommentVisible] = useState(false);
@@ -120,10 +120,13 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 
 	// Reactions handler (like/dislike)
 	const handleReaction = async (reactionType) => {
-		if (!questionsItem && isLoading) return;
+		if (!questionsItem || isLoading) return;
+
 		try {
 			if (reactionType === 'like') {
-				const comentsId = comments[currentIndex]?.commentId;
+				const commentId = comments[currentIndex]?.commentId;
+
+				// Помечаем текущий вопрос как отвеченный
 				if (nextQuestion) {
 					dispatch(
 						updateQuestion({
@@ -134,26 +137,25 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 						})
 					);
 
-					// Animate out the old question and animate in the new one
+					// Начинаем анимацию выхода
 					setTimeout(() => {
-						setQuestionsItem(nextQuestion);
-						dispatch(setSelectedQuestionId(nextQuestion.question_id));
-					}, 500); // Delay to allow animation to complete
+						setQuestionsItem(nextQuestion); // Устанавливаем новый вопрос
+						dispatch(setSelectedQuestionId(nextQuestion.question_id)); // Обновляем ID выбранного вопроса
+					}, 10); // Минимальная задержка для анимации
 				} else {
 					console.warn('No more unanswered questions available.');
 					alert('No more unanswered questions available.');
 				}
-				await likeComment(comentsId);
+
+				await likeComment(commentId);
 			} else if (reactionType === 'dislike') {
 				await dislikeComment(comments[currentIndex]?.commentId);
 
-				// Move to the next comment
+				// Переходим к следующему комментарию
 				if (currentIndex < comments.length - 1) {
-					setTimeout(() => {
-						setCurrentIndex(currentIndex + 1);
-					}, 10);
+					setCurrentIndex(currentIndex + 1);
 				} else {
-					setCurrentIndex(0); // Return to the first comment
+					setCurrentIndex(0); // Возвращаемся к первому комментарию
 				}
 			}
 		} catch (error) {
@@ -203,8 +205,8 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 					? 'right'
 					: 'left'
 				: offsetY > 0
-				? 'down'
-				: 'up';
+					? 'down'
+					: 'up';
 
 		setHoverState({ isDragging: true, direction });
 
@@ -270,10 +272,10 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 			<AnimatePresence mode='wait'>
 				<motion.div
 					key={questionsItem?.question_id}
-					initial={{ opacity: 0, y: -50 }}
-					animate={{ opacity: 1, y: 0 }}
-					exit={{ opacity: 0, x: -200 }}
-					transition={{ duration: 0.5 }}
+					initial="initial"
+					animate="animate"
+					exit="exit"
+					variants={questionVariants}
 				>
 					<QuestionsItem
 						questionItem={questionsItem}
@@ -323,9 +325,8 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 										<div className='reactions-counter mb--32'>
 											{/* Лайк */}
 											<div
-												className={`reactions-counter__icon-wrapper ${
-													comments[currentIndex].likedByUser ? 'active' : ''
-												}`}
+												className={`reactions-counter__icon-wrapper ${comments[currentIndex].likedByUser ? 'active' : ''
+													}`}
 											>
 												<LikeIcon />
 												<span className='reactions-counter__count'>
@@ -335,9 +336,8 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 
 											{/* Дизлайк */}
 											<div
-												className={`reactions-counter__icon-wrapper ${
-													comments[currentIndex].dislikedByUser ? 'active' : ''
-												}`}
+												className={`reactions-counter__icon-wrapper ${comments[currentIndex].dislikedByUser ? 'active' : ''
+													}`}
 											>
 												<DislikeIcon />
 												<span className='reactions-counter__count'>
@@ -358,9 +358,8 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 										{/* Кнопка лайка */}
 										<button
 											type='button'
-											className={`reactions__button ${
-												hoverState.isDragging && hoverState.direction === 'left' ? 'like-hover' : ''
-											}`}
+											className={`reactions__button ${hoverState.isDragging && hoverState.direction === 'left' ? 'like-hover' : ''
+												}`}
 											onClick={() => handleReaction('like')}
 										>
 											<LikeIcon />
@@ -369,11 +368,10 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 										{/* Кнопка дизлайка */}
 										<button
 											type='button'
-											className={`reactions__button ${
-												hoverState.isDragging && hoverState.direction === 'right'
-													? 'dislike-hover'
-													: ''
-											}`}
+											className={`reactions__button ${hoverState.isDragging && hoverState.direction === 'right'
+												? 'dislike-hover'
+												: ''
+												}`}
 											onClick={() => handleReaction('dislike')}
 										>
 											<DislikeIcon />

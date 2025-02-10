@@ -24,24 +24,26 @@ export const selectSelectedQuestion = createSelector(
 	}
 );
 
-export const selectNotAnsweredQuestion = createSelector(
-	[selectQuestions], // Входной селектор
-	(questions) => {
-		if (!Array.isArray(questions)) {
-			console.warn('Questions data is not an array:', questions); // Предупреждение о некорректных данных
-			return null; // Возвращаем null, если данные некорректны
-		}
+export const selectNotAnsweredQuestion = (currentQuestionId) =>
+	createSelector(
+		[selectQuestions], // Входной селектор
+		(questions) => {
+			if (!Array.isArray(questions)) {
+				console.warn('Questions data is not an array:', questions); // Предупреждение о некорректных данных
+				return null; // Возвращаем null, если данные некорректны
+			}
+			// Исключаем текущий вопрос из выборки
+			const filteredQuestions = questions.filter((q) => q.question_id !== currentQuestionId);
 
-		// Находим первый вопрос с ответами (commentsCount > 0)
-		const questionWithComments = questions.find((q) => q.commentsCount > 0 && !q.answered);
-		if (questionWithComments) {
-			return questionWithComments;
+			// Находим первый вопрос с ответами (commentsCount > 0)
+			const questionWithComments = filteredQuestions.find((q) => q.commentsCount > 0 && !q.answered);
+			if (questionWithComments) {
+				return questionWithComments;
+			}
+			// Если нет вопросов с ответами, возвращаем первый неотвеченный вопрос
+			return filteredQuestions.find((q) => !q.answered) || null;
 		}
-
-		// Если нет вопросов с ответами, возвращаем первый неотвеченный вопрос
-		return questions.find((q) => !q.answered) || null;
-	}
-);
+	);
 
 export const selectCurrentPage = createSelector(
 	[selectquestions],
