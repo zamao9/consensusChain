@@ -53,7 +53,7 @@ const AppScreen = () => {
 	const url = new URL(urlWindow);
 	const params = new URLSearchParams(url.search);
 	// const userIdFromUrlBot = params.get('user_id');
-	const userIdFromUrlBot = '5499493097';
+	const userIdFromUrlBot = '6621151292';
 	const [userIdFromUrl, setUserIdFromUrl] = useState(userIdFromUrlBot);
 
 	useEffect(() => {

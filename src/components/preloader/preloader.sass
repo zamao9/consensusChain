@@ -14,3 +14,58 @@
 	&-active
 		opacity: 0
 		transition: opacity 300ms
+.preloader-svg
+	width: 70px
+	margin-bottom: 16px
+
+.svg-elem-1.active
+	-webkit-animation: animate-svg-stroke-1-active 1s ease 0s both
+	animation: animate-svg-stroke-1-active 1s ease 0s both
+
+@keyframes animate-svg-stroke-1-active
+	0%
+		stroke-dashoffset: 76.23052978515625px
+		stroke-dasharray: 76.23052978515625px
+
+	100%
+		stroke-dashoffset: 0
+		stroke-dasharray: 76.23052978515625px
+
+.svg-elem-2.active
+	-webkit-animation: animate-svg-stroke-2-active 1s ease 0s both
+	animation: animate-svg-stroke-2-active 1s ease 0s both
+
+@keyframes animate-svg-stroke-2-active
+	0%
+		stroke-dashoffset: 76.35189819335938px
+		stroke-dasharray: 76.35189819335938px
+
+	100%
+		stroke-dashoffset: 0
+		stroke-dasharray: 76.35189819335938px
+
+@keyframes animate-svg-stroke-1-inactive
+	0%
+		stroke-dashoffset: 152.4610595703125px
+		stroke-dasharray: 76.23052978515625px
+
+	100%
+		stroke-dashoffset: 76.23052978515625px
+		stroke-dasharray: 76.23052978515625px
+
+.svg-elem-1
+	-webkit-animation: animate-svg-stroke-1-inactive 1s ease 0s both
+	animation: animate-svg-stroke-1-inactive 1s ease 0s both
+
+@keyframes animate-svg-stroke-2-inactive
+	0%
+		stroke-dashoffset: 152.70379638671875px
+		stroke-dasharray: 76.35189819335938px
+
+	100%
+		stroke-dashoffset: 76.35189819335938px
+		stroke-dasharray: 76.35189819335938px
+
+.svg-elem-2
+	-webkit-animation: animate-svg-stroke-2-inactive 1s ease 0s both
+	animation: animate-svg-stroke-2-inactive 1s ease 0s both
