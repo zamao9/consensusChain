@@ -26,6 +26,7 @@ class Question(BaseModel):
     user_id: str
     title: str
     tags: List[str] = []
+    language: str 
 
 # Модель для комментария 
 class CommentRequest(BaseModel):
