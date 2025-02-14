@@ -35,23 +35,23 @@ const commentsSlice = createSlice({
 		// Редьюсер для переключения дизлайка на комментарий
 		toggleDislike: (state, action) => {
 			const { commentId } = action.payload; // Извлекаем ID комментария из действия
-			const comment = state.comments.find((c) => c.commentId === commentId); // Ищем комментарий по ID
-			if (comment) {
-				if (comment.dislikedByUser) {
-					// Если пользователь уже дизлайкнул, отменяем дизлайк
-					comment.dislikes -= 1;
-					comment.dislikedByUser = false;
-				} else {
-					// Если лайкнут, убираем лайк
-					if (comment.likedByUser) {
-						comment.likes -= 1;
-						comment.likedByUser = false;
-					}
-					// Добавляем дизлайк
-					comment.dislikes += 1;
-					comment.dislikedByUser = true;
-				}
+			const commentIndex = state.comments.findIndex((c) => c.commentId === commentId); // Ищем индекс комментария по ID
+			if (commentIndex !== -1) {
+				const comment = state.comments[commentIndex];
+				const newComments = [...state.comments]; // Создаем копию массива комментариев
+				newComments[commentIndex] = {
+					...comment,
+					dislikedByUser: !comment.dislikedByUser,
+					dislikes: comment.dislikedByUser ? comment.dislikes - 1 : comment.dislikes + 1,
+					likedByUser: false,
+					likes: comment.likedByUser ? comment.likes - 1 : comment.likes,
+				};
+				return {
+					...state,
+					comments: newComments,
+				};
 			}
+			return state;
 		},
 		// Редьюсер для установки всех комментариев (например, при загрузке с сервера)
 		setComments: (state, action) => {

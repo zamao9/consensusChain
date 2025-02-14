@@ -1,5 +1,5 @@
 import './commentsPage.sass';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks/store';
 import { DislikeIcon, LikeIcon, ProfileIcon } from '../../constants/SvgIcons';
 import QuestionsItem from '../questionsPage/questionsItem/QuestionsItem';
@@ -27,8 +27,8 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 	// Get the ID of the current question
 	const questionId = questionsItem?.question_id || null;
 
-	// Get comments for the current question
 	const comments = useAppSelector(selectCommentsByQuestionId(questionId)) || [];
+	const [commentsState, setCommentsState] = useState([]); // Инициализируем пустым массивом
 
 	// Fetch comments from the server
 	const getComments = async () => {
@@ -51,7 +51,8 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 				throw new Error('Failed to fetch comments');
 			}
 			const data = await response.json();
-			dispatch(setComments(data)); // Save comments to state
+			dispatch(setComments(data));
+			setCommentsState(data); // Save comments to state
 		} catch (error) {
 			console.error('Error fetching comments:', error);
 			alert('Error fetching comments');
@@ -60,8 +61,15 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 		}
 	};
 
+	useEffect(() => {
+		if (currentIndex === 0) {
+			getComments();
+		} // Синхронизируем локальное состояние с Redux
+	}, [currentIndex]);
+
 	// Fetch comments when `questionId` changes
 	useEffect(() => {
+		console.log("question change")
 		if (questionId) {
 			setCurrentIndex(0); // Reset currentIndex when switching questions
 			getComments(); // Fetch comments for the new question
@@ -83,6 +91,19 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 			);
 
 			if (response.ok) {
+				setCommentsState((prevComments) =>
+					prevComments.map((comment) =>
+						comment.commentId === commentId
+							? {
+								...comment,
+								likedByUser: true,
+								dislikedByUser: false,
+								likes: comment.likes + 1,
+								dislikes: comment.dislikedByUser ? comment.dislikes - 1 : comment.dislikes,
+							}
+							: comment
+					)
+				);
 				dispatch(toggleLike({ commentId }));
 			} else {
 				throw new Error('Failed to like the comment');
@@ -108,6 +129,19 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 			);
 
 			if (response.ok) {
+				setCommentsState((prevComments) =>
+					prevComments.map((comment) =>
+						comment.commentId === commentId
+							? {
+								...comment,
+								dislikedByUser: true,
+								likedByUser: false,
+								dislikes: comment.dislikes + 1,
+								likes: comment.likedByUser ? comment.likes - 1 : comment.likes,
+							}
+							: comment
+					)
+				);
 				dispatch(toggleDislike({ commentId }));
 			} else {
 				throw new Error('Failed to dislike the comment');
@@ -118,15 +152,28 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 		}
 	};
 
+	const [buttonProcessing, setButtonProcessing] = useState(false);
+
+	//useEffect(() => {
+	//		console.log("Updated comments:", comments);
+	//	}, [comments]);
+
+	useEffect(() => {
+		console.log("Updated currentIndex:", currentIndex);
+	}, [currentIndex]);
+
+	useEffect(() => {
+		console.log("Updated buttonProcessing:", buttonProcessing);
+	}, [buttonProcessing]);
+
 	// Reactions handler (like/dislike)
 	const handleReaction = async (reactionType) => {
-		if (!questionsItem || isLoading) return;
-
+		if (!questionsItem || isLoading || buttonProcessing) return;
+		console.log('Reaction started:', reactionType);
+		setButtonProcessing(true); // Блокируем кнопки
 		try {
 			if (reactionType === 'like') {
-				const commentId = comments[currentIndex]?.commentId;
-
-				// Помечаем текущий вопрос как отвеченный
+				const commentId = commentsState[currentIndex]?.commentId;
 				if (nextQuestion) {
 					dispatch(
 						updateQuestion({
@@ -136,34 +183,35 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 							},
 						})
 					);
-
-					// Начинаем анимацию выхода
 					setTimeout(() => {
-						setQuestionsItem(nextQuestion); // Устанавливаем новый вопрос
-						dispatch(setSelectedQuestionId(nextQuestion.question_id)); // Обновляем ID выбранного вопроса
-					}, 10); // Минимальная задержка для анимации
+						setQuestionsItem(nextQuestion);
+						dispatch(setSelectedQuestionId(nextQuestion.question_id));
+					}, 10);
 				} else {
 					console.warn('No more unanswered questions available.');
 					alert('No more unanswered questions available.');
 				}
-
 				await likeComment(commentId);
 			} else if (reactionType === 'dislike') {
-				await dislikeComment(comments[currentIndex]?.commentId);
-
-				// Переходим к следующему комментарию
-				if (currentIndex < comments.length - 1) {
-					setCurrentIndex(currentIndex + 1);
-				} else {
-					setCurrentIndex(0); // Возвращаемся к первому комментарию
-				}
+				const commentId = commentsState[currentIndex]?.commentId;
+				await dislikeComment(commentId); // Сначала дождемся завершения dislikeComment
+				setCurrentIndex((prevIndex) => {
+					//console.log("After dislikeComment:", { prevIndex, commentsLength: commentsState.length });
+					if (prevIndex < commentsState.length - 1) {
+						return prevIndex + 1;
+					} else {
+						return 0; // Возвращаемся к первому комментарию
+					}
+				});
 			}
 		} catch (error) {
 			console.error('Error handling reaction:', error);
 			alert('An error occurred while processing your reaction.');
+		} finally {
+			setButtonProcessing(false); // Разблокируем кнопки
 		}
 	};
-
+	//console.log(currentIndex)
 	// Framer Motion variants for animations
 	const questionVariants = {
 		initial: { opacity: 0, y: -50 },
@@ -205,8 +253,8 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 					? 'right'
 					: 'left'
 				: offsetY > 0
-				? 'down'
-				: 'up';
+					? 'down'
+					: 'up';
 
 		setHoverState({ isDragging: true, direction });
 
@@ -272,9 +320,9 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 			<AnimatePresence mode='wait'>
 				<motion.div
 					key={questionsItem?.question_id}
-					initial='initial'
-					animate='animate'
-					exit='exit'
+					initial="initial"
+					animate="animate"
+					exit="exit"
 					variants={questionVariants}
 				>
 					<QuestionsItem
@@ -314,36 +362,34 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 							onTouchMove={handleDragMove}
 							onTouchEnd={handleDragEnd}
 						>
-							{comments.length > 0 && comments !== null ? (
+							{commentsState.length > 0 && commentsState !== null ? (
 								<>
 									{/* Обертка данных ответа */}
 									<div className='comment-card'>
 										{/* Текст ответа */}
-										<h2 className='answers__title lh--140 mb--16'>{comments[currentIndex].text}</h2>
+										<h2 className='answers__title lh--140 mb--16'>{commentsState[currentIndex].text}</h2>
 
 										{/* Реакции на ответ */}
 										<div className='reactions-counter mb--32'>
 											{/* Лайк */}
 											<div
-												className={`reactions-counter__icon-wrapper ${
-													comments[currentIndex].likedByUser ? 'active' : ''
-												}`}
+												className={`reactions-counter__icon-wrapper ${commentsState[currentIndex].likedByUser ? 'active' : ''
+													}`}
 											>
 												<LikeIcon />
 												<span className='reactions-counter__count'>
-													{comments[currentIndex].likes}
+													{commentsState[currentIndex].likes}
 												</span>
 											</div>
 
 											{/* Дизлайк */}
 											<div
-												className={`reactions-counter__icon-wrapper ${
-													comments[currentIndex].dislikedByUser ? 'active' : ''
-												}`}
+												className={`reactions-counter__icon-wrapper ${commentsState[currentIndex].dislikedByUser ? 'active' : ''
+													}`}
 											>
 												<DislikeIcon />
 												<span className='reactions-counter__count'>
-													{comments[currentIndex].dislikes}
+													{commentsState[currentIndex].dislikes}
 												</span>
 											</div>
 
@@ -360,9 +406,8 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 										{/* Кнопка лайка */}
 										<button
 											type='button'
-											className={`reactions__button ${
-												hoverState.isDragging && hoverState.direction === 'left' ? 'like-hover' : ''
-											}`}
+											className={`reactions__button ${hoverState.isDragging && hoverState.direction === 'left' ? 'like-hover' : ''
+												}`}
 											onClick={() => handleReaction('like')}
 										>
 											<LikeIcon />
@@ -371,11 +416,10 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 										{/* Кнопка дизлайка */}
 										<button
 											type='button'
-											className={`reactions__button ${
-												hoverState.isDragging && hoverState.direction === 'right'
-													? 'dislike-hover'
-													: ''
-											}`}
+											className={`reactions__button ${hoverState.isDragging && hoverState.direction === 'right'
+												? 'dislike-hover'
+												: ''
+												}`}
 											onClick={() => handleReaction('dislike')}
 										>
 											<DislikeIcon />
@@ -388,22 +432,22 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 						</div>
 
 						{/* Нижний ответ */}
-						{nextCommentVisible && currentIndex < comments.length - 1 && (
+						{nextCommentVisible && currentIndex < commentsState.length - 1 && (
 							<div className='answers answers__next-comment-card'>
 								<h2 className='answers__title lh--140 mb--16'>
-									{comments[currentIndex + 1]?.text}
+									{commentsState[currentIndex + 1]?.text}
 								</h2>
 								<div className='reactions-counter mb--32'>
 									<div className='reactions-counter__icon-wrapper'>
 										<LikeIcon />
 										<span className='reactions-counter__count'>
-											{comments[currentIndex + 1]?.likes}
+											{commentsState[currentIndex + 1]?.likes}
 										</span>
 									</div>
 									<div className='reactions-counter__icon-wrapper'>
 										<DislikeIcon />
 										<span className='reactions-counter__count'>
-											{comments[currentIndex + 1]?.dislikes}
+											{commentsState[currentIndex + 1]?.dislikes}
 										</span>
 									</div>
 									<div className='user reactions-counter__user'>

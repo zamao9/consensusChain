@@ -24,7 +24,7 @@ const QuestionsPage = ({ curItem, setItem, setPage, setPopup, setPopupText, setP
 	const dispatch = useAppDispatch();
 	const userId = useAppSelector(selectUserId);
 	const [isLoading, setIsLoading] = useState(true);
-	const [data, setData] = useState(null);
+	//const [data, setData] = useState(null);
 	const [tab, setTab] = useState('first');
 	const [filterButton, setFilterButton] = useState(false); // click on filter button
 
@@ -46,7 +46,22 @@ const QuestionsPage = ({ curItem, setItem, setPage, setPopup, setPopupText, setP
 			status: false,
 		},
 	];
+
 	const [languageFilter, setLanguageFilter] = useState(initialLanguage);
+
+	const [selectedTags, setSelectedTags] = useState([]);
+	const [selectedLanguage, setSelectedLanguage] = useState('English');
+
+	// Retrieving data from storage
+	const currentPage = useAppSelector(selectCurrentPage);
+	const displayedQuestions = useAppSelector((state) =>
+		selectCurrentQuestionPageList(state, selectedTags, selectedLanguage)
+	);
+
+	const totalPages = useAppSelector((state) =>
+		selectTotalPages(state, selectedTags, selectedLanguage)
+	);
+	//console.log(displayedQuestions)
 
 	// Languages click handler
 	const handleLanguageChange = (id) => {
@@ -54,7 +69,17 @@ const QuestionsPage = ({ curItem, setItem, setPage, setPopup, setPopupText, setP
 			lang.id === id ? { ...lang, status: true } : { ...lang, status: false }
 		);
 		setLanguageFilter(updatedLanguages);
+
+		// Находим выбранный язык
+		const selectedLang = updatedLanguages.find((lang) => lang.status)?.label || '';
+		setSelectedLanguage(selectedLang);
 	};
+
+	const handleTagSearch = (tags) => {
+		setSelectedTags(tags);
+	};
+
+	const [isFiltering, setIsFiltering] = useState(false);
 
 	// Function for receiving user questions
 	const fetchQuestions = async (userId, allQuestions) => {
@@ -64,11 +89,11 @@ const QuestionsPage = ({ curItem, setItem, setPage, setPopup, setPopupText, setP
 			);
 			if (!response.ok) throw new Error('Failed to fetch questions');
 			const questions = await response.json();
-
+			console.log(questions)
 			// Setting up questions in Redux
 			dispatch(setQuestions(questions));
 
-			setData(questions); // Keeping questions local
+			//setData(questions); // Keeping questions local
 		} catch (error) {
 			console.error('Error fetching questions:', error);
 		} finally {
@@ -91,10 +116,6 @@ const QuestionsPage = ({ curItem, setItem, setPage, setPopup, setPopupText, setP
 		};
 	}, [userId, tab]);
 
-	// Retrieving data from storage
-	const currentPage = useAppSelector(selectCurrentPage);
-	const displayedQuestions = useAppSelector(selectCurrentQuestionPageList);
-	const totalPages = useAppSelector(selectTotalPages);
 	// Functions for switching between pages
 	const goToFirstPage = () => dispatch(setCurrentPage(1));
 	const goToLastPage = () => dispatch(setCurrentPage(totalPages));
@@ -110,23 +131,24 @@ const QuestionsPage = ({ curItem, setItem, setPage, setPopup, setPopupText, setP
 		}
 	}, [filterButton]);
 
+	useEffect(() => {
+		// Имитация задержки фильтрации
+		setIsFiltering(true);
+		setTimeout(() => {
+			setIsFiltering(false);
+		}, 300); // Задержка в 300 мс
+	}, [selectedTags, selectedLanguage]);
+
 	return (
 		<div className='questions-page'>
 			{isLoading ? (
-				<Preloader
-					isVisible={isLoading}
-					color='#CECECE'
-					size={60}
-					message='Please wait, fetching data...'
-				/>
+				<Preloader isVisible={isLoading} color='#CECECE' size={60} message='Please wait, fetching data...' />
 			) : (
-				// Если загрузка завершена (`isLoading` стало false), показываем загруженные данные.
 				<>
 					{/* Tabs and Filters wrapper */}
 					<div className='tabs-filter-wrapper mb--32'>
 						{/* Tabs */}
 						<ul className='tabs'>
-							{/* Tabs Item */}
 							<li>
 								<button
 									className={`button tabs__item ${tab === 'first' ? 'active' : ''}`}
@@ -135,18 +157,6 @@ const QuestionsPage = ({ curItem, setItem, setPage, setPopup, setPopupText, setP
 									All
 								</button>
 							</li>
-
-							{/* Tabs Item */}
-							{/* <li>
-							<button
-								className={`button tabs__item ${tab === 'second' ? 'active' : ''}`}
-								onClick={() => setTab('second')}
-							>
-								Private
-							</button>
-						</li> */}
-
-							{/* Tabs Item */}
 							<li>
 								<button
 									className={`button tabs__item ${tab === 'third' ? 'active' : ''}`}
@@ -156,10 +166,8 @@ const QuestionsPage = ({ curItem, setItem, setPage, setPopup, setPopupText, setP
 								</button>
 							</li>
 						</ul>
-
 						{/* Filter button wrapper */}
 						<div className='button-wrapper'>
-							{/* Filter Button */}
 							<button
 								className={`button button-wrapper__button ${filterButton ? 'active' : ''}`}
 								onClick={() => setFilterButton(!filterButton)}
@@ -177,19 +185,16 @@ const QuestionsPage = ({ curItem, setItem, setPage, setPopup, setPopupText, setP
 							<motion.div className='questions-page__filter'>
 								{/* Search tag input */}
 								<div className='input questions-page__input'>
-									{/* Input */}
-									<input placeholder='Find a tag' type='text' />
-
-									{/* Icon */}
+									<input
+										placeholder='Find a tag'
+										type='text'
+										onChange={(e) => handleTagSearch(e.target.value.split(','))}
+									/>
 									<SearchIcon />
 								</div>
-
-								{/* Dividing line */}
 								<hr />
-
 								{/* Languages filter list */}
 								<ul className='language-filter'>
-									{/* Languages filter items */}
 									{languageFilter.map((element) => (
 										<li className='language-filter-item' key={element.id}>
 											<button
@@ -206,11 +211,16 @@ const QuestionsPage = ({ curItem, setItem, setPage, setPopup, setPopupText, setP
 						</AnimatePresence>
 					)}
 
+					{/* Preloader for filtering */}
+					{isFiltering && (
+						<Preloader isVisible={isFiltering} color='#CECECE' size={40} message='Filtering questions...' />
+					)}
+
 					{/* List of questions */}
-					<ul className=' mb--32 questions-page__list'>
-						{/* Questions item */}
+					<ul className='mb--32 questions-page__list'>
 						{displayedQuestions.map((element, index) => (
 							<QuestionsItem
+								key={element.question_id}
 								questionItem={element}
 								comments={'questions-page'}
 								setPopup={setPopup}
@@ -219,8 +229,7 @@ const QuestionsPage = ({ curItem, setItem, setPage, setPopup, setPopupText, setP
 								setPage={setPage}
 								setItem={setItem}
 								isCurrentElement={false}
-								key={element.question_id}
-								animationDelay={index * 200} // Pass delay for animation
+								animationDelay={index * 200}
 							/>
 						))}
 					</ul>
@@ -239,12 +248,9 @@ const QuestionsPage = ({ curItem, setItem, setPage, setPopup, setPopupText, setP
 						>
 							<ArrowLeftIcon />
 						</button>
-
-						{/* Page counter */}
 						<div className='pagination__counter'>
 							{currentPage} / {totalPages}
 						</div>
-
 						<button
 							className={`pagination__button ${currentPage === totalPages ? 'disabled' : ''}`}
 							onClick={goToNextPage}

@@ -47,34 +47,67 @@ export const selectNotAnsweredQuestion = (currentQuestionId) =>
 
 export const selectCurrentPage = createSelector(
 	[selectquestions],
-	(questions) => questions.currentPage
+	(questions) => questions?.currentPage || 1 // Возвращаем значение по умолчанию (1), если currentPage отсутствует
 );
 
 export const selectQuestionsPerPage = createSelector(
 	[selectquestions],
-	(questions) => questions.questionsPerPage
+	(questions) => questions?.questionsPerPage || 3 // Возвращаем значение по умолчанию (3)
 );
 
 export const selectTotalPages = createSelector(
-	[selectQuestions, selectQuestionsPerPage], // Использует другие селекторы в качестве входных
-	(questions, questionsPerPage) => {
+	[
+		selectQuestions,
+		selectQuestionsPerPage,
+		(_, selectedTags, selectedLanguage) => ({ selectedTags, selectedLanguage }),
+	],
+	(questions, questionsPerPage, { selectedTags, selectedLanguage }) => {
 		if (!Array.isArray(questions)) {
-			console.warn('Questions data is not an array:', questions); // Предупреждение о некорректных данных
-			return 0; // Возвращаем 0, если данные некорректны
+			console.warn('Questions data is not an array:', questions);
+			return 0;
 		}
-		return Math.ceil(questions.length / questionsPerPage); // Вычисляем количество страниц
+
+		// Фильтруем вопросы
+		const filteredQuestions = questions.filter((question) => {
+			if (selectedLanguage && question.language !== selectedLanguage) return false;
+			if (selectedTags.length > 0) {
+				const questionTags = question.tags || [];
+				return selectedTags.every((tag) => questionTags.includes(tag));
+			}
+			return true;
+		});
+
+		// Вычисляем количество страниц
+		return Math.ceil(filteredQuestions.length / (questionsPerPage || 3)); // Значение по умолчанию (3)
 	}
 );
 
 export const selectCurrentQuestionPageList = createSelector(
-	[selectQuestions, selectCurrentPage, selectQuestionsPerPage],
-	(questions, currentPage, questionsPerPage) => {
+	[
+		selectQuestions,
+		selectCurrentPage,
+		selectQuestionsPerPage,
+		(_, selectedTags, selectedLanguage) => ({ selectedTags, selectedLanguage }),
+	],
+	(questions, currentPage, questionsPerPage, { selectedTags, selectedLanguage }) => {
 		if (!Array.isArray(questions)) {
-			console.warn('Questions data is not an array:', questions); // Предупреждение о некорректных данных
+			console.warn('Questions data is not an array:', questions);
 			return [];
 		}
-		// Определяем индекс начала и конца текущей страницы
-		const startIndex = (currentPage - 1) * questionsPerPage;
-		return questions.slice(startIndex, startIndex + questionsPerPage); // Возвращаем подмассив для текущей страницы
+
+		// Фильтруем вопросы
+		const filteredQuestions = questions.filter((question) => {
+			if (selectedLanguage && question.language !== selectedLanguage) return false;
+			//console.log(selectedTags)
+			if (selectedTags.length > 0 && selectedTags[0] !== '') {
+				const questionTags = question.tags || [];
+				return selectedTags.every((tag) => questionTags.includes(tag));
+			}
+			return true;
+		});
+
+		// Разбиваем на страницы
+		const startIndex = ((currentPage || 1) - 1) * (questionsPerPage || 3); // Значения по умолчанию
+		return filteredQuestions.slice(startIndex, startIndex + (questionsPerPage || 3));
 	}
 );

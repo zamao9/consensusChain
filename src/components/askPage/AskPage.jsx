@@ -85,7 +85,6 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 			.map((tag) => tag.charAt(0).toUpperCase() + tag.slice(1)); // Convert the first letter to upper case
 
 		if (selectedTags.length === 0 || (selectedTags.includes('') && filtersItems[10].active)) {
-			// alert('Please select at least one tag.');
 			setPopup(true);
 			setPopupText('Please select at least one tag.');
 			setPopupSource('error');
@@ -95,12 +94,16 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 		if (isSubmitting) return;
 		setIsSubmitting(true);
 
+		// Find the selected language
+		const selectedLanguage = languageFilter.find((lang) => lang.status)?.label || ''; // Default to empty string if no language is selected
+
 		// Create a payload to send to the server
 		const payload = {
 			user_id: userId.toString(),
 			title: questionText, // Changed field to title for API compliance
 			is_private: currPrivacyBtn,
 			tags: selectedTags,
+			language: selectedLanguage, // Add the selected language here
 		};
 
 		try {
@@ -201,9 +204,8 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 						<li key={element.id}>
 							<button
 								type='button'
-								className={`filters-item filters__item language-filter__item ${
-									element.status ? 'active' : ''
-								}`}
+								className={`filters-item filters__item language-filter__item ${element.status ? 'active' : ''
+									}`}
 								onClick={() => handleLanguageChange(element.id)}
 							>
 								{element.label}
@@ -220,9 +222,8 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 					{/* Public questions button */}
 					<button
 						type='button'
-						className={`ask-page__privacy-button ask-page__public-button ${
-							!currPrivacyBtn ? 'active' : ''
-						}`}
+						className={`ask-page__privacy-button ask-page__public-button ${!currPrivacyBtn ? 'active' : ''
+							}`}
 						onClick={() => setPrivacyBtn(false)}
 					>
 						Public
