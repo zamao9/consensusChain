@@ -25,13 +25,18 @@ async def ensure_tables_exist():
         );
         """)
         await conn.execute("""
+        ALTER TABLE questions ADD COLUMN IF NOT EXISTS language TEXT DEFAULT 'English';
+        UPDATE questions SET language = 'English' WHERE language IS NULL;
+        """)        
+        await conn.execute("""
         CREATE TABLE IF NOT EXISTS questions (
             question_id SERIAL PRIMARY KEY,
             user_id BIGINT REFERENCES users(user_id),
             title TEXT NOT NULL,
             tags JSONB DEFAULT '[]',
             likes INT DEFAULT 0,
-            popular BOOLEAN DEFAULT FALSE
+            popular BOOLEAN DEFAULT FALSE,
+            language TEXT DEFAULT 'English'
         );
         """)
         await conn.execute("""

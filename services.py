@@ -77,7 +77,7 @@ async def get_user_statistics(user_id: int) -> Dict:
 """Fetch Statistics Data for User"""
 
 #Create a new question and update user's questionsPerDay counter."""
-async def create_question(user_id: int, title: str, tags: list) -> Dict:
+async def create_question(user_id: int, title: str, tags: list, language: str = "English") -> Dict:
     conn = await get_db_connection()
     await ensure_tables_exist()
     try:
@@ -89,19 +89,19 @@ async def create_question(user_id: int, title: str, tags: list) -> Dict:
         # Проверяем, доступно ли создание вопроса
         if user["questions_per_day"] <= 0:
             return {"error": "You have reached the limit of questions for today"}
-
+        
         # Создаем вопрос
         query = """
-        INSERT INTO questions (user_id, title, tags) 
-        VALUES ($1, $2, $3) RETURNING question_id;
+        INSERT INTO questions (user_id, title, tags, language) 
+        VALUES ($1, $2, $3, $4) RETURNING question_id;
         """
-        question_id = await conn.fetchval(query, user_id, title, json.dumps(tags))
-
+        question_id = await conn.fetchval(query, user_id, title, json.dumps(tags), language)
+        
         # Уменьшаем счетчик вопросов
         await conn.execute("""
         UPDATE users SET questions_per_day = questions_per_day - 1 WHERE user_id = $1;
         """, user_id)
-
+        
         return {"message": "Question created successfully", "question_id": question_id}
     finally:
         await conn.close()
@@ -230,7 +230,7 @@ async def get_questions(user_id: int, all_questions: bool = True) -> List[Dict]:
         # Декодируем JSON-поля пользователя
         liked_questions = json.loads(user["liked_questions"]) if user["liked_questions"] else []
         reported_questions = json.loads(user["reported_questions"]) if user["reported_questions"] else []
-
+        
         # Получаем список вопросов, которые пользователь отслеживает
         trace_questions = await conn.fetch(
             """
@@ -239,13 +239,12 @@ async def get_questions(user_id: int, all_questions: bool = True) -> List[Dict]:
             user_id
         )
         trace_question_ids = [trace["question_id"] for trace in trace_questions]
-
+        
         # Определяем запрос для выборки вопросов
         query = "WHERE q.user_id = $1" if not all_questions else ""
-
         # Формируем параметры для запроса
         params = (user_id, user_id) if not all_questions else (user_id,)
-
+        
         # Получаем вопросы из базы данных с подсчетом комментариев и проверкой ответа пользователя
         questions = await conn.fetch(f"""
             SELECT 
@@ -256,6 +255,7 @@ async def get_questions(user_id: int, all_questions: bool = True) -> List[Dict]:
                 q.tags,
                 q.likes,
                 q.popular,
+                q.language,  -- Добавляем поле language
                 (
                     SELECT COUNT(*) 
                     FROM comments c 
@@ -270,7 +270,7 @@ async def get_questions(user_id: int, all_questions: bool = True) -> List[Dict]:
             LEFT JOIN users u ON q.user_id = u.user_id
             {query};
         """, *params)
-
+        
         # Формируем список вопросов
         result = []
         for question in questions:
@@ -287,7 +287,8 @@ async def get_questions(user_id: int, all_questions: bool = True) -> List[Dict]:
                 "trace": question["question_id"] in trace_question_ids,  # Проверяем в списке отслеживаемых
                 "like": question["question_id"] in liked_questions,
                 "commentsCount": question["comments_count"],  # Количество комментариев
-                "answered": question["answered"]  # Метка, указывающая, дал ли пользователь ответ
+                "answered": question["answered"],  # Метка, указывающая, дал ли пользователь ответ
+                "language": question["language"]  # Добавляем язык
             })
         return result
     finally:

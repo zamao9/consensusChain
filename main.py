@@ -43,7 +43,8 @@ async def create_new_question(request: Question):
     user_id = int(request.user_id)
     title = request.title
     tags = request.tags
-    return await create_question(user_id, title, tags)
+    language = request.language
+    return await create_question(user_id, title, tags, language)
 
 # Лайк/дизлайк вопроса пользователем
 @app.post("/questions/{question_id}/like")
