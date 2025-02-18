@@ -63,6 +63,11 @@ const QuestionsPage = ({ curItem, setItem, setPage, setPopup, setPopupText, setP
 	);
 	//console.log(displayedQuestions)
 
+	const formatTag = (tag) => {
+		if (!tag) return '';
+		return tag.charAt(0).toUpperCase() + tag.slice(1).toLowerCase();
+	};
+
 	// Languages click handler
 	const handleLanguageChange = (id) => {
 		const updatedLanguages = languageFilter.map((lang) =>
@@ -76,7 +81,10 @@ const QuestionsPage = ({ curItem, setItem, setPage, setPopup, setPopupText, setP
 	};
 
 	const handleTagSearch = (tags) => {
-		setSelectedTags(tags);
+		const formattedTags = tags
+			.map((tag) => formatTag(tag.trim())) // Форматируем каждый тег
+			.filter((tag) => tag); // Убираем пустые значения
+		setSelectedTags(formattedTags); // Устанавливаем отформатированные теги
 	};
 
 	const [isFiltering, setIsFiltering] = useState(false);

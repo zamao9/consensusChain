@@ -232,20 +232,16 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 		setNextCommentVisible(true); // Show the next comment when dragging starts
 	};
 
-	// Handle drag move
 	const handleDragMove = (e) => {
 		if (!isDragging) return;
-
 		const clientX = e.touches ? e.touches[0].clientX : e.clientX;
 		const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-
 		const rect = cardRef.current.getBoundingClientRect();
 		const centerX = rect.left + rect.width / 2;
 		const centerY = rect.top + rect.height / 2;
-
 		const offsetX = clientX - centerX;
 		const offsetY = clientY - centerY;
-
+	
 		// Determine direction of movement
 		const direction =
 			Math.abs(offsetX) > Math.abs(offsetY)
@@ -255,58 +251,79 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 				: offsetY > 0
 					? 'down'
 					: 'up';
-
+	
 		setHoverState({ isDragging: true, direction });
-
+	
 		// Smoothed offsets and rotation
-		const deadZone = 20;
+		const deadZone = 10; 
 		let adjustedOffsetX = Math.abs(offsetX) < deadZone ? 0 : offsetX;
 		let adjustedOffsetY = Math.abs(offsetY) < deadZone ? 0 : offsetY;
-
+	
 		const maxRotation = 15;
 		const targetRotation = Math.min(Math.max(adjustedOffsetX / 10, -maxRotation), maxRotation);
-
 		const maxOffsetX = 500;
 		const maxOffsetY = 300;
-
+	
 		const targetOffsetX = Math.min(Math.max(adjustedOffsetX, -maxOffsetX), maxOffsetX);
 		const targetOffsetY = Math.min(Math.max(adjustedOffsetY, -maxOffsetY), maxOffsetY);
-
-		const smoothedX = lerp(position.x, targetOffsetX, 0.2);
-		const smoothedY = lerp(position.y, targetOffsetY, 0.2);
-		const smoothedRotation = lerp(position.rotation, targetRotation, 0.2);
-
+	
+		const smoothedX = lerp(position.x, targetOffsetX, 0.3);
+		const smoothedY = lerp(position.y, targetOffsetY, 0.3);
+		const smoothedRotation = lerp(position.rotation, targetRotation, 0.3);
+	
 		setPosition({ x: smoothedX, y: smoothedY, rotation: smoothedRotation });
 	};
 
 	// Handle drag end
 	const handleDragEnd = () => {
 		if (!isDragging) return;
-
 		setHoverState({ isDragging: false, direction: null });
-
-		const threshold = 30;
-
+	
+		const threshold = 50;
 		if (Math.abs(position.x) > threshold || Math.abs(position.y) > threshold) {
 			if (position.x > threshold) {
-				dislikeComment(comments[currentIndex].commentId);
+				animateCardExit('right');
+				dislikeComment(comments[currentIndex]?.commentId);
 			} else if (position.x < -threshold) {
-				likeComment(comments[currentIndex].commentId);
+				animateCardExit('left');
+				likeComment(comments[currentIndex]?.commentId);
 			}
-		}
-
-		setPosition({ x: 0, y: 0, rotation: 0 });
-		setIsDragging(false);
-
-		if (currentIndex < comments.length - 1) {
-			setTimeout(() => {
-				setCurrentIndex(currentIndex + 1);
-				setNextCommentVisible(false);
-			}, 300);
 		} else {
-			setCurrentIndex(0);
-			setNextCommentVisible(false);
+			resetCardPosition();
 		}
+	};
+	
+	// Анимация "улетания"
+	const animateCardExit = (direction) => {
+		const exitAnimation = {
+			x: direction === 'left' ? '-200%' : '200%',
+			opacity: 0,
+			transition: { duration: 0.5 },
+		};
+	
+		// Запускаем анимацию через framer-motion
+		cardRef.current.animate(
+			[
+				{ transform: `translate(${position.x}px, ${position.y}px) rotate(${position.rotation}deg)` },
+				{ transform: `translate(${exitAnimation.x}, 0px)`, opacity: 0 },
+			],
+			{ duration: 500, easing: 'ease-out' }
+		);
+	
+		setTimeout(() => {
+			if (currentIndex < commentsState.length - 1) {
+				setCurrentIndex(currentIndex + 1);
+			} else {
+				setCurrentIndex(0);
+			}
+			setNextCommentVisible(false);
+			resetCardPosition();
+		}, 500);
+	};
+	
+	// Сброс позиции карточки
+	const resetCardPosition = () => {
+		setPosition({ x: 0, y: 0, rotation: 0 });
 	};
 
 	const [hoverState, setHoverState] = useState({
@@ -349,7 +366,7 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 				)}
 				{!isLoading && (
 					<>
-						<div
+						<motion.div
 							className='answers mt--16'
 							ref={cardRef}
 							style={{
@@ -367,7 +384,7 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 									{/* Обертка данных ответа */}
 									<div className='comment-card'>
 										{/* Текст ответа */}
-										<h2 className='answers__title lh--140 mb--16'>{commentsState[currentIndex].text}</h2>
+										<h2 className='answers__title lh--140 mb--16'>        {commentsState[currentIndex]?.text || 'waiting text'}</h2>
 
 										{/* Реакции на ответ */}
 										<div className='reactions-counter mb--32'>
@@ -378,7 +395,7 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 											>
 												<LikeIcon />
 												<span className='reactions-counter__count'>
-													{commentsState[currentIndex].likes}
+												{commentsState[currentIndex]?.likes || 0}
 												</span>
 											</div>
 
@@ -389,7 +406,7 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 											>
 												<DislikeIcon />
 												<span className='reactions-counter__count'>
-													{commentsState[currentIndex].dislikes}
+												{commentsState[currentIndex]?.dislikes || 0}
 												</span>
 											</div>
 
@@ -429,7 +446,7 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 							) : (
 								<p>No comments available for this question.</p>
 							)}
-						</div>
+						</motion.div>
 
 						{/* Нижний ответ */}
 						{nextCommentVisible && currentIndex < commentsState.length - 1 && (
