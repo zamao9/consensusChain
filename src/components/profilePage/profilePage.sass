@@ -5,23 +5,24 @@
 	margin: 0 auto
 
 	/* Wrapper Nickname, Registration Dates */
-	.user
+	&__user
+		display: flex
+		align-items: flex-start !important
+		flex-direction: column !important
+		gap: 10px !important
 		padding: 14px 20px
 		@include index.border15
 		background-color: index.$c-bg-900
-		display: flex
-		align-items: flex-start
-		flex-direction: column
-		gap: 10px
 
-		/* Nickname */
-		&__name
-			display: flex
-			align-items: center
-			gap: 4px
-			& svg
-				width: 30px
-				height: 30px
+	/* Nickname */
+	&__user-name
+		display: flex
+		align-items: center
+		gap: 4px
+		& svg
+			width: 30px
+			height: 30px
+			stroke: index.$c-text !important
 
 	/* Wrapper Support */
 	.links

@@ -306,7 +306,7 @@ const QuestionsItem = ({
 		}
 	}, [questionItem.commentsCount]);
 
-	const questionsItemDate = '18.01.2025';
+	const questionsItemDate = '18.01.2025'; ///////////
 
 	return (
 		// Questions item

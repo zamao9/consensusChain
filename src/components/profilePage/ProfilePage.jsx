@@ -108,9 +108,9 @@ const ProfilePage = ({ tab, setTab, setPage, setItem }) => {
 			{tab === 'first' && (
 				<>
 					{/* Wrapper Nickname, Registration Dates */}
-					<div className='user mb--16'>
+					<div className='user profile-page__user mb--16'>
 						{/* Nickname */}
-						<div className='user__name'>
+						<div className='user__name  profile-page__user-name'>
 							<ProfileIcon />
 							<span className='title fw--400 user__title'>{profileName}</span>
 						</div>

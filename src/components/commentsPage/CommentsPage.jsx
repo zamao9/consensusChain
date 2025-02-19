@@ -69,7 +69,7 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 
 	// Fetch comments when `questionId` changes
 	useEffect(() => {
-		console.log("question change")
+		console.log('question change');
 		if (questionId) {
 			setCurrentIndex(0); // Reset currentIndex when switching questions
 			getComments(); // Fetch comments for the new question
@@ -95,12 +95,12 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 					prevComments.map((comment) =>
 						comment.commentId === commentId
 							? {
-								...comment,
-								likedByUser: true,
-								dislikedByUser: false,
-								likes: comment.likes + 1,
-								dislikes: comment.dislikedByUser ? comment.dislikes - 1 : comment.dislikes,
-							}
+									...comment,
+									likedByUser: !comment.likedByUser,
+									dislikedByUser: !comment.likedByUser ? false : comment.dislikedByUser,
+									likes: comment.likedByUser ? comment.likes - 1 : comment.likes + 1,
+									dislikes: comment.dislikedByUser ? comment.dislikes - 1 : comment.dislikes,
+							  }
 							: comment
 					)
 				);
@@ -133,12 +133,12 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 					prevComments.map((comment) =>
 						comment.commentId === commentId
 							? {
-								...comment,
-								dislikedByUser: true,
-								likedByUser: false,
-								dislikes: comment.dislikes + 1,
-								likes: comment.likedByUser ? comment.likes - 1 : comment.likes,
-							}
+									...comment,
+									dislikedByUser: !comment.dislikedByUser,
+									likedByUser: !comment.dislikedByUser ? false : comment.likedByUser,
+									dislikes: comment.dislikedByUser ? comment.dislikes - 1 : comment.dislikes + 1,
+									likes: comment.likedByUser ? comment.likes - 1 : comment.likes,
+							  }
 							: comment
 					)
 				);
@@ -159,11 +159,11 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 	//	}, [comments]);
 
 	useEffect(() => {
-		console.log("Updated currentIndex:", currentIndex);
+		console.log('Updated currentIndex:', currentIndex);
 	}, [currentIndex]);
 
 	useEffect(() => {
-		console.log("Updated buttonProcessing:", buttonProcessing);
+		console.log('Updated buttonProcessing:', buttonProcessing);
 	}, [buttonProcessing]);
 
 	// Reactions handler (like/dislike)
@@ -241,7 +241,7 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 		const centerY = rect.top + rect.height / 2;
 		const offsetX = clientX - centerX;
 		const offsetY = clientY - centerY;
-	
+
 		// Determine direction of movement
 		const direction =
 			Math.abs(offsetX) > Math.abs(offsetY)
@@ -249,28 +249,28 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 					? 'right'
 					: 'left'
 				: offsetY > 0
-					? 'down'
-					: 'up';
-	
+				? 'down'
+				: 'up';
+
 		setHoverState({ isDragging: true, direction });
-	
+
 		// Smoothed offsets and rotation
-		const deadZone = 10; 
+		const deadZone = 10;
 		let adjustedOffsetX = Math.abs(offsetX) < deadZone ? 0 : offsetX;
 		let adjustedOffsetY = Math.abs(offsetY) < deadZone ? 0 : offsetY;
-	
+
 		const maxRotation = 15;
 		const targetRotation = Math.min(Math.max(adjustedOffsetX / 10, -maxRotation), maxRotation);
 		const maxOffsetX = 500;
 		const maxOffsetY = 300;
-	
+
 		const targetOffsetX = Math.min(Math.max(adjustedOffsetX, -maxOffsetX), maxOffsetX);
 		const targetOffsetY = Math.min(Math.max(adjustedOffsetY, -maxOffsetY), maxOffsetY);
-	
+
 		const smoothedX = lerp(position.x, targetOffsetX, 0.3);
 		const smoothedY = lerp(position.y, targetOffsetY, 0.3);
 		const smoothedRotation = lerp(position.rotation, targetRotation, 0.3);
-	
+
 		setPosition({ x: smoothedX, y: smoothedY, rotation: smoothedRotation });
 	};
 
@@ -278,7 +278,7 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 	const handleDragEnd = () => {
 		if (!isDragging) return;
 		setHoverState({ isDragging: false, direction: null });
-	
+
 		const threshold = 50;
 		if (Math.abs(position.x) > threshold || Math.abs(position.y) > threshold) {
 			if (position.x > threshold) {
@@ -292,7 +292,7 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 			resetCardPosition();
 		}
 	};
-	
+
 	// Анимация "улетания"
 	const animateCardExit = (direction) => {
 		const exitAnimation = {
@@ -300,16 +300,18 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 			opacity: 0,
 			transition: { duration: 0.5 },
 		};
-	
+
 		// Запускаем анимацию через framer-motion
 		cardRef.current.animate(
 			[
-				{ transform: `translate(${position.x}px, ${position.y}px) rotate(${position.rotation}deg)` },
+				{
+					transform: `translate(${position.x}px, ${position.y}px) rotate(${position.rotation}deg)`,
+				},
 				{ transform: `translate(${exitAnimation.x}, 0px)`, opacity: 0 },
 			],
 			{ duration: 500, easing: 'ease-out' }
 		);
-	
+
 		setTimeout(() => {
 			if (currentIndex < commentsState.length - 1) {
 				setCurrentIndex(currentIndex + 1);
@@ -320,7 +322,7 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 			resetCardPosition();
 		}, 500);
 	};
-	
+
 	// Сброс позиции карточки
 	const resetCardPosition = () => {
 		setPosition({ x: 0, y: 0, rotation: 0 });
@@ -337,9 +339,9 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 			<AnimatePresence mode='wait'>
 				<motion.div
 					key={questionsItem?.question_id}
-					initial="initial"
-					animate="animate"
-					exit="exit"
+					initial='initial'
+					animate='animate'
+					exit='exit'
 					variants={questionVariants}
 				>
 					<QuestionsItem
@@ -384,29 +386,34 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 									{/* Обертка данных ответа */}
 									<div className='comment-card'>
 										{/* Текст ответа */}
-										<h2 className='answers__title lh--140 mb--16'>        {commentsState[currentIndex]?.text || 'waiting text'}</h2>
+										<h2 className='answers__title lh--140 mb--16'>
+											{' '}
+											{commentsState[currentIndex]?.text || 'waiting text'}
+										</h2>
 
 										{/* Реакции на ответ */}
 										<div className='reactions-counter mb--32'>
 											{/* Лайк */}
 											<div
-												className={`reactions-counter__icon-wrapper ${commentsState[currentIndex].likedByUser ? 'active' : ''
-													}`}
+												className={`reactions-counter__icon-wrapper ${
+													commentsState[currentIndex].likedByUser ? 'active' : ''
+												}`}
 											>
 												<LikeIcon />
 												<span className='reactions-counter__count'>
-												{commentsState[currentIndex]?.likes || 0}
+													{commentsState[currentIndex]?.likes || 0}
 												</span>
 											</div>
 
 											{/* Дизлайк */}
 											<div
-												className={`reactions-counter__icon-wrapper ${commentsState[currentIndex].dislikedByUser ? 'active' : ''
-													}`}
+												className={`reactions-counter__icon-wrapper ${
+													commentsState[currentIndex].dislikedByUser ? 'active' : ''
+												}`}
 											>
 												<DislikeIcon />
 												<span className='reactions-counter__count'>
-												{commentsState[currentIndex]?.dislikes || 0}
+													{commentsState[currentIndex]?.dislikes || 0}
 												</span>
 											</div>
 
@@ -423,8 +430,9 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 										{/* Кнопка лайка */}
 										<button
 											type='button'
-											className={`reactions__button ${hoverState.isDragging && hoverState.direction === 'left' ? 'like-hover' : ''
-												}`}
+											className={`reactions__button ${
+												hoverState.isDragging && hoverState.direction === 'left' ? 'like-hover' : ''
+											}`}
 											onClick={() => handleReaction('like')}
 										>
 											<LikeIcon />
@@ -433,10 +441,11 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 										{/* Кнопка дизлайка */}
 										<button
 											type='button'
-											className={`reactions__button ${hoverState.isDragging && hoverState.direction === 'right'
-												? 'dislike-hover'
-												: ''
-												}`}
+											className={`reactions__button ${
+												hoverState.isDragging && hoverState.direction === 'right'
+													? 'dislike-hover'
+													: ''
+											}`}
 											onClick={() => handleReaction('dislike')}
 										>
 											<DislikeIcon />
