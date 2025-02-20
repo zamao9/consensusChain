@@ -97,7 +97,7 @@ const QuestionsPage = ({ curItem, setItem, setPage, setPopup, setPopupText, setP
 			);
 			if (!response.ok) throw new Error('Failed to fetch questions');
 			const questions = await response.json();
-			console.log(questions)
+			console.log(questions);
 			// Setting up questions in Redux
 			dispatch(setQuestions(questions));
 
@@ -150,7 +150,12 @@ const QuestionsPage = ({ curItem, setItem, setPage, setPopup, setPopupText, setP
 	return (
 		<div className='questions-page'>
 			{isLoading ? (
-				<Preloader isVisible={isLoading} color='#CECECE' size={60} message='Please wait, fetching data...' />
+				<Preloader
+					isVisible={isLoading}
+					color='#CECECE'
+					size={60}
+					message='Please wait, fetching data...'
+				/>
 			) : (
 				<>
 					{/* Tabs and Filters wrapper */}
@@ -221,7 +226,12 @@ const QuestionsPage = ({ curItem, setItem, setPage, setPopup, setPopupText, setP
 
 					{/* Preloader for filtering */}
 					{isFiltering && (
-						<Preloader isVisible={isFiltering} color='#CECECE' size={40} message='Filtering questions...' />
+						<Preloader
+							isVisible={isFiltering}
+							color='#CECECE'
+							size={40}
+							message='Filtering questions...'
+						/>
 					)}
 
 					{/* List of questions */}

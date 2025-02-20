@@ -2,9 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 // Начальное состояние для уведомлений
 
 const initialState = {
-	notifications: [
-
-	],
+	notifications: [],
 };
 
 // Создаём срез уведомлений
@@ -28,24 +26,18 @@ export const notificationsSlice = createSlice({
 		},
 		// Помечаем уведомление как прочитанное по ID
 		markAsRead(state, action) {
-			const notification = state.notifications.find(
-				(n) => n.id === action.payload
-			);
+			const notification = state.notifications.find((n) => n.id === action.payload);
 			if (notification) {
 				notification.isRead = true;
 			}
 		},
 		// Удаляем уведомление по ID
 		removeNotification(state, action) {
-			state.notifications = state.notifications.filter(
-				(n) => n.id !== action.payload
-			);
+			state.notifications = state.notifications.filter((n) => n.id !== action.payload);
 		},
 		// Изменение состояния анимации
 		markRemoveAnimation(state, action) {
-			const notification = state.notifications.find(
-				(n) => n.id === action.payload
-			);
+			const notification = state.notifications.find((n) => n.id === action.payload);
 			if (notification) {
 				notification.animation = true;
 			}

@@ -7,6 +7,7 @@ import profileReducer from './feature/profile/profileSlice';
 import achievementsReducer from './feature/achievements/achievementsSlice';
 import tasksReducer from './feature/tasks/tasksSlice';
 import userInterfaceReducer from './feature/userInterface/userInterfaceSlice';
+import friendsReducer from './feature/friends/friendsSlice';
 
 export const store = configureStore({
 	reducer: {
@@ -17,5 +18,6 @@ export const store = configureStore({
 		achievements: achievementsReducer,
 		tasks: tasksReducer,
 		userInterface: userInterfaceReducer,
+		friends: friendsReducer,
 	},
 });

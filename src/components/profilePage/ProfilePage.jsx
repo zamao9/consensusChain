@@ -1,6 +1,12 @@
 import './profilePage.sass';
-import { ArrowRightIcon, ProfileIcon, SuccessIcon, SupportIcon } from '../../constants/SvgIcons';
-import { useAppDispatch, useAppSelector } from '../../hooks/store';
+import {
+	ArrowRightIcon,
+	FriendsIcon,
+	ProfileIcon,
+	SuccessIcon,
+	SupportIcon,
+} from '../../constants/SvgIcons';
+import { useAppSelector } from '../../hooks/store';
 import {
 	selectAnswersCount,
 	selectLikesReceived,
@@ -13,7 +19,6 @@ import {
 import { selectAchievementsWithProgress } from '../../feature/achievements/achievementsSelector';
 
 const ProfilePage = ({ tab, setTab, setPage, setItem }) => {
-	const dispatch = useAppDispatch();
 	const profileName = useAppSelector(selectUserName);
 	const profileRegistrationDate = useAppSelector(selectRegistrationDate);
 	const achievementsData = useAppSelector(selectAchievementsWithProgress);
@@ -25,6 +30,14 @@ const ProfilePage = ({ tab, setTab, setPage, setItem }) => {
 			svg: <SupportIcon />,
 			handler: () => {
 				console.log('support-page');
+			},
+		},
+		{
+			key: 2,
+			svg: <FriendsIcon />,
+			handler: () => {
+				setPage('friends-page');
+				setItem('');
 			},
 		},
 	];
@@ -73,8 +86,9 @@ const ProfilePage = ({ tab, setTab, setPage, setItem }) => {
 			count: useAppSelector(selectAnswersCount),
 			svg: <ArrowRightIcon />,
 			handler: () => {
-				setPage('replies-sent-page');
-				setItem('');
+				// setPage('replies-sent-page');
+				// setItem('');
+				console.log('Replies sent');
 			},
 		},
 	];
@@ -121,12 +135,12 @@ const ProfilePage = ({ tab, setTab, setPage, setItem }) => {
 						</div>
 					</div>
 
-					{/* Wrapper Support */}
+					{/* Links wrapper */}
 					<ul className='links mb--16'>
-						{/* Links */}
+						{/* Profile link */}
 						{linksData.map((element) => (
 							<li className='links__item' key={element.key}>
-								<button className='links__button' onClick={element.handler}>
+								<button className='link links__link' onClick={element.handler}>
 									{element.svg}
 								</button>
 							</li>
@@ -147,7 +161,7 @@ const ProfilePage = ({ tab, setTab, setPage, setItem }) => {
 									</div>
 
 									{/* Link of statistical elements */}
-									<button className='stats__button' onClick={element.handler}>
+									<button className='link' onClick={element.handler}>
 										{element.svg}
 									</button>
 								</li>

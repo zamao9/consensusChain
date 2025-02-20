@@ -41,6 +41,7 @@ import {
 	setPopupText,
 	setPopupSource,
 } from '../../feature/userInterface/userInterfaceSlice';
+import FriendsPage from '../friendsPage/FriendsPage';
 
 const AppScreen = () => {
 	const dispatch = useAppDispatch();
@@ -220,6 +221,9 @@ const AppScreen = () => {
 							setItem={(item) => dispatch(setCurItem(item))}
 						/>
 					)}
+
+					{/* FRIENDS */}
+					{curPage === 'friends-page' && <FriendsPage />}
 
 					{/* REPLIES SENT */}
 					{curPage === 'replies-sent-page' && <RepliesSentPage />}

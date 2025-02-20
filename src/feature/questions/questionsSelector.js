@@ -36,7 +36,9 @@ export const selectNotAnsweredQuestion = (currentQuestionId) =>
 			const filteredQuestions = questions.filter((q) => q.question_id !== currentQuestionId);
 
 			// Находим первый вопрос с ответами (commentsCount > 0)
-			const questionWithComments = filteredQuestions.find((q) => q.commentsCount > 0 && !q.answered);
+			const questionWithComments = filteredQuestions.find(
+				(q) => q.commentsCount > 0 && !q.answered
+			);
 			if (questionWithComments) {
 				return questionWithComments;
 			}
