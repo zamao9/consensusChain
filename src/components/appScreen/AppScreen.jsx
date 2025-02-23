@@ -179,7 +179,7 @@ const AppScreen = () => {
 				<Marquees />
 
 				{/* CONTAINER */}
-				<div className='container'>
+				<div id='scrollableDiv' className='container' style={{ maxHeight: '80vh', overflowY: 'auto' }}>
 					{/* POPUP */}
 					{popup && (
 						<PopupBackground
