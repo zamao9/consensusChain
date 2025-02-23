@@ -255,9 +255,11 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 		setHoverState({ isDragging: true, direction });
 
 		// Smoothed offsets and rotation
-		const deadZone = 10;
+		const deadZone = 1;
 		let adjustedOffsetX = Math.abs(offsetX) < deadZone ? 0 : offsetX;
+		adjustedOffsetX *= 3;
 		let adjustedOffsetY = Math.abs(offsetY) < deadZone ? 0 : offsetY;
+		adjustedOffsetY *= 3;
 
 		const maxRotation = 15;
 		const targetRotation = Math.min(Math.max(adjustedOffsetX / 10, -maxRotation), maxRotation);
@@ -337,166 +339,163 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 		initial: { opacity: 0, x: 0 },
 		animate: { opacity: 1, x: 0, transition: { duration: 0.5 } },
 		exit: { opacity: 0, x: -200, transition: { duration: 0.5 } }, // Свайп влево
-	  };
+	};
 
 	return (
-		<div className="comments-page">
-		  {/* Отображение текущего вопроса */}
-		  <AnimatePresence mode="wait">
-			<motion.div
-			  key={questionsItem?.question_id}
-			  initial="initial"
-			  animate="animate"
-			  exit="exit"
-			  variants={questionVariants}
-			>
-			  <QuestionsItem
-				questionItem={questionsItem}
-				comments={'comments-page'}
-				setPopup={setPopup}
-				setPopupText={setPopupText}
-				setPopupSource={setPopupSource}
-				answer={questionsItem?.answered}
-				isCurrentElement={true}
-			  />
-			</motion.div>
-		  </AnimatePresence>
-	  
-		  {/* Обертка свайпа ответов */}
-		  <div className="answers-block">
-			{isLoading && (
-			  <Preloader
-				isVisible={isLoading}
-				color="#CECECE"
-				size={60}
-				message="Please wait, fetching data..."
-			  />
-			)}
-			{!isLoading && (
-			  <>
-				<AnimatePresence mode="wait">
-				  <motion.div
-					key={currentIndex} // Уникальный ключ для каждой карточки
-					className="answers mt--16"
-					variants={cardVariants}
-					initial="initial"
-					animate="animate"
-					exit="exit"
-					ref={cardRef}
-					style={{
-					  transform: `translate(${position.x}px, ${position.y}px) rotate(${position.rotation}deg)`,
-					}}
-					onMouseDown={handleDragStart}
-					onMouseMove={handleDragMove}
-					onMouseUp={handleDragEnd}
-					onTouchStart={handleDragStart}
-					onTouchMove={handleDragMove}
-					onTouchEnd={handleDragEnd}
-				  >
-					{commentsState.length > 0 && commentsState !== null ? (
-					  <>
-						{/* Обертка данных ответа */}
-						<div className="comment-card">
-						  {/* Текст ответа */}
-						  <h2 className="answers__title lh--140 mb--16">
-							{commentsState[currentIndex]?.text || 'waiting text'}
-						  </h2>
-						  {/* Реакции на ответ */}
-						  <div className="reactions-counter mb--32">
-							{/* Лайк */}
-							<div
-							  className={`reactions-counter__icon-wrapper ${
-								commentsState[currentIndex].likedByUser ? 'active' : ''
-							  }`}
-							>
-							  <LikeIcon />
-							  <span className="reactions-counter__count">
-								{commentsState[currentIndex]?.likes || 0}
-							  </span>
-							</div>
-							{/* Дизлайк */}
-							<div
-							  className={`reactions-counter__icon-wrapper ${
-								commentsState[currentIndex].dislikedByUser ? 'active' : ''
-							  }`}
-							>
-							  <DislikeIcon />
-							  <span className="reactions-counter__count">
-								{commentsState[currentIndex]?.dislikes || 0}
-							  </span>
-							</div>
-							{/* Профиль ответчика */}
-							<div className="user reactions-counter__user">
-							  <ProfileIcon />
-							  <span className="user__name">{questionsItem?.user_name}</span>
-							</div>
-						  </div>
-						</div>
-						{/* Кнопки реакций */}
-						<div className="reactions">
-						  {/* Кнопка лайка */}
-						  <button
-							type="button"
-							className={`reactions__button ${
-							  hoverState.isDragging && hoverState.direction === 'left'
-								? 'like-hover'
-								: ''
-							}`}
-							onClick={() => handleReaction('like')}
-						  >
-							<LikeIcon />
-						  </button>
-						  {/* Кнопка дизлайка */}
-						  <button
-							type="button"
-							className={`reactions__button ${
-							  hoverState.isDragging && hoverState.direction === 'right'
-								? 'dislike-hover'
-								: ''
-							}`}
-							onClick={() => handleReaction('dislike')}
-						  >
-							<DislikeIcon />
-						  </button>
-						</div>
-					  </>
-					) : (
-					  <p>No comments available for this question.</p>
-					)}
-				  </motion.div>
-				</AnimatePresence>
-	  
-				{/* Нижний ответ */}
-				{nextCommentVisible && currentIndex < commentsState.length - 1 && (
-				  <div className="answers answers__next-comment-card">
-					<h2 className="answers__title lh--140 mb--16">
-					  {commentsState[currentIndex + 1]?.text}
-					</h2>
-					<div className="reactions-counter mb--32">
-					  <div className="reactions-counter__icon-wrapper">
-						<LikeIcon />
-						<span className="reactions-counter__count">
-						  {commentsState[currentIndex + 1]?.likes}
-						</span>
-					  </div>
-					  <div className="reactions-counter__icon-wrapper">
-						<DislikeIcon />
-						<span className="reactions-counter__count">
-						  {commentsState[currentIndex + 1]?.dislikes}
-						</span>
-					  </div>
-					  <div className="user reactions-counter__user">
-						<ProfileIcon />
-						<span className="user__name">{questionsItem?.user_name}</span>
-					  </div>
-					</div>
-				  </div>
+		<div className='comments-page'>
+			{/* Отображение текущего вопроса */}
+			<AnimatePresence mode='wait'>
+				<motion.div
+					key={questionsItem?.question_id}
+					initial='initial'
+					animate='animate'
+					exit='exit'
+					variants={questionVariants}
+				>
+					<QuestionsItem
+						questionItem={questionsItem}
+						comments={'comments-page'}
+						setPopup={setPopup}
+						setPopupText={setPopupText}
+						setPopupSource={setPopupSource}
+						answer={questionsItem?.answered}
+						isCurrentElement={true}
+					/>
+				</motion.div>
+			</AnimatePresence>
+
+			{/* Обертка свайпа ответов */}
+			<div className='answers-block'>
+				{isLoading && (
+					<Preloader
+						isVisible={isLoading}
+						color='#CECECE'
+						size={60}
+						message='Please wait, fetching data...'
+					/>
 				)}
-			  </>
-			)}
-		  </div>
+				{!isLoading && (
+					<>
+						<motion.div
+							className='answers mt--16'
+							ref={cardRef}
+							style={{
+								transform: `translate(${position.x}px, ${position.y}px) rotate(${position.rotation}deg)`,
+							}}
+							onMouseDown={handleDragStart}
+							onMouseMove={handleDragMove}
+							onMouseUp={handleDragEnd}
+							onTouchStart={handleDragStart}
+							onTouchMove={handleDragMove}
+							onTouchEnd={handleDragEnd}
+						>
+							{commentsState.length > 0 && commentsState !== null ? (
+								<>
+									{/* Обертка данных ответа */}
+									<div className='comment-card'>
+										{/* Текст ответа */}
+										<h2 className='answers__title lh--140 mb--16'>
+											{' '}
+											{commentsState[currentIndex]?.text || 'waiting text'}
+										</h2>
+
+										{/* Реакции на ответ */}
+										<div className='reactions-counter mb--32'>
+											{/* Лайк */}
+											<div
+												className={`reactions-counter__icon-wrapper ${
+													commentsState[currentIndex].likedByUser ? 'active' : ''
+												}`}
+											>
+												<LikeIcon />
+												<span className='reactions-counter__count'>
+													{commentsState[currentIndex]?.likes || 0}
+												</span>
+											</div>
+
+											{/* Дизлайк */}
+											<div
+												className={`reactions-counter__icon-wrapper ${
+													commentsState[currentIndex].dislikedByUser ? 'active' : ''
+												}`}
+											>
+												<DislikeIcon />
+												<span className='reactions-counter__count'>
+													{commentsState[currentIndex]?.dislikes || 0}
+												</span>
+											</div>
+
+											{/* Профиль ответчика */}
+											<div className='user reactions-counter__user'>
+												<ProfileIcon />
+												<span className='user__name'>{questionsItem?.user_name}</span>
+											</div>
+										</div>
+									</div>
+
+									{/* Кнопки реакций */}
+									<div className='reactions'>
+										{/* Кнопка лайка */}
+										<button
+											type='button'
+											className={`reactions__button ${
+												hoverState.isDragging && hoverState.direction === 'left' ? 'like-hover' : ''
+											}`}
+											onClick={() => handleReaction('like')}
+										>
+											<LikeIcon />
+										</button>
+
+										{/* Кнопка дизлайка */}
+										<button
+											type='button'
+											className={`reactions__button ${
+												hoverState.isDragging && hoverState.direction === 'right'
+													? 'dislike-hover'
+													: ''
+											}`}
+											onClick={() => handleReaction('dislike')}
+										>
+											<DislikeIcon />
+										</button>
+									</div>
+								</>
+							) : (
+								<p>No comments available for this question.</p>
+							)}
+						</motion.div>
+
+						{/* Нижний ответ */}
+						{nextCommentVisible && currentIndex < commentsState.length - 1 && (
+							<div className='answers answers__next-comment-card'>
+								<h2 className='answers__title lh--140 mb--16'>
+									{commentsState[currentIndex + 1]?.text}
+								</h2>
+								<div className='reactions-counter mb--32'>
+									<div className='reactions-counter__icon-wrapper'>
+										<LikeIcon />
+										<span className='reactions-counter__count'>
+											{commentsState[currentIndex + 1]?.likes}
+										</span>
+									</div>
+									<div className='reactions-counter__icon-wrapper'>
+										<DislikeIcon />
+										<span className='reactions-counter__count'>
+											{commentsState[currentIndex + 1]?.dislikes}
+										</span>
+									</div>
+									<div className='user reactions-counter__user'>
+										<ProfileIcon />
+										<span className='user__name'>{questionsItem?.user_name}</span>
+									</div>
+								</div>
+							</div>
+						)}
+					</>
+				)}
+			</div>
 		</div>
-	  );
+	);
 };
 
 export default CommentsPage;

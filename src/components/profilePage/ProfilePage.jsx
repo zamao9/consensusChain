@@ -136,16 +136,16 @@ const ProfilePage = ({ tab, setTab, setPage, setItem }) => {
 					</div>
 
 					{/* Links wrapper */}
-					<ul className='links mb--16'>
-						{/* Profile link */}
-						{linksData.map((element) => (
+					{/* <ul className='links mb--16'> */}
+					{/* Profile link */}
+					{/* {linksData.map((element) => (
 							<li className='links__item' key={element.key}>
 								<button className='link links__link' onClick={element.handler}>
 									{element.svg}
 								</button>
 							</li>
 						))}
-					</ul>
+					</ul> */}
 
 					{/* Statistics Wrapper */}
 					<div className='stats'>
