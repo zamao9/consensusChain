@@ -31,8 +31,7 @@ const friendsSlice = createSlice({
 	initialState,
 	reducers: {
 		setFriends(state, action) {
-			const friends = action.payload;
-			state.friends = friends;
+			state.friends = action.payload;
 		},
 		setCurrentPage(state, action) {
 			state.currentPage = action.payload;

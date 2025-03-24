@@ -2,7 +2,7 @@ import './askPage.sass';
 import { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks/store';
 import { selectUserId } from '../../feature/profile/profileSelector';
-import { SearchIcon } from '../../constants/SvgIcons';
+import { SearchInputIcon } from '../../constants/SvgIcons';
 
 const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 	const dispatch = useAppDispatch();
@@ -204,8 +204,9 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 						<li key={element.id}>
 							<button
 								type='button'
-								className={`filters-item filters__item language-filter__item ${element.status ? 'active' : ''
-									}`}
+								className={`filters-item filters__item language-filter__item ${
+									element.status ? 'active' : ''
+								}`}
 								onClick={() => handleLanguageChange(element.id)}
 							>
 								{element.label}
@@ -222,8 +223,9 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 					{/* Public questions button */}
 					<button
 						type='button'
-						className={`ask-page__privacy-button ask-page__public-button ${!currPrivacyBtn ? 'active' : ''
-							}`}
+						className={`ask-page__privacy-button ask-page__public-button ${
+							!currPrivacyBtn ? 'active' : ''
+						}`}
 						onClick={() => setPrivacyBtn(false)}
 					>
 						Public
@@ -243,9 +245,11 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 
 				{/* Nickname entry field */}
 				{/* {currPrivacyBtn && (
-					<div className={`input filters__private ${currPrivacyBtn ? 'active' : false}`}>
+					<div
+						className={`input input-relative filters__private ${currPrivacyBtn ? 'active' : false}`}
+					>
 						<input type='text' required placeholder='@nickname' />
-						<SearchIcon />
+						<SearchInputIcon />
 					</div>
 				)} */}
 			</div>

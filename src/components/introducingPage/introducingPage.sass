@@ -1,0 +1,55 @@
+@use '../../index'
+
+.introducing-page
+	display: flex
+	flex-direction: column
+	justify-content: center
+	align-items: center
+	max-width: 375px
+	height: 100vh
+	margin: 0 auto
+	padding: 0 15px
+	text-align: center
+
+	/* Introducing Svg */
+	&__svg svg
+		width: 100px
+		height: 100px
+
+	/* Introducing Title */
+	&__title
+		width: 100%
+		font-size: 20px
+		line-height: 120%
+		margin-bottom: 8px
+
+	/* Introducing Image */
+	&__image
+		@include index.border15
+		overflow: hidden
+
+	/* Introducing Input Field */
+	.input-field
+		width: 100%
+		padding: 8px
+		background-color: index.$c-bg-900
+		@include index.border15
+
+	/* Dots Wrapper */
+	.dots
+		display: flex
+		justify-content: center
+		gap: 4px
+		&__item
+			width: 20px
+			height: 4px
+			background-color: index.$c-text-disabled
+			border-radius: 2px
+			transition: 0.2s ease
+			&.active
+				background-color: index.$c-text
+
+	/* Buttons Wrapper */
+	.buttons-wrapper
+		display: flex
+		gap: 32px

@@ -42,6 +42,7 @@ import {
 	setPopupSource,
 } from '../../feature/userInterface/userInterfaceSlice';
 import FriendsPage from '../friendsPage/FriendsPage';
+import IntroducingPage from '../introducingPage/IntroducingPage';
 
 const AppScreen = () => {
 	const dispatch = useAppDispatch();
@@ -163,112 +164,121 @@ const AppScreen = () => {
 	}, [popup]);
 	//console.log(popupSource)
 
+	const [firstLoading, setFirstLoading] = useState(true);
+
 	return (
 		<>
-			{/* HEADER */}
-			<Header
-				curItem={curItem}
-				setItem={(item) => dispatch(setCurItem(item))}
-				setPage={(page) => dispatch(setCurPage(page))}
-				setTab={(tab) => dispatch(setTab(tab))}
-			/>
+			{/* INTRODUCING */}
+			{firstLoading ? (
+				<IntroducingPage setFirstLoading={setFirstLoading} />
+			) : (
+				<>
+					{/* HEADER */}
+					<Header
+						curItem={curItem}
+						setItem={(item) => dispatch(setCurItem(item))}
+						setPage={(page) => dispatch(setCurPage(page))}
+						setTab={(tab) => dispatch(setTab(tab))}
+					/>
 
-			{/* SECTION */}
-			<main className='section'>
-				{/* MARQUEES */}
-				<Marquees />
+					{/* SECTION */}
+					<main className='section'>
+						{/* MARQUEES */}
+						<Marquees />
 
-				{/* CONTAINER */}
-				<div className='container'>
-					{/* POPUP */}
-					{popup && (
-						<PopupBackground
-							popupSvg={popupSvg}
-							setPopup={(value) => dispatch(setPopup(value))}
-							popupText={popupText}
-							setPopupText={(text) => dispatch(setPopupText(text))}
-							popupSource={popupSource}
-							setPopupSource={(source) => dispatch(setPopupSource(source))}
-						/>
-					)}
+						{/* CONTAINER */}
+						<div className='container'>
+							{/* POPUP */}
+							{popup && (
+								<PopupBackground
+									popupSvg={popupSvg}
+									setPopup={(value) => dispatch(setPopup(value))}
+									popupText={popupText}
+									setPopupText={(text) => dispatch(setPopupText(text))}
+									popupSource={popupSource}
+									setPopupSource={(source) => dispatch(setPopupSource(source))}
+								/>
+							)}
 
-					{/* PRELOADER */}
-					{curPage === 'preloader' && (
-						<Preloader
-							isVisible={true}
-							color='#FF5733'
-							size={60}
-							message='Please wait, fetching data...'
-						/>
-					)}
+							{/* PRELOADER */}
+							{curPage === 'preloader' && (
+								<Preloader
+									isVisible={true}
+									color='#FF5733'
+									size={60}
+									message='Please wait, fetching data...'
+								/>
+							)}
 
-					{/* NOTIFICATIONS */}
-					{curPage === 'notifications-page' && (
-						<NotificationsPage
-							setPopupSvg={setPopupSvg}
-							setPopup={(value) => dispatch(setPopup(value))}
-							setPopupText={(text) => dispatch(setPopupText(text))}
-							setPopupSource={(source) => dispatch(setPopupSource(source))}
-						/>
-					)}
+							{/* NOTIFICATIONS */}
+							{curPage === 'notifications-page' && (
+								<NotificationsPage
+									setPopupSvg={setPopupSvg}
+									setPopup={(value) => dispatch(setPopup(value))}
+									setPopupText={(text) => dispatch(setPopupText(text))}
+									setPopupSource={(source) => dispatch(setPopupSource(source))}
+								/>
+							)}
 
-					{/* PROFILE */}
-					{curPage === 'profile-page' && (
-						<ProfilePage
-							tab={tab}
-							setTab={(tab) => dispatch(setTab(tab))}
-							setPage={(page) => dispatch(setCurPage(page))}
-							setItem={(item) => dispatch(setCurItem(item))}
-						/>
-					)}
+							{/* PROFILE */}
+							{curPage === 'profile-page' && (
+								<ProfilePage
+									tab={tab}
+									setTab={(tab) => dispatch(setTab(tab))}
+									setPage={(page) => dispatch(setCurPage(page))}
+									setItem={(item) => dispatch(setCurItem(item))}
+								/>
+							)}
 
-					{/* FRIENDS */}
-					{curPage === 'friends-page' && <FriendsPage />}
+							{/* FRIENDS */}
+							{curPage === 'friends-page' && <FriendsPage />}
 
-					{/* REPLIES SENT */}
-					{curPage === 'replies-sent-page' && <RepliesSentPage />}
+							{/* REPLIES SENT */}
+							{curPage === 'replies-sent-page' && <RepliesSentPage />}
 
-					{/* ASK */}
-					{curPage === 'ask-page' && (
-						<AskPage
-							setPopup={(value) => dispatch(setPopup(value))}
-							setPopupText={(text) => dispatch(setPopupText(text))}
-							setPopupSource={(source) => dispatch(setPopupSource(source))}
-						/>
-					)}
+							{/* ASK */}
+							{curPage === 'ask-page' && (
+								<AskPage
+									setPopup={(value) => dispatch(setPopup(value))}
+									setPopupText={(text) => dispatch(setPopupText(text))}
+									setPopupSource={(source) => dispatch(setPopupSource(source))}
+								/>
+							)}
 
-					{/* QUESTIONS-PAGE */}
-					{curPage === 'questions-page' && (
-						<QuestionsPage
-							setPage={(page) => dispatch(setCurPage(page))}
-							setItem={(item) => dispatch(setCurItem(item))}
-							setPopup={(value) => dispatch(setPopup(value))}
-							setPopupText={(text) => dispatch(setPopupText(text))}
-							setPopupSource={(source) => dispatch(setPopupSource(source))}
-							popupSource={popupSource}
-						/>
-					)}
+							{/* QUESTIONS-PAGE */}
+							{curPage === 'questions-page' && (
+								<QuestionsPage
+									setPage={(page) => dispatch(setCurPage(page))}
+									setItem={(item) => dispatch(setCurItem(item))}
+									setPopup={(value) => dispatch(setPopup(value))}
+									setPopupText={(text) => dispatch(setPopupText(text))}
+									setPopupSource={(source) => dispatch(setPopupSource(source))}
+									popupSource={popupSource}
+								/>
+							)}
 
-					{/* COMMENTS */}
-					{curPage === 'comments-page' && (
-						<CommentsPage
-							setPopup={(value) => dispatch(setPopup(value))}
-							setPopupText={(text) => dispatch(setPopupText(text))}
-							setPopupSource={(source) => dispatch(setPopupSource(source))}
-						/>
-					)}
+							{/* COMMENTS */}
+							{curPage === 'comments-page' && (
+								<CommentsPage
+									setPopup={(value) => dispatch(setPopup(value))}
+									setPopupText={(text) => dispatch(setPopupText(text))}
+									setPopupSource={(source) => dispatch(setPopupSource(source))}
+								/>
+							)}
 
-					{/* TASKS */}
-					{curPage === 'tasks-page' && <TasksPage />}
-				</div>
-			</main>
+							{/* TASKS */}
+							{curPage === 'tasks-page' && <TasksPage />}
+						</div>
+					</main>
 
-			{/* FOOTER */}
-			<Footer
-				curItem={curItem}
-				setItem={(item) => dispatch(setCurItem(item))}
-				setPage={(page) => dispatch(setCurPage(page))}
-			/>
+					{/* FOOTER */}
+					<Footer
+						curItem={curItem}
+						setItem={(item) => dispatch(setCurItem(item))}
+						setPage={(page) => dispatch(setCurPage(page))}
+					/>
+				</>
+			)}
 		</>
 	);
 };
