@@ -164,7 +164,7 @@ const AppScreen = () => {
 	}, [popup]);
 	//console.log(popupSource)
 
-	const [firstLoading, setFirstLoading] = useState(true);
+	const [firstLoading, setFirstLoading] = useState(false);
 
 	return (
 		<>

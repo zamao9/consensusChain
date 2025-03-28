@@ -8,7 +8,7 @@ import achievementsReducer from './feature/achievements/achievementsSlice';
 import tasksReducer from './feature/tasks/tasksSlice';
 import userInterfaceReducer from './feature/userInterface/userInterfaceSlice';
 import friendsReducer from './feature/friends/friendsSlice';
-// import introducingReducer from './feature/introducing/introducingSlice';
+import repliesSentReducer from './feature/repliesSent/repliesSentSlice';
 
 export const store = configureStore({
 	reducer: {
@@ -20,6 +20,6 @@ export const store = configureStore({
 		tasks: tasksReducer,
 		userInterface: userInterfaceReducer,
 		friends: friendsReducer,
-		// introducing: introducingReducer,
+		repliesSent: repliesSentReducer,
 	},
 });

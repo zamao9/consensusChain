@@ -7,42 +7,30 @@ import {
 	DislikeIcon,
 	LikeIcon,
 } from '../../constants/SvgIcons';
-import { useAppSelector } from '../../hooks/store';
-import { selectCurrentPage } from '../../feature/questions/questionsSelector';
+import { useAppDispatch, useAppSelector } from '../../hooks/store';
+import {
+	selectCurrentPageCommentsList,
+	selectTotalPage,
+	selectCurrentPage,
+} from '../../feature/repliesSent/repliesSentSelector';
+import { setCurrentPage } from '../../feature/repliesSent/RepliesSentSlice';
+import { useEffect } from 'react';
 
 const RepliesSentPage = () => {
+	const dispatch = useAppDispatch();
+
+	const totalPage = useAppSelector(selectTotalPage);
+	const currentPageCommentsList = useAppSelector(selectCurrentPageCommentsList);
 	const currentPage = useAppSelector(selectCurrentPage);
 
-	// sent response structure
-	const RepliesSentData = [
-		{
-			id: 1,
-			text: 'One guy shoves exactly one can into his rectum.',
-			likes: 7,
-			dislikes: 9,
-			link: () => {
-				console.log('link1');
-			},
-		},
-		{
-			id: 2,
-			text: 'A human anus can stretch up to 7 inches. A raccoon can squeeze into a 4 inch hole, which means you can put two raccoons up your arse.',
-			likes: 16,
-			dislikes: 4,
-			link: () => {
-				console.log('link2');
-			},
-		},
-		{
-			id: 3,
-			text: 'I guess, we’ll never know.',
-			likes: 30,
-			dislikes: 6,
-			link: () => {
-				console.log('link3');
-			},
-		},
-	];
+	const goToFirstPage = () => dispatch(setCurrentPage(1));
+	const goToPreviousPage = () => dispatch(setCurrentPage(Math.max(currentPage - 1, 1)));
+	const goToNextPage = () => dispatch(setCurrentPage(Math.min(currentPage + 1, totalPage)));
+	const goToLastPage = () => dispatch(setCurrentPage(totalPage));
+
+	useEffect(() => {
+		dispatch(setCurrentPage(1));
+	}, []);
 
 	return (
 		<div className='replies-sent-page'>
@@ -52,7 +40,7 @@ const RepliesSentPage = () => {
 			{/* List of sent reply items */}
 			<ul className='replies-sent-page__list mb--32'>
 				{/* Items in the list of sent replies */}
-				{RepliesSentData.map((element) => (
+				{currentPageCommentsList.map((element) => (
 					<li className='replies-sent-page__item' key={element.id}>
 						{/* Element Text */}
 						<p className='lh--140 replies-sent-page__text'>{element.text}</p>
@@ -86,25 +74,35 @@ const RepliesSentPage = () => {
 			{/* Pagination */}
 			<div className='pagination'>
 				<button
-					className={`pagination__button ${currentPage === 1 ? 'disabled' : ''}`}
-					onClick={() => console.log('first')}
+					className={`pagination__button `}
+					disabled={currentPage === 1}
+					onClick={() => goToFirstPage()}
 				>
 					<DblArrowLeftIcon />
 				</button>
 				<button
-					className={`pagination__button ${currentPage === 1 ? 'disabled' : ''}`}
-					onClick={() => console.log('prev')}
+					className='pagination__button '
+					disabled={currentPage === 1}
+					onClick={() => goToPreviousPage()}
 				>
 					<ArrowLeftIcon />
 				</button>
 
 				{/* Page counter */}
-				<div className='pagination__counter'>1 / 3</div>
+				<div className='pagination__counter'>{`${currentPage} / ${totalPage}`}</div>
 
-				<button className={`pagination__button `} onClick={() => console.log('next')}>
+				<button
+					className={`pagination__button `}
+					onClick={() => goToNextPage()}
+					disabled={currentPage === totalPage}
+				>
 					<ArrowRightIcon />
 				</button>
-				<button className={`pagination__button `} onClick={() => console.log('last')}>
+				<button
+					className={`pagination__button `}
+					onClick={() => goToLastPage()}
+					disabled={currentPage === totalPage}
+				>
 					<DblArrowRightIcon />
 				</button>
 			</div>
