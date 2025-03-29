@@ -1,6 +1,6 @@
 import os
 from typing import Dict, List
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Request
 from motor.motor_asyncio import AsyncIOMotorClient
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
@@ -28,6 +28,17 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+def str_to_bool(value: str) -> bool:
+    """
+    Преобразует строку в булево значение.
+    Поддерживает значения: "true", "false", "1", "0", "yes", "no".
+    """
+    if value.lower() in ("true", "1", "yes"):
+        return True
+    elif value.lower() in ("false", "0", "no"):
+        return False
+    raise ValueError(f"Invalid boolean value: {value}")
 
 # Получить информацию о пользователе по user_id
 @app.get("/users/{user_id}")
@@ -109,10 +120,22 @@ async def dislike_comment_endpoint(comment_id: str, request: LikeDislikeRequest)
 
 # Получить комментарии к вопросу
 @app.get("/questions/{question_id}/comments")
-async def get_comments_endpoint(question_id: str, user_id: str):
-    user_id = int(user_id)
-    question_id=int(question_id)
-    comments = await get_comments(question_id, user_id)
+async def get_comments_endpoint(
+    request: Request,  # Добавляем объект Request
+    question_id: int,
+    user_id: int = Query(..., description="ID пользователя"),
+    allComments: str = Query("true", description="Include all comments or only user's comments")
+):
+    # Выводим всю query-строку
+    print("Full query string:", request.query_params)
+
+    # Преобразуем строку в булево значение
+    all_comments = str_to_bool(allComments)
+    
+    print("user_id->", user_id)  # Для дебага
+    print("all_comments->", all_comments)  # Для дебага
+    
+    comments = await get_comments(question_id, user_id, all_comments)
     if "error" in comments:
         raise HTTPException(status_code=404, detail=comments["error"])
     return comments

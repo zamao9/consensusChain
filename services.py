@@ -439,9 +439,9 @@ async def dislike_comment(user_id: int, comment_id: int) -> Dict:
 """Dislike a comment by user"""
 
 # Fetch Comments Data for QuestionId
-async def get_comments(question_id: int, user_id: int) -> List[Dict]:
+async def get_comments(question_id: int, user_id: int, all_comments: bool) -> List[Dict]:
     conn = await get_db_connection()
-    
+    print("all_comments->" ,all_comments    );    
     try:
         # Получаем данные пользователя
         user = await conn.fetchrow("""
@@ -453,11 +453,24 @@ async def get_comments(question_id: int, user_id: int) -> List[Dict]:
         liked_comments = json.loads(user["liked_comments"]) if user["liked_comments"] else []
         disliked_comments = json.loads(user["disliked_comments"]) if user["disliked_comments"] else []
 
-        # Получаем список комментариев для указанного вопроса
-        comments = await conn.fetch("""
-            SELECT comment_id, user_id, text, likes, dislikes 
-            FROM comments WHERE question_id = $1;
-        """, question_id)
+        # Запрос для получения всех комментариев пользователя
+        if not all_comments:
+            comments = await conn.fetch("""
+                SELECT comment_id, user_id, text, likes, dislikes, question_id
+                FROM comments WHERE user_id = $1;
+            """, user_id)
+        else:
+            # Запрос для получения всех комментариев (с фильтром по question_id, если он указан)
+            if question_id:
+                comments = await conn.fetch("""
+                    SELECT comment_id, user_id, text, likes, dislikes, question_id 
+                    FROM comments WHERE question_id = $1;
+                """, question_id)
+            else:
+                comments = await conn.fetch("""
+                    SELECT comment_id, user_id, text, likes, dislikes, question_id 
+                    FROM comments;
+                """)
 
         if not comments:
             return []
@@ -467,7 +480,7 @@ async def get_comments(question_id: int, user_id: int) -> List[Dict]:
         for comment in comments:
             result.append({
                 "commentId": comment["comment_id"],
-                "questionId": question_id,
+                "questionId": comment.get("question_id"),  # Может быть None
                 "user_id": comment["user_id"],
                 "text": comment["text"],
                 "likes": comment["likes"],
@@ -479,7 +492,6 @@ async def get_comments(question_id: int, user_id: int) -> List[Dict]:
         return result
     finally:
         await conn.close()
-"""Fetch Comments Data for QuestionId"""
 
 # Fetch Tasks Data and add tasks
 async def get_user_tasks(user_id: int) -> Dict:
