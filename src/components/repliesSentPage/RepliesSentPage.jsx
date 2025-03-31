@@ -13,15 +13,19 @@ import {
 	selectTotalPage,
 	selectCurrentPage,
 } from '../../feature/repliesSent/repliesSentSelector';
-import { setCurrentPage } from '../../feature/repliesSent/RepliesSentSlice';
+import { setCurrentPage, setRepliesSent } from '../../feature/repliesSent/RepliesSentSlice';
 import { useEffect } from 'react';
+import { selectUserId } from '../../feature/profile/profileSelector';
 
 const RepliesSentPage = () => {
 	const dispatch = useAppDispatch();
 
 	const totalPage = useAppSelector(selectTotalPage);
 	const currentPageCommentsList = useAppSelector(selectCurrentPageCommentsList);
+	console.log(currentPageCommentsList);
+
 	const currentPage = useAppSelector(selectCurrentPage);
+	const userId = useAppSelector(selectUserId);
 
 	const goToFirstPage = () => dispatch(setCurrentPage(1));
 	const goToPreviousPage = () => dispatch(setCurrentPage(Math.max(currentPage - 1, 1)));
@@ -31,6 +35,25 @@ const RepliesSentPage = () => {
 	useEffect(() => {
 		dispatch(setCurrentPage(1));
 	}, []);
+
+	useEffect(() => {
+		const fetchaaaa = async () => {
+			try {
+				const response = await fetch(
+					`https://web-production-c0b1.up.railway.app/questions/1/comments?user_id=${userId}&allComments=false`
+				);
+				if (!response.ok) throw new Error('Failed to fetch statistics');
+				const data = await response.json();
+				console.log(data);
+				dispatch(setRepliesSent(data));
+			} catch (error) {
+				setError('Error fetching user statistics');
+				console.error('Error fetching user statistics:', error);
+			}
+		};
+
+		fetchaaaa();
+	}, [userId, dispatch]);
 
 	return (
 		<div className='replies-sent-page'>

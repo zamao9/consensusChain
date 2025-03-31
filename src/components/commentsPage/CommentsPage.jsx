@@ -39,7 +39,7 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 		setIsLoading(true); // Start loading
 		try {
 			const response = await fetch(
-				`https://web-production-c0b1.up.railway.app/questions/${questionId}/comments?user_id=${userId}`,
+				`https://web-production-c0b1.up.railway.app/questions/${questionId}/comments?user_id=${userId}&allComments=true`,
 				{
 					method: 'GET',
 					headers: {

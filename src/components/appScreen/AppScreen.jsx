@@ -239,6 +239,9 @@ const AppScreen = () => {
 							{/* ASK */}
 							{curPage === 'ask-page' && (
 								<AskPage
+									setPage={(page) => dispatch(setCurPage(page))}
+									setTab={(tab) => dispatch(setTab(tab))}
+									setItem={(item) => dispatch(setCurItem(item))}
 									setPopup={(value) => dispatch(setPopup(value))}
 									setPopupText={(text) => dispatch(setPopupText(text))}
 									setPopupSource={(source) => dispatch(setPopupSource(source))}
@@ -267,7 +270,9 @@ const AppScreen = () => {
 							)}
 
 							{/* TASKS */}
-							{curPage === 'tasks-page' && <TasksPage />}
+							{curPage === 'tasks-page' && (
+								<TasksPage tab={tab} setTab={(tab) => dispatch(setTab(tab))} />
+							)}
 						</div>
 					</main>
 

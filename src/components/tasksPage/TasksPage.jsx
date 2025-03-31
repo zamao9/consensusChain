@@ -9,7 +9,7 @@ import { selectUserId } from '../../feature/profile/profileSelector';
 import { incrementBalance } from '../../feature/profile/profileSlice';
 import Preloader from '../preloader/Preloader';
 
-const TasksPage = () => {
+const TasksPage = ({ tab, setTab }) => {
 	const dispatch = useAppDispatch();
 	const userId = useAppSelector(selectUserId);
 	const [isProcessing, setIsProcessing] = useState(false);
@@ -139,63 +139,90 @@ const TasksPage = () => {
 				<>
 					<h2 className='title mb--22 tasks-page__title'>Tasks</h2>
 
-					{/* Список тасков */}
-					{!taskIsEmpty ? (
-						<ul className='tasks-page__list'>
-							<AnimatePresence>
-								{/* Таски */}
-								{visibleTasks.map((element) => (
-									<motion.li
-										initial={{ opacity: 0, y: -20 }}
-										animate={{ opacity: 1, y: 0 }}
-										exit={{ opacity: 0, y: 20 }} // Анимация исчезновения
-										className='tasks-page__item'
-										key={element.key}
-									>
-										{/* Обертка Заголовка и Цены */}
-										<div className='tasks-page__header'>
-											{/* Заголовок элементов таска */}
-											<h2 className='lh--140 tasks-page__item-title'>{element.title}</h2>
-											{/* Цена таска */}
-											<span className='tasks-page__cost'>{element.cost} TON</span>
-										</div>
-										{/* Разделительная линия */}
-										<hr />
-										{/* Обертка Таймера и Кнопки */}
-										<div className='tasks-page__footer'>
-											{/* Таймер */}
-											<span className={`tasks-page__timer`}>{element.timer}</span>
-											{/* Кнопка */}
-											{!element.isDone && (
-												<button
-													type='button'
-													className='button tasks-page__button'
-													onClick={() => handleGo(element.key)}
-													// disabled={isProcessing}
-												>
-													Go
-												</button>
-											)}
-											{/* Кнопка */}
-											{element.isDone && !element.isClaimed && (
-												<button
-													type='button'
-													className='button tasks-page__button tasks-page__claim'
-													onClick={() => handleClaim(element.key)}
-													// disabled={isProcessing}
-												>
-													Claim
-												</button>
-											)}
-										</div>
-									</motion.li>
-								))}
-							</AnimatePresence>
-						</ul>
-					) : (
-						<div className='empty-block'>
-							<span className='lh--140'>Task not found for this user</span>
-						</div>
+					{/* Tabs */}
+					<ul className='tabs mb--32'>
+						{/* Tabs Item */}
+						<li>
+							<button
+								className={`button tabs__item ${tab === 'first' ? 'active' : ''}`}
+								onClick={() => setTab('first')}
+							>
+								General
+							</button>
+						</li>
+
+						{/* Tabs Item */}
+						<li>
+							<button
+								className={`button tabs__item ${tab === 'second' ? 'active' : ''}`}
+								onClick={() => setTab('second')}
+							>
+								Daily
+							</button>
+						</li>
+					</ul>
+
+					{tab === 'first' && (
+						<>
+							{/* Список тасков */}
+							{!taskIsEmpty ? (
+								<ul className='tasks-page__list'>
+									<AnimatePresence>
+										{/* Таски */}
+										{visibleTasks.map((element) => (
+											<motion.li
+												initial={{ opacity: 0, y: -20 }}
+												animate={{ opacity: 1, y: 0 }}
+												exit={{ opacity: 0, y: 20 }} // Анимация исчезновения
+												className='tasks-page__item'
+												key={element.key}
+											>
+												{/* Обертка Заголовка и Цены */}
+												<div className='tasks-page__header'>
+													{/* Заголовок элементов таска */}
+													<h2 className='lh--140 tasks-page__item-title'>{element.title}</h2>
+													{/* Цена таска */}
+													<span className='tasks-page__cost'>{element.cost} TON</span>
+												</div>
+												{/* Разделительная линия */}
+												<hr />
+												{/* Обертка Таймера и Кнопки */}
+												<div className='tasks-page__footer'>
+													{/* Таймер */}
+													<span className={`tasks-page__timer`}>{element.timer}</span>
+													{/* Кнопка */}
+													{!element.isDone && (
+														<button
+															type='button'
+															className='button tasks-page__button'
+															onClick={() => handleGo(element.key)}
+															// disabled={isProcessing}
+														>
+															Go
+														</button>
+													)}
+													{/* Кнопка */}
+													{element.isDone && !element.isClaimed && (
+														<button
+															type='button'
+															className='button tasks-page__button tasks-page__claim'
+															onClick={() => handleClaim(element.key)}
+															// disabled={isProcessing}
+														>
+															Claim
+														</button>
+													)}
+												</div>
+											</motion.li>
+										))}
+									</AnimatePresence>
+								</ul>
+							) : (
+								<div className='empty-block'>
+									<span className='lh--140'>Task not found for this user</span>
+								</div>
+							)}
+						</>
 					)}
 				</>
 			)}

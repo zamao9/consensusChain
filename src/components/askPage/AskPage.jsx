@@ -2,9 +2,9 @@ import './askPage.sass';
 import { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks/store';
 import { selectUserId } from '../../feature/profile/profileSelector';
-import { SearchInputIcon } from '../../constants/SvgIcons';
+import { NotificationIcon, SearchInputIcon } from '../../constants/SvgIcons';
 
-const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
+const AskPage = ({ setPage, setTab, setItem, setPopup, setPopupText, setPopupSource }) => {
 	const dispatch = useAppDispatch();
 	const userId = useAppSelector(selectUserId);
 
@@ -144,95 +144,116 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 		}
 	};
 
+	const [introduceCheck, setIntroduceCheck] = useState(false);
+
 	return (
-		<form onSubmit={handleSubmit} className='ask-page'>
-			{/* Title */}
-			{/* <h2 className='title mb--22 ask-page__title'>Ask your question</h2> */}
-
-			{/* Textarea */}
-			<textarea
-				placeholder='Ask your question'
-				className='text mb--22 lh--140 ask-page__textarea'
-				required
-				value={questionText}
-				onChange={(e) => setQuestionText(e.target.value)}
-			/>
-
-			{/* Title */}
-			{/* <h2 className='title mb--22 ask-page__title'>Filters</h2> */}
-			{/* Wrapper for Filters */}
-			<div className='filters'>
-				{/* Filters list */}
-				{/* Filters list */}
-				<ul className='filters__list'>
-					{/* Filters Item */}
-					{filtersItems.map((element) => (
-						<li key={element.key}>
-							<button
-								type='button'
-								className={`filters-item filters__item ${element.active ? 'active' : ''}`}
-								onClick={() => handleTagClick(element.key)}
-							>
-								{element.label}
-							</button>
-						</li>
-					))}
-
-					{/* Show the text field if the tag is selected "Other" */}
-					{filtersItems[10].active && (
-						// Tag entry field
-						<div className='input mt--8 filters__other'>
-							{' '}
-							<input
-								type='text'
-								required
-								placeholder='Enter custom tag'
-								value={otherTag}
-								onChange={(e) => setOtherTag(e.target.value)}
-							/>
-						</div>
-					)}
+		<>
+			{!introduceCheck && (
+				<ul className='links mb--16'>
+					<li className='links__item notification-tick '>
+						<button
+							className='link links__link'
+							onClick={() => {
+								setIntroduceCheck(true);
+								setPage('tasks-page');
+								setTab('second');
+								setItem('tasks-page');
+							}}
+						>
+							<NotificationIcon />
+						</button>
+					</li>
 				</ul>
+			)}
 
-				{/* Dividing line */}
-				<hr />
+			<form onSubmit={handleSubmit} className='ask-page'>
+				{/* Title */}
+				{/* <h2 className='title mb--22 ask-page__title'>Ask your question</h2> */}
 
-				{/* Languages filter list */}
-				<ul className='language-filter'>
-					{/* Languages filter items */}
-					{languageFilter.map((element) => (
-						<li key={element.id}>
-							<button
-								type='button'
-								className={`filters-item filters__item language-filter__item ${
-									element.status ? 'active' : ''
-								}`}
-								onClick={() => handleLanguageChange(element.id)}
-							>
-								{element.label}
-							</button>
-						</li>
-					))}
-				</ul>
+				{/* Textarea */}
+				<textarea
+					placeholder='Ask your question'
+					className='text mb--22 lh--140 ask-page__textarea'
+					required
+					value={questionText}
+					onChange={(e) => setQuestionText(e.target.value)}
+				/>
 
-				{/* Dividing line */}
-				<hr />
+				{/* Title */}
+				{/* <h2 className='title mb--22 ask-page__title'>Filters</h2> */}
+				{/* Wrapper for Filters */}
+				<div className='filters'>
+					{/* Filters list */}
+					{/* Filters list */}
+					<ul className='filters__list'>
+						{/* Filters Item */}
+						{filtersItems.map((element) => (
+							<li key={element.key}>
+								<button
+									type='button'
+									className={`filters-item filters__item ${element.active ? 'active' : ''}`}
+									onClick={() => handleTagClick(element.key)}
+								>
+									{element.label}
+								</button>
+							</li>
+						))}
 
-				{/* Privacy buttons */}
-				<div className='ask-page__privacy-buttons'>
-					{/* Public questions button */}
-					<button
-						type='button'
-						className={`ask-page__privacy-button ask-page__public-button ${
-							!currPrivacyBtn ? 'active' : ''
-						}`}
-						onClick={() => setPrivacyBtn(false)}
-					>
-						Public
-					</button>
+						{/* Show the text field if the tag is selected "Other" */}
+						{filtersItems[10].active && (
+							// Tag entry field
+							<div className='input mt--8 filters__other'>
+								{' '}
+								<input
+									type='text'
+									required
+									placeholder='Enter custom tag'
+									value={otherTag}
+									onChange={(e) => setOtherTag(e.target.value)}
+								/>
+							</div>
+						)}
+					</ul>
 
-					{/* Private questions button */}
-					{/* <button
+					{/* Dividing line */}
+					<hr />
+
+					{/* Languages filter list */}
+					<ul className='language-filter'>
+						{/* Languages filter items */}
+						{languageFilter.map((element) => (
+							<li key={element.id}>
+								<button
+									type='button'
+									className={`filters-item filters__item language-filter__item ${
+										element.status ? 'active' : ''
+									}`}
+									onClick={() => handleLanguageChange(element.id)}
+								>
+									{element.label}
+								</button>
+							</li>
+						))}
+					</ul>
+
+					{/* Dividing line */}
+					<hr />
+
+					{/* Privacy buttons */}
+					<div className='ask-page__privacy-buttons'>
+						{/* Public questions button */}
+						<button
+							type='button'
+							className={`ask-page__privacy-button ask-page__public-button ${
+								!currPrivacyBtn ? 'active' : ''
+							}`}
+							onClick={() => setPrivacyBtn(false)}
+						>
+							Public
+						</button>
+
+						{/* Private questions button */}
+						{/* <button
 						type='button'
 						className={`ask-page__privacy-button ask-page__private-button ${
 							currPrivacyBtn ? 'active' : ''
@@ -241,10 +262,10 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 					>
 						Private
 					</button> */}
-				</div>
+					</div>
 
-				{/* Nickname entry field */}
-				{/* {currPrivacyBtn && (
+					{/* Nickname entry field */}
+					{/* {currPrivacyBtn && (
 					<div
 						className={`input input-relative filters__private ${currPrivacyBtn ? 'active' : false}`}
 					>
@@ -252,16 +273,17 @@ const AskPage = ({ setPopup, setPopupText, setPopupSource }) => {
 						<SearchInputIcon />
 					</div>
 				)} */}
-			</div>
+				</div>
 
-			{/* Wrapper for send aquestion button */}
-			<div className='mt--32 ask-page__button-wrapper'>
-				{/* Button to send a question */}
-				<button className='button ask-page__button' type='submit' disabled={isSubmitting}>
-					Submit
-				</button>
-			</div>
-		</form>
+				{/* Wrapper for send aquestion button */}
+				<div className='mt--32 ask-page__button-wrapper'>
+					{/* Button to send a question */}
+					<button className='button ask-page__button' type='submit' disabled={isSubmitting}>
+						Submit
+					</button>
+				</div>
+			</form>
+		</>
 	);
 };
 

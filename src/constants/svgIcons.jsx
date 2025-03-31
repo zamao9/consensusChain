@@ -22,7 +22,7 @@ export const ArrowRightIcon = () => (
 
 export const BlockchainIcon = () => (
 	<svg
-		className='blockchain-icon'
+		className='fill-icon'
 		width='24'
 		height='24'
 		viewBox='0 0 24 24'
@@ -44,11 +44,12 @@ export const CommentsIcon = () => (
 	<svg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
 		<path
 			d='M12 6.26667C4 6.26667 4 7.90127 4 12C4 16.0987 4 17.7333 12 17.7333H20V12C20 7.90127 20 6.26667 12 6.26667Z'
+			stroke='#CECECE'
 			strokeLinecap='round'
 		/>
-		<circle cx='8.50111' cy='11.95' r='0.75' className='comments-icon-dots-fill' />
-		<circle cx='12.0011' cy='11.95' r='0.75' className='comments-icon-dots-fill' />
-		<circle cx='15.5011' cy='11.95' r='0.75' className='comments-icon-dots-fill' />
+		<circle cx='8.00111' cy='11.95' r='1' className='fill-icon' />
+		<circle cx='12.0011' cy='11.95' r='1' className='fill-icon' />
+		<circle cx='16.0011' cy='11.95' r='1' className='fill-icon' />
 	</svg>
 );
 
@@ -105,10 +106,20 @@ export const DislikeIcon = () => (
 );
 
 export const FilterIcon = () => (
-	<svg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
-		<path d='M6 7H12' strokeLinecap='round' />
-		<path d='M6 12H15' strokeLinecap='round' />
-		<path d='M6 17H18' strokeLinecap='round' />
+	<svg
+		className='fill-icon'
+		width='24'
+		height='24'
+		viewBox='0 0 24 24'
+		fill='none'
+		xmlns='http://www.w3.org/2000/svg'
+	>
+		<circle cx='7.20001' cy='11.9' r='1.5' />
+		<rect x='4' y='11.4' width='16' height='1' rx='0.5' />
+		<circle cx='13.28' cy='6.9' r='1.5' />
+		<rect x='4' y='6.4' width='16' height='1' rx='0.5' />
+		<circle cx='16.7999' cy='16.9' r='1.5' />
+		<rect x='4' y='16.4' width='16' height='1' rx='0.5' />
 	</svg>
 );
 

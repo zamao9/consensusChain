@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { a } from 'framer-motion/client';
 
 const initialState = {
 	id: null, // Идентификатор пользователя
@@ -10,6 +11,8 @@ const initialState = {
 	questionsCount: 5, // Количество созданных вопросов
 	answersCount: 0, // Количество данных ответов
 	receivedAnswersCount: 0, // Количество ответов, полученных на вопросы пользователя
+	introdusingCheck: false,
+	dailyTaskCheck: false,
 };
 
 const profileSlice = createSlice({
@@ -49,6 +52,12 @@ const profileSlice = createSlice({
 		setReceivedAnswersCount: (state, action) => {
 			state.receivedAnswersCount = action.payload;
 		},
+		setIntroducingCheck: (state, action) => {
+			state.introdusingCheck = action.payload;
+		},
+		setDailyTaskCheck: (state, action) => {
+			state.dailyTaskCheck = action.payload;
+		},
 	},
 });
 
@@ -64,6 +73,8 @@ export const {
 	setQuestionsCount,
 	setAnswersCount,
 	setReceivedAnswersCount,
+	setIntroducingCheck,
+	setDailyTaskCheck,
 } = profileSlice.actions;
 
 export default profileSlice.reducer;

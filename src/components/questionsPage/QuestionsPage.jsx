@@ -6,7 +6,7 @@ import {
 	DblArrowLeftIcon,
 	DblArrowRightIcon,
 	FilterIcon,
-	SearchIcon,
+	SearchInputIcon,
 } from '../../constants/SvgIcons';
 import QuestionsItem from './questionsItem/QuestionsItem';
 import { useAppDispatch, useAppSelector } from '../../hooks/store';
@@ -115,8 +115,10 @@ const QuestionsPage = ({ curItem, setItem, setPage, setPopup, setPopupText, setP
 			setIsLoading(true);
 			if (tab === 'first') {
 				fetchQuestions(userId, true); // Getting questions when userId changes
+				setFilterButton(false);
 			} else if (tab === 'third') {
 				fetchQuestions(userId, false);
+				setFilterButton(false);
 			}
 		}
 		return () => {
@@ -125,10 +127,22 @@ const QuestionsPage = ({ curItem, setItem, setPage, setPopup, setPopupText, setP
 	}, [userId, tab]);
 
 	// Functions for switching between pages
-	const goToFirstPage = () => dispatch(setCurrentPage(1));
-	const goToLastPage = () => dispatch(setCurrentPage(totalPages));
-	const goToNextPage = () => dispatch(setCurrentPage(Math.min(currentPage + 1, totalPages)));
-	const goToPreviousPage = () => dispatch(setCurrentPage(Math.max(currentPage - 1, 1)));
+	const goToFirstPage = () => {
+		dispatch(setCurrentPage(1));
+		setFilterButton(false);
+	};
+	const goToLastPage = () => {
+		dispatch(setCurrentPage(totalPages));
+		setFilterButton(false);
+	};
+	const goToNextPage = () => {
+		dispatch(setCurrentPage(Math.min(currentPage + 1, totalPages)));
+		setFilterButton(false);
+	};
+	const goToPreviousPage = () => {
+		dispatch(setCurrentPage(Math.max(currentPage - 1, 1)));
+		setFilterButton(false);
+	};
 
 	// When filtering is open, disallow scrolling
 	useEffect(() => {
@@ -185,9 +199,7 @@ const QuestionsPage = ({ curItem, setItem, setPage, setPopup, setPopupText, setP
 								className={`button button-wrapper__button ${filterButton ? 'active' : ''}`}
 								onClick={() => setFilterButton(!filterButton)}
 							>
-								<div className='filter-icon'>
-									<div className='filter-icon__item'></div>
-								</div>
+								<FilterIcon />
 							</button>
 						</div>
 					</div>
@@ -197,13 +209,13 @@ const QuestionsPage = ({ curItem, setItem, setPage, setPopup, setPopupText, setP
 						<AnimatePresence>
 							<motion.div className='questions-page__filter'>
 								{/* Search tag input */}
-								<div className='input questions-page__input'>
+								<div className='input input-relative questions-page__input'>
 									<input
 										placeholder='Find a tag'
 										type='text'
 										onChange={(e) => handleTagSearch(e.target.value.split(','))}
 									/>
-									<SearchIcon />
+									<SearchInputIcon />
 								</div>
 								<hr />
 								{/* Languages filter list */}

@@ -103,10 +103,22 @@ const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource
 	const currentNotifications = filteredNotifications.slice(indexOfFirstItem, indexOfLastItem);
 
 	// Pagination handlers
-	const goToFirstPage = () => setCurrentPage(1);
-	const goToPreviousPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
-	const goToNextPage = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));
-	const goToLastPage = () => setCurrentPage(totalPages);
+	const goToFirstPage = () => {
+		setCurrentPage(1);
+		setFilterButton(false);
+	};
+	const goToPreviousPage = () => {
+		setCurrentPage((prev) => Math.max(prev - 1, 1));
+		setFilterButton(false);
+	};
+	const goToNextPage = () => {
+		setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+		setFilterButton(false);
+	};
+	const goToLastPage = () => {
+		setCurrentPage(totalPages);
+		setFilterButton(false);
+	};
 
 	// When filtering is open, disallow scrolling
 	useEffect(() => {
@@ -142,9 +154,7 @@ const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource
 								}`}
 								onClick={() => setFilterButton(!filterButton)}
 							>
-								<div className='filter-icon'>
-									<div className='filter-icon__item'></div>
-								</div>
+								<FilterIcon />
 							</button>
 						</div>
 					</div>
