@@ -1,8 +1,9 @@
 import './askPage.sass';
 import { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks/store';
-import { selectUserId } from '../../feature/profile/profileSelector';
+import { selectDailyTasksStatus, selectUserId } from '../../feature/profile/profileSelector';
 import { NotificationIcon, SearchInputIcon } from '../../constants/SvgIcons';
+import { setDailyTaskCheck } from '../../feature/profile/profileSlice';
 
 const AskPage = ({ setPage, setTab, setItem, setPopup, setPopupText, setPopupSource }) => {
 	const dispatch = useAppDispatch();
@@ -144,17 +145,22 @@ const AskPage = ({ setPage, setTab, setItem, setPopup, setPopupText, setPopupSou
 		}
 	};
 
-	const [introduceCheck, setIntroduceCheck] = useState(false);
+	// const dailyTaskCheck = useAppSelector(selectDailyTasksStatus);
+	const dailyTaskCheck = useAppSelector(selectDailyTasksStatus);
 
 	return (
 		<>
-			{!introduceCheck && (
-				<ul className='links mb--16'>
-					<li className='links__item notification-tick '>
+			{/* Links wrapper */}
+			{!dailyTaskCheck && (
+				<ul className='ask-page__links-wrapper mb--16'>
+					{/* Wrapper for buttons, links, tabs etc. */}
+					<li className='button-wrapper'>
+						{/* Link */}
 						<button
-							className='link links__link'
+							className='link'
 							onClick={() => {
-								setIntroduceCheck(true);
+								// showDailyTasks();
+								setDailyTaskCheck(true);
 								setPage('tasks-page');
 								setTab('second');
 								setItem('tasks-page');
@@ -168,30 +174,30 @@ const AskPage = ({ setPage, setTab, setItem, setPopup, setPopupText, setPopupSou
 
 			<form onSubmit={handleSubmit} className='ask-page'>
 				{/* Title */}
-				{/* <h2 className='title mb--22 ask-page__title'>Ask your question</h2> */}
+				{/* <h2 className='title mb--22'>Ask your question</h2> */}
 
 				{/* Textarea */}
 				<textarea
 					placeholder='Ask your question'
-					className='text mb--22 lh--140 ask-page__textarea'
+					className='text mb--22 ask-page__textarea'
 					required
 					value={questionText}
 					onChange={(e) => setQuestionText(e.target.value)}
 				/>
 
 				{/* Title */}
-				{/* <h2 className='title mb--22 ask-page__title'>Filters</h2> */}
+				{/* <h2 className='title mb--22'>Filters</h2> */}
+
 				{/* Wrapper for Filters */}
 				<div className='filters'>
 					{/* Filters list */}
-					{/* Filters list */}
-					<ul className='filters__list'>
+					<ul className='filters-list'>
 						{/* Filters Item */}
 						{filtersItems.map((element) => (
 							<li key={element.key}>
 								<button
 									type='button'
-									className={`filters-item filters__item ${element.active ? 'active' : ''}`}
+									className={`button filters-list__button ${element.active ? 'active' : ''}`}
 									onClick={() => handleTagClick(element.key)}
 								>
 									{element.label}
@@ -219,15 +225,13 @@ const AskPage = ({ setPage, setTab, setItem, setPopup, setPopupText, setPopupSou
 					<hr />
 
 					{/* Languages filter list */}
-					<ul className='language-filter'>
+					<ul className='filters-list'>
 						{/* Languages filter items */}
 						{languageFilter.map((element) => (
 							<li key={element.id}>
 								<button
 									type='button'
-									className={`filters-item filters__item language-filter__item ${
-										element.status ? 'active' : ''
-									}`}
+									className={`button filters-list__button ${element.status ? 'active' : ''}`}
 									onClick={() => handleLanguageChange(element.id)}
 								>
 									{element.label}
@@ -240,45 +244,51 @@ const AskPage = ({ setPage, setTab, setItem, setPopup, setPopupText, setPopupSou
 					<hr />
 
 					{/* Privacy buttons */}
-					<div className='ask-page__privacy-buttons'>
+					<ul className='filters-list'>
 						{/* Public questions button */}
-						<button
-							type='button'
-							className={`ask-page__privacy-button ask-page__public-button ${
-								!currPrivacyBtn ? 'active' : ''
-							}`}
-							onClick={() => setPrivacyBtn(false)}
-						>
-							Public
-						</button>
+						<li>
+							<button
+								type='button'
+								className={`button filters-list__button ask-page__public-button ${
+									!currPrivacyBtn ? 'active' : ''
+								}`}
+								onClick={() => setPrivacyBtn(false)}
+							>
+								Public
+							</button>
+						</li>
 
 						{/* Private questions button */}
-						{/* <button
-						type='button'
-						className={`ask-page__privacy-button ask-page__private-button ${
-							currPrivacyBtn ? 'active' : ''
-						}`}
-						onClick={() => setPrivacyBtn(true)}
-					>
-						Private
-					</button> */}
-					</div>
+						{/* <li>
+							<button
+								type='button'
+								className={`button filters-list__button ask-page__private-button ${
+									currPrivacyBtn ? 'active' : ''
+								}`}
+								onClick={() => setPrivacyBtn(true)}
+							>
+								Private
+							</button>
+						</li> */}
+					</ul>
 
 					{/* Nickname entry field */}
 					{/* {currPrivacyBtn && (
-					<div
-						className={`input input-relative filters__private ${currPrivacyBtn ? 'active' : false}`}
-					>
-						<input type='text' required placeholder='@nickname' />
-						<SearchInputIcon />
-					</div>
-				)} */}
+						<div
+							className={`input input-relative filters__private ${
+								currPrivacyBtn ? 'active' : false
+							}`}
+						>
+							<input type='text' required placeholder='@nickname' />
+							<SearchInputIcon />
+						</div>
+					)} */}
 				</div>
 
 				{/* Wrapper for send aquestion button */}
-				<div className='mt--32 ask-page__button-wrapper'>
-					{/* Button to send a question */}
-					<button className='button ask-page__button' type='submit' disabled={isSubmitting}>
+				<div className='mt--32 button-wrapper submit-button-wrapper'>
+					{/* Submit button */}
+					<button className='submit-button ask-page__button' type='submit' disabled={isSubmitting}>
 						Submit
 					</button>
 				</div>

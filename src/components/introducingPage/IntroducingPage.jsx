@@ -1,4 +1,4 @@
-import './IntroducingPage.sass';
+import './introducingPage.sass';
 import askPageImage from './../../assets/images/ask-page.jpg';
 import tasksImage from './../../assets/images/tasks.jpg';
 import {
@@ -15,8 +15,12 @@ import {
 	TelegramIcon,
 } from '../../constants/SvgIcons';
 import { useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../../hooks/store';
+import { selectUserId } from '../../feature/profile/profileSelector';
+import { setIntroducingCheck } from '../../feature/profile/profileSlice';
 
-const IntroducingPage = ({ setFirstLoading }) => {
+const IntroducingPage = () => {
+	const dispatch = useAppDispatch();
 	const initialState = [
 		{
 			id: 1,
@@ -89,6 +93,32 @@ const IntroducingPage = ({ setFirstLoading }) => {
 		},
 	];
 
+	const userId = useAppSelector(selectUserId);
+
+	const submitNickName = () => {
+		const fetchIntroducingStatus = async () => {
+			try {
+				const response = await fetch(
+					`https://web-production-c0b1.up.railway.app/user-state/${userId}/set-introducing-page-status?status=true`,
+					{
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+						},
+					}
+				);
+				if (!response.ok) throw new Error('Failed to fetch statistics');
+				const data = await response.json();
+				console.log(data.message);
+				dispatch(setIntroducingCheck(false));
+			} catch (error) {
+				setError('Error fetching user statistics');
+				console.error('Error fetching user statistics:', error);
+			}
+		};
+		fetchIntroducingStatus();
+	};
+
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const currentElement = initialState[currentIndex];
 
@@ -105,7 +135,7 @@ const IntroducingPage = ({ setFirstLoading }) => {
 	};
 
 	return (
-		<ul className='introducing-page'>
+		<ul className='introducing-page ta--c'>
 			<li key={currentElement.id}>
 				{/* Introducing Svg */}
 				{currentElement.svg && (
@@ -132,7 +162,9 @@ const IntroducingPage = ({ setFirstLoading }) => {
 							<input type='text' placeholder='@nickname' />
 							<ProfileInputIcon />
 						</div>
-						<button type='button' className='button' onClick={() => setFirstLoading(false)}>
+
+						{/* Submit button */}
+						<button type='button' className='submit-button' onClick={() => submitNickName()}>
 							Submit
 						</button>
 					</div>
@@ -149,18 +181,23 @@ const IntroducingPage = ({ setFirstLoading }) => {
 				</div>
 
 				{/* Buttons Wrapper */}
-				<div className='mt--32 buttons-wrapper'>
+				<div className='mt--32 introducing-page__button-wrapper'>
+					{/* Button */}
 					<button
 						type='button'
-						className={`button ${currentIndex === 0 ? 'disabled' : ''}`}
+						className='button introducing-page__button'
 						onClick={previousButton}
+						disabled={currentIndex === 0}
 					>
 						<ArrowLeftIcon />
 					</button>
+
+					{/* Button */}
 					<button
 						type='button'
-						className={`button ${currentIndex === initialState.length - 1 ? 'disabled' : ''}`}
+						className='button introducing-page__button'
 						onClick={nextButton}
+						disabled={currentIndex === initialState.length - 1}
 					>
 						<ArrowRightIcon />
 					</button>

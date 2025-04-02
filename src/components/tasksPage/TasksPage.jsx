@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react';
 import './tasksPage.sass';
+import { useEffect, useState } from 'react';
 import { AnimatePresence } from 'motion/react';
 import { motion } from 'framer-motion';
 import { useAppDispatch, useAppSelector } from '../../hooks/store';
-import { selectVisibleTasks } from '../../feature/tasks/tasksSelector';
+import { selectVisibleDailyTasks, selectVisibleTasks } from '../../feature/tasks/tasksSelector';
 import { claimTask, markTaskDone, setTasks } from '../../feature/tasks/tasksSlice';
-import { selectUserId } from '../../feature/profile/profileSelector';
-import { incrementBalance } from '../../feature/profile/profileSlice';
+import { selectDailyTasksStatus, selectUserId } from '../../feature/profile/profileSelector';
+import { incrementBalance, setDailyTaskCheck } from '../../feature/profile/profileSlice';
 import Preloader from '../preloader/Preloader';
 
 const TasksPage = ({ tab, setTab }) => {
@@ -125,6 +125,37 @@ const TasksPage = ({ tab, setTab }) => {
 		}
 	}, [visibleTasks]);
 
+	const dailyTaskCheck = useAppSelector(selectDailyTasksStatus);
+
+	useEffect(() => {
+		const fetchDailyTasksStatusUpdate = async () => {
+			try {
+				const response = await fetch(
+					`https://web-production-c0b1.up.railway.app/user-state/${userId}/set-daily-task-status?status=true`,
+					{
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+						},
+					}
+				);
+				if (!response.ok) throw new Error('Failed to fetch statistics');
+				const data = await response.json();
+				console.log(data.message);
+				dispatch(setDailyTaskCheck(true));
+			} catch (error) {
+				setError('Error fetching user statistics');
+				console.error('Error fetching user statistics:', error);
+			}
+		};
+
+		if (tab === 'second' && dailyTaskCheck === false) {
+			fetchDailyTasksStatusUpdate();
+		}
+	}, [tab]);
+
+	const dailyTask = useAppSelector(selectVisibleDailyTasks);
+
 	return (
 		<div className='tasks-page'>
 			{isLoading ? (
@@ -135,40 +166,42 @@ const TasksPage = ({ tab, setTab }) => {
 					message='Please wait, fetching data...'
 				/>
 			) : (
-				// Если загрузка завершена (`isLoading` стало false), показываем загруженные данные.
 				<>
-					<h2 className='title mb--22 tasks-page__title'>Tasks</h2>
+					<h2 className='title mb--22'>Tasks</h2>
 
-					{/* Tabs */}
-					<ul className='tabs mb--32'>
-						{/* Tabs Item */}
-						<li>
-							<button
-								className={`button tabs__item ${tab === 'first' ? 'active' : ''}`}
-								onClick={() => setTab('first')}
-							>
-								General
-							</button>
-						</li>
+					<div className='button-wrapper mb--32'>
+						{/* Tabs */}
+						<ul className='tabs'>
+							{/* Tabs Item */}
+							<li>
+								<button
+									className={`tabs__item ${tab === 'first' ? 'active' : ''}`}
+									onClick={() => setTab('first')}
+								>
+									General
+								</button>
+							</li>
 
-						{/* Tabs Item */}
-						<li>
-							<button
-								className={`button tabs__item ${tab === 'second' ? 'active' : ''}`}
-								onClick={() => setTab('second')}
-							>
-								Daily
-							</button>
-						</li>
-					</ul>
+							{/* Tabs Item */}
+							<li>
+								<button
+									className={`tabs__item ${tab === 'second' ? 'active' : ''}`}
+									onClick={() => setTab('second')}
+								>
+									Daily
+								</button>
+							</li>
+						</ul>
+					</div>
 
+					{/* If first tab */}
 					{tab === 'first' && (
 						<>
-							{/* Список тасков */}
+							{/* Task page list */}
 							{!taskIsEmpty ? (
 								<ul className='tasks-page__list'>
 									<AnimatePresence>
-										{/* Таски */}
+										{/* Task page item */}
 										{visibleTasks.map((element) => (
 											<motion.li
 												initial={{ opacity: 0, y: -20 }}
@@ -177,20 +210,24 @@ const TasksPage = ({ tab, setTab }) => {
 												className='tasks-page__item'
 												key={element.key}
 											>
-												{/* Обертка Заголовка и Цены */}
+												{/* Wrapper for title and cost */}
 												<div className='tasks-page__header'>
-													{/* Заголовок элементов таска */}
-													<h2 className='lh--140 tasks-page__item-title'>{element.title}</h2>
-													{/* Цена таска */}
-													<span className='tasks-page__cost'>{element.cost} TON</span>
+													{/* Title */}
+													<h2 className='tasks-page__item-title'>{element.title}</h2>
+
+													{/* Cost */}
+													<span className='tasks-page__cost'>{element.cost} CT</span>
 												</div>
-												{/* Разделительная линия */}
+
+												{/* Dividing line */}
 												<hr />
-												{/* Обертка Таймера и Кнопки */}
+
+												{/* Wrapper for date and button */}
 												<div className='tasks-page__footer'>
-													{/* Таймер */}
-													<span className={`tasks-page__timer`}>{element.timer}</span>
-													{/* Кнопка */}
+													{/* Date */}
+													<span className={`tasks-page__date`}>{element.timer}</span>
+
+													{/* Button if task is not done */}
 													{!element.isDone && (
 														<button
 															type='button'
@@ -201,7 +238,77 @@ const TasksPage = ({ tab, setTab }) => {
 															Go
 														</button>
 													)}
-													{/* Кнопка */}
+
+													{/* Button if task is done */}
+													{element.isDone && !element.isClaimed && (
+														<button
+															type='button'
+															className='button tasks-page__button tasks-page__claim'
+															onClick={() => handleClaim(element.key)}
+															// disabled={isProcessing}
+														>
+															Claim
+														</button>
+													)}
+												</div>
+											</motion.li>
+										))}
+									</AnimatePresence>
+								</ul>
+							) : (
+								<div className='empty-block'>
+									<span className='lh--140'>Task not found for this user</span>
+								</div>
+							)}
+						</>
+					)}
+
+					{/* If second tab */}
+					{tab === 'second' && (
+						<>
+							{/* Task page list */}
+							{!taskIsEmpty ? (
+								<ul className='tasks-page__list'>
+									<AnimatePresence>
+										{/* Task page item */}
+										{dailyTask.map((element) => (
+											<motion.li
+												initial={{ opacity: 0, y: -20 }}
+												animate={{ opacity: 1, y: 0 }}
+												exit={{ opacity: 0, y: 20 }} // Анимация исчезновения
+												className='tasks-page__item'
+												key={element.id}
+											>
+												{/* Wrapper for title and cost */}
+												<div className='tasks-page__header'>
+													{/* Title */}
+													<h2 className='tasks-page__item-title'>{element.title}</h2>
+
+													{/* Cost */}
+													<span className='tasks-page__cost'>{element.cost} CT</span>
+												</div>
+
+												{/* Dividing line */}
+												<hr />
+
+												{/* Wrapper for date and button */}
+												<div className='tasks-page__footer'>
+													{/* Date */}
+													<span className={`tasks-page__date`}>{element.timer}</span>
+
+													{/* Button if task is not done */}
+													{!element.isDone && (
+														<button
+															type='button'
+															className='button tasks-page__button'
+															onClick={() => handleGo(element.key)}
+															// disabled={isProcessing}
+														>
+															Go
+														</button>
+													)}
+
+													{/* Button if task is done */}
 													{element.isDone && !element.isClaimed && (
 														<button
 															type='button'

@@ -29,7 +29,7 @@ const Header = ({ curItem, setItem, setPage, setTab }) => {
 				<Logo />
 			</div>
 			{/*  Wrapper for Balance, Notifications, Profile */}
-			<div className='header__profile'>
+			<div className='header__content'>
 				{/* Balance */}
 				<div className='balance'>
 					<span>
@@ -44,12 +44,10 @@ const Header = ({ curItem, setItem, setPage, setTab }) => {
 				</div>
 
 				{/* Wrapper for Notifications, Profile */}
-				<div className='header__buttons'>
+				<div className='button-wrapper header__button-wrapper'>
 					{/* Button for Notifications */}
 					<button
-						className={`header__button header-item1 ${
-							curItem === 'notifications-page' ? 'active' : ''
-						}`}
+						className={`button header-item1 ${curItem === 'notifications-page' ? 'active' : ''}`}
 						onClick={() => {
 							setItem('notifications-page');
 							setPage('notifications-page');
@@ -60,7 +58,7 @@ const Header = ({ curItem, setItem, setPage, setTab }) => {
 
 					{/* Button for Profile */}
 					<button
-						className={`header__button header-item2 ${curItem === 'profile-page' ? 'active' : ''}`}
+						className={`button header-item2 ${curItem === 'profile-page' ? 'active' : ''}`}
 						onClick={() => {
 							setItem('profile-page');
 							setTab('first');

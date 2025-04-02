@@ -20,20 +20,14 @@ const FriendsPage = () => {
 		dispatch(changeRating([1, 1000]));
 	}, []);
 
-	// useEffect(() => {
-	// 	dispatch(setFriends(friendsList));
-	// }, []);
-
-	const [trash, setTrash] = useState(false);
-
 	return (
 		<div className='friends-page'>
 			{/* Title */}
-			<h2 className='title mb--22 lh--140'>Friends</h2>
+			<h2 className='title mb--22'>Friends</h2>
 
 			{/* Friends list */}
 			<ul className='friends-page__list'>
-				{/* Friends item */}
+				{/* Friends list item */}
 				<AnimatePresence>
 					{friendsList.map((element) => (
 						<motion.li
@@ -49,40 +43,43 @@ const FriendsPage = () => {
 								{/* User */}
 								<div className='user'>
 									{/* Nickname */}
-									<div className='user__name'>
-										<span className='title fw--400 lh--140 user__title friends-page__user-title'>
-											{element.userName}
-										</span>
-									</div>
+									<div className='user__name friends-page__user-name'>{element.userName}</div>
 								</div>
 
-								{/* Rating */}
-								<div className='rating'>
-									{/* Comments button */}
-									<div className='rating__icon'>
+								{/* Wrapper for icon and counter */}
+								<div className='icon-counter mt--16'>
+									<div className='icon-counter__icon'>
 										<StarIcon />
 									</div>
 
 									{/* Comments count */}
-									<span className='rating__counter'>{element.userRating}</span>
+									<span className='icon-counter__counter icon-counter__counter-right'>
+										{element.userRating}
+									</span>
 								</div>
 							</div>
 
 							{/* Message, Delete wrapper */}
 							<div className='friends-page__links-wrapper'>
-								{/* Message Link */}
-								<button type='button' className='link' onClick={() => setTrash(false)}>
-									<MessageIcon />
-								</button>
-								{/* Delete Link */}
+								{/* Link Message */}
 								<button
 									type='button'
-									className='link friends-page__trash'
+									className='link friends-page__link-message'
+									disabled={element.trash}
+								>
+									<MessageIcon />
+								</button>
+
+								{/* Link Trash */}
+								<button
+									type='button'
+									className='link friends-page__link-trash'
 									disabled={element.trash}
 									onClick={() => dispatch(changeTrash(element.id))}
 								>
 									<TrashIcon />
 								</button>
+
 								<AnimatePresence>
 									{/* Selection */}
 									{element.trash && (
@@ -92,23 +89,23 @@ const FriendsPage = () => {
 											exit={{ opacity: 0 }}
 											className='selection'
 										>
-											{/* Yes Link */}
+											{/* Link Yes */}
 											<motion.button
 												initial={{ marginRight: 'calc( -35px - 8px )' }}
 												animate={{ marginRight: 0 }}
 												exit={{ marginRight: 'calc( -35px - 8px )' }}
 												transition={{ ease: 'easeIn', duration: 0.1 }}
 												type='button'
-												className='link selection__link selection__link-yes'
+												className='link friends-page__link-yes'
 												onClick={() => dispatch(removeFriend(element.id))}
 											>
 												<SuccessIcon />
 											</motion.button>
 
-											{/* No Link */}
+											{/* Link No */}
 											<button
 												type='button'
-												className='link selection__link'
+												className='link friends-page__link-no'
 												onClick={() => dispatch(changeTrash(element.id))}
 											>
 												<CloseIcon />

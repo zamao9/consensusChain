@@ -1,5 +1,5 @@
-import { AnswersIcon, QuestionsIcon, TasksIcon } from '../../constants/SvgIcons';
 import './footer.sass';
+import { AnswersIcon, QuestionsIcon, TasksIcon } from '../../constants/SvgIcons';
 
 const Footer = ({ curItem, setItem, setPage }) => {
 	const footerItems = [
@@ -26,25 +26,21 @@ const Footer = ({ curItem, setItem, setPage }) => {
 	return (
 		<footer className='footer'>
 			{/* Footer Items */}
-			<div className='footer__wrapper'>
-				<ul className='footer__list'>
-					{footerItems.map((element) => (
-						<li key={element.key}>
-							<button
-								className={`footer__item ${element.className} ${
-									curItem === element.label ? 'active' : ''
-								}`}
-								onClick={() => {
-									setItem(element.label);
-									setPage(element.label);
-								}}
-							>
-								{element.svg}
-							</button>
-						</li>
-					))}
-				</ul>
-			</div>
+			<ul className='button-wrapper footer__button-wrapper'>
+				{footerItems.map((element) => (
+					<li key={element.key}>
+						<button
+							className={`button ${element.className} ${curItem === element.label ? 'active' : ''}`}
+							onClick={() => {
+								setItem(element.label);
+								setPage(element.label);
+							}}
+						>
+							{element.svg}
+						</button>
+					</li>
+				))}
+			</ul>
 		</footer>
 	);
 };

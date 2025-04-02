@@ -66,27 +66,27 @@ const RepliesSentPage = () => {
 				{currentPageCommentsList.map((element) => (
 					<li className='replies-sent-page__item' key={element.id}>
 						{/* Element Text */}
-						<p className='lh--140 replies-sent-page__text'>{element.text}</p>
+						<p>{element.text}</p>
 
 						{/* Wrapper for Reactions, Links */}
 						<div className='replies-sent-page__footer'>
-							{/* Wrapper for Reactions */}
-							<div className='replies-sent-page__reactions'>
-								{/* Reactions */}
-								<div className='replies-sent-page__reaction'>
+							{/* Reactions */}
+							<ul className='reactions'>
+								{/* Reactions item */}
+								<li className='reactions__item'>
 									<LikeIcon />
 									<span>{element.likes}</span>
-								</div>
+								</li>
 
-								{/* Reactions */}
-								<div className='replies-sent-page__reaction'>
+								{/* Reactions item */}
+								<li className='reactions__item'>
 									<DislikeIcon />
 									<span>{element.dislikes}</span>
-								</div>
-							</div>
+								</li>
+							</ul>
 
 							{/* Link */}
-							<button className='replies-sent-page__link' onClick={element.link}>
+							<button className='link replies-sent-page__link' onClick={element.link}>
 								Go to
 							</button>
 						</div>
@@ -95,16 +95,16 @@ const RepliesSentPage = () => {
 			</ul>
 
 			{/* Pagination */}
-			<div className='pagination'>
+			<div className='button-wrapper pagination'>
 				<button
-					className={`pagination__button `}
+					className='button pagination__button'
 					disabled={currentPage === 1}
 					onClick={() => goToFirstPage()}
 				>
 					<DblArrowLeftIcon />
 				</button>
 				<button
-					className='pagination__button '
+					className='button pagination__button '
 					disabled={currentPage === 1}
 					onClick={() => goToPreviousPage()}
 				>
@@ -115,14 +115,14 @@ const RepliesSentPage = () => {
 				<div className='pagination__counter'>{`${currentPage} / ${totalPage}`}</div>
 
 				<button
-					className={`pagination__button `}
+					className='button pagination__button'
 					onClick={() => goToNextPage()}
 					disabled={currentPage === totalPage}
 				>
 					<ArrowRightIcon />
 				</button>
 				<button
-					className={`pagination__button `}
+					className='button pagination__button'
 					onClick={() => goToLastPage()}
 					disabled={currentPage === totalPage}
 				>

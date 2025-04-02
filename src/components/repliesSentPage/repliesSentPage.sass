@@ -15,35 +15,18 @@
 		@include index.border15
 		background-color: index.$c-bg-900
 
+	/* Element Text */
+
 	/* Wrapper for Reactions, Links */
 	&__footer
 		display: flex
 		align-items: center
 		justify-content: space-between
-
-	/* Wrapper for Reactions */
-	&__reactions
-		display: flex
-		align-items: center
 		gap: 16px
 
-	/* Reactions */
-	&__reaction
-		display: flex
-		align-items: center
-		gap: 4px
+	/* Reactions in index.sass */
 
-	/* Link */
+	/* Link in index.sass */
 	&__link
-		flex-shrink: 0
-		display: flex
-		align-items: center
-		justify-content: center
-		min-width: 90px
-		height: 30px
-		@include index.link
-		color: index.$c-text
-
-@media (any-hover: hover)
-	.replies-sent-page__link:hover
-		@include index.link-hover
+		width: fit-content !important
+		padding: 0 20px

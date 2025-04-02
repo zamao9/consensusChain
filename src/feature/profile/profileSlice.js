@@ -11,7 +11,7 @@ const initialState = {
 	questionsCount: 5, // Количество созданных вопросов
 	answersCount: 0, // Количество данных ответов
 	receivedAnswersCount: 0, // Количество ответов, полученных на вопросы пользователя
-	introdusingCheck: false,
+	introducingCheck: true,
 	dailyTaskCheck: false,
 };
 
@@ -53,7 +53,7 @@ const profileSlice = createSlice({
 			state.receivedAnswersCount = action.payload;
 		},
 		setIntroducingCheck: (state, action) => {
-			state.introdusingCheck = action.payload;
+			state.introducingCheck = action.payload;
 		},
 		setDailyTaskCheck: (state, action) => {
 			state.dailyTaskCheck = action.payload;

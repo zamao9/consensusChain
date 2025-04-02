@@ -1,18 +1,18 @@
 @use '../../index'
 
 .comments-page
-	/* Обертка свайпа ответов */
+	/* Answer Swipe Wrapper */
 	.answers-block
 		position: relative
 
-	/* Верхний ответ	*/
+	/* Top Answer	*/
 	.answers
 		position: relative
 		z-index: 3
 		padding: 14px 20px
 		@include index.border15
 		background-color: index.$c-bg-900
-		/* Нижний ответ	*/
+		/* Bottom Answer	*/
 		&__next-comment-card
 			position: absolute
 			inset: 0
@@ -22,44 +22,33 @@
 			pointer-events: none
 			filter: blur(2px)
 
-		/* Текст ответа */
-		&__title
-			font-size: 16px
-			line-height: 1.4
-			margin-bottom: 16px
+		/* Answer Text */
 
-	/* Реакции на ответ */
+		/* Reactions in index.sass */
+
+		/* Reactions item active */
+		&__reactions-item.active
+			color: index.$c-gold
+			svg
+				stroke: index.$c-gold
+
+		/* User in index.sass */
+		&__user
+			margin-left: auto
+
+	/* Reactions to the response */
 	.reactions-counter
 		display: flex
 		gap: 16px
 		align-items: center
 
-		/* Обертка Лайк / Дизлайк */
-		&__icon-wrapper
-			display: flex
-			align-items: center
-			gap: 4px
-			color: index.$c-text-disabled
-			svg
-				stroke: index.$c-text-disabled
-			&.active
-				color: #99943D
-				svg
-					stroke: #99943D
-
-		/* Профиль ответчика*/
-		&__user
-			margin-left: auto
-
-	/* Кнопки для десктопной версии */
-	.reactions
+	/* Reactions buttons */
+	.reactions-button
 		display: flex
 		justify-content: center
 		gap: 46px
 		margin-top: 16px
-
-		/* Кнопки лайка */
-		&__button
+		&__item
 			display: flex
 			justify-content: center
 			align-items: center
@@ -71,18 +60,17 @@
 				width: 40px
 				height: 40px
 
-		// Стили для карточек
+		/* Styles for cards */
 		&.grabbing
 			cursor: grabbing
+
 	.like-hover
 		@include index.link-hover
-
 	.dislike-hover
 		@include index.link-hover
 
-// Анимация при наведении (для десктопов)
+// Hover animation (for desktops)
 @media (any-hover:hover)
-	.comments-page
-		.reactions
-			&__button:hover
-				@include index.link-hover
+	.reactions-button
+		&__item:hover
+			@include index.link-hover

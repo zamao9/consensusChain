@@ -94,38 +94,41 @@ const ProfilePage = ({ tab, setTab, setPage, setItem }) => {
 
 	return (
 		<div className='profile-page'>
-			{/* Tabs */}
-			<ul className='tabs mb--32'>
-				{/* Tabs Item */}
-				<li>
-					<button
-						className={`button tabs__item ${tab === 'first' ? 'active' : ''}`}
-						onClick={() => setTab('first')}
-					>
-						Account
-					</button>
-				</li>
+			{/* Wrapper for buttons, links, tabs etc. */}
+			<div className='button-wrapper mb--32'>
+				{/* Tabs */}
+				<ul className='tabs'>
+					{/* Tabs Item */}
+					<li>
+						<button
+							className={`tabs__item ${tab === 'first' ? 'active' : ''}`}
+							onClick={() => setTab('first')}
+						>
+							Account
+						</button>
+					</li>
 
-				{/* Tabs Item */}
-				<li>
-					<button
-						className={`button tabs__item ${tab === 'second' ? 'active' : ''}`}
-						onClick={() => setTab('second')}
-					>
-						Achievements
-					</button>
-				</li>
-			</ul>
+					{/* Tabs Item */}
+					<li>
+						<button
+							className={`tabs__item ${tab === 'second' ? 'active' : ''}`}
+							onClick={() => setTab('second')}
+						>
+							Achievements
+						</button>
+					</li>
+				</ul>
+			</div>
 
 			{/* If first tab */}
 			{tab === 'first' && (
 				<>
 					{/* Wrapper Nickname, Registration Dates */}
-					<div className='user profile-page__user mb--16'>
-						{/* Nickname */}
-						<div className='user__name  profile-page__user-name'>
+					<div className='profile-page__user-wrapper mb--16'>
+						{/* User */}
+						<div className='user'>
 							<ProfileIcon />
-							<span className='title fw--400 user__title'>{profileName}</span>
+							<span className='user__name profile-page__user-name'>{profileName}</span>
 						</div>
 
 						{/* Registration Dates */}
@@ -135,11 +138,12 @@ const ProfilePage = ({ tab, setTab, setPage, setItem }) => {
 					</div>
 
 					{/* Links wrapper */}
-					<ul className='links mb--16'>
-						{/* Profile link */}
+					<ul className='profile-page__links-wrapper mb--16'>
+						{/* Wrapper for buttons, links, tabs etc. */}
 						{linksData.map((element) => (
-							<li className='links__item' key={element.key}>
-								<button className='link links__link' onClick={element.handler}>
+							<li className='button-wrapper' key={element.key}>
+								{/* Link | Profile link */}
+								<button className='link' onClick={element.handler}>
 									{element.svg}
 								</button>
 							</li>
@@ -147,19 +151,19 @@ const ProfilePage = ({ tab, setTab, setPage, setItem }) => {
 					</ul>
 
 					{/* Statistics Wrapper */}
-					<div className='stats'>
+					<div className='statsistics'>
 						{/* Statistics List */}
-						<ul className='stats__list'>
+						<ul className='statsistics__list'>
 							{/* Elements of the list of statistics */}
 							{statsData.map((element) => (
-								<li className='stats__item' key={element.key}>
+								<li className='statsistics__item' key={element.key}>
 									{/* Data from statistical elements */}
-									<div className='stats__data'>
-										<span className='stats__name'>{element.name}</span>
-										<span className='stats__count'>{element.count}</span>
+									<div className='statsistics__data'>
+										<span className='statsistics__name'>{element.name}</span>
+										<span className='statsistics__count'>{element.count}</span>
 									</div>
 
-									{/* Link of statistical elements */}
+									{/* Link */}
 									<button className='link' onClick={element.handler}>
 										{element.svg}
 									</button>
@@ -184,10 +188,10 @@ const ProfilePage = ({ tab, setTab, setPage, setItem }) => {
 								{/* Element content*/}
 								<div className='achievements__content'>
 									{/* Achievement Title */}
-									<h2 className='title lh--140 achievements__title'>{element.title}</h2>
+									<h2 className='title achievements__title'>{element.title}</h2>
 
 									{/* Achievement Text */}
-									<p className='lh--140 achievements__text'>{element.text}</p>
+									<p className='achievements__text'>{element.text}</p>
 								</div>
 
 								{/* Completed Achievement Icon */}
@@ -196,6 +200,8 @@ const ProfilePage = ({ tab, setTab, setPage, setItem }) => {
 										<SuccessIcon />
 									</div>
 								)}
+
+								{/* Achievement Progression */}
 								{element.done !== true && (
 									<div className='achievements__progress'>
 										{element.progress + ' / ' + element.goal}

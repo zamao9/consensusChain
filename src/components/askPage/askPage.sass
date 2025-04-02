@@ -5,9 +5,15 @@
 	flex-direction: column
 	align-items: center
 
-	/* Title */
-	&__title
-		width: 100%
+	/* Links wrapper */
+	&__links-wrapper
+		justify-self: flex-end
+		/* Wrapper for buttons, links, tabs etc. in index.sass */
+		& .button-wrapper
+			width: fit-content
+			/* Link in index.sass */
+			.link
+				border: none
 
 	/* Wrapper for Filters */
 	.filters
@@ -19,55 +25,10 @@
 		@include index.border15
 		background-color: index.$c-bg-900
 
-		/* Filters list */
-		&__list
-			display: flex
-			flex-wrap: wrap
-			gap: 8px
-			width: 100%
-		& li
-			flex-grow: 1
+	/* Filters list in index.sass */
 
-		/* Private entry field */
-		&__private
-			& input
-				padding-right: 40px
-
-	/* Privacy buttons */
-	&__privacy-buttons
-		display: flex
-		align-items: center
-		gap: 8px
-
-	/* Public questions button */
-	&__privacy-button
-		display: flex
-		align-items: center
-		justify-content: center
+	/* Wrapper for send aquestion button	*/
+	.submit-button-wrapper
 		width: 100%
-		min-height: 24px
-		padding: 8px
-		@include index.button
-		font-size: 16px
-		line-height: 16px
-		color: index.$c-text
-		transition: 0.2s ease
-		cursor: pointer
-		&.active
-			@include index.button-active
 
-	/* Wrapper for send aquestion button */
-	&__button-wrapper
-		width: 100%
-		padding: 8px
-		@include index.border15
-		background-color: index.$c-bg-900
-		@media (any-hover:hover)
-
-/* Hover */
-@media (any-hover:hover)
-	.ask-page
-		&__privacy-button:hover
-			@include index.button-hover
-		&__button:hover
-			@include index.button-hover
+	/* Submit button in index.sass */

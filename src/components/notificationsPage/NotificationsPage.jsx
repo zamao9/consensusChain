@@ -22,7 +22,6 @@ const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource
 	const dispatch = useAppDispatch();
 	const userId = useAppSelector(selectUserId);
 	const [isLoading, setIsLoading] = useState(true);
-	const [curItem, setItem] = useState(false);
 	const [currentPage, setCurrentPage] = useState(1); // Current page
 	const [itemsPerPage] = useState(3); // Number of elements on the page
 	const [filterButton, setFilterButton] = useState(false); // click on filter button
@@ -122,12 +121,12 @@ const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource
 
 	// When filtering is open, disallow scrolling
 	useEffect(() => {
-		if (curItem) {
+		if (filterButton) {
 			document.body.classList.add('no-scroll');
 		} else {
 			document.body.classList.remove('no-scroll');
 		}
-	}, [curItem]);
+	}, [filterButton]);
 
 	return (
 		<div className='notifications-page'>
@@ -143,15 +142,13 @@ const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource
 					{/* Header and filter button */}
 					<div className='notifications-page__header mb--32'>
 						{/* Title */}
-						<h2 className='title lh--140 notifications-page__title'>Notifications</h2>
+						<h2 className='title notifications-page__title'>Notifications</h2>
 
-						{/* Filter Button Wrapper */}
-						<div className='button-wrapper notifications-page__button-wrapper'>
+						{/* Button Wrapper */}
+						<div className='button-wrapper'>
 							{/* Filter Button */}
 							<button
-								className={`button button-wrapper__button notifications-page__button ${
-									filterButton ? 'active' : ''
-								}`}
+								className={`button ${filterButton ? 'active' : ''}`}
 								onClick={() => setFilterButton(!filterButton)}
 							>
 								<FilterIcon />
@@ -183,11 +180,11 @@ const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource
 						</AnimatePresence>
 					)}
 
-					{/* Notification list */}
+					{/* Notifications list */}
 					<ul className='mb--32 notifications-page__list'>
 						{currentNotifications.map((element) => (
 							<li key={element.id}>
-								{/* Notification list items */}
+								{/* Notifications list items */}
 								<button
 									type='button'
 									className={`notifications-page__item ${element.isRead ? 'is-read' : ''}`}
@@ -205,9 +202,7 @@ const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource
 									}}
 								>
 									{/* Notification list text */}
-									<h2 className='title lh--140 fw--400 notifications-page__title'>
-										{element.title}
-									</h2>
+									<h2 className='title notifications-page__title'>{element.title}</h2>
 
 									{/* Dividing line */}
 									<hr />
@@ -215,10 +210,10 @@ const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource
 									{/* Wrapping the date and time of the item */}
 									<div className='notifications-page__date-wrapper'>
 										{/* Date of element */}
-										<span className='notifications-page__date'>{element.createdAt.date}</span>
+										<span>{element.createdAt.date}</span>
 
 										{/* Element time */}
-										<span className='notifications-page__time'>{element.createdAt.time}</span>
+										<span>{element.createdAt.time}</span>
 									</div>
 
 									{/* Icon type */}
@@ -234,16 +229,16 @@ const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource
 					</ul>
 
 					{/* Pagination */}
-					<div className='pagination'>
+					<div className='button-wrapper pagination'>
 						<button
-							className={`pagination__button ${currentPage === 1 ? 'disabled' : ''}`}
+							className='button pagination__button'
 							onClick={goToFirstPage}
 							disabled={currentPage === 1}
 						>
 							<DblArrowLeftIcon />
 						</button>
 						<button
-							className={`pagination__button ${currentPage === 1 ? 'disabled' : ''}`}
+							className='button pagination__button'
 							onClick={goToPreviousPage}
 							disabled={currentPage === 1}
 						>
@@ -253,14 +248,14 @@ const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource
 							{currentPage} / {totalPages}
 						</div>
 						<button
-							className={`pagination__button ${currentPage === totalPages ? 'disabled' : ''}`}
+							className='button pagination__button'
 							onClick={goToNextPage}
 							disabled={currentPage === totalPages}
 						>
 							<ArrowRightIcon />
 						</button>
 						<button
-							className={`pagination__button ${currentPage === totalPages ? 'disabled' : ''}`}
+							className='button pagination__button'
 							onClick={goToLastPage}
 							disabled={currentPage === totalPages}
 						>

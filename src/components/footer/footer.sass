@@ -7,7 +7,8 @@
 	left: 0
 	width: 100%
 	padding: 15px
-	&__wrapper
+
+	&__button-wrapper
 		position: relative
 		display: flex
 		align-items: center
@@ -22,35 +23,10 @@
 		overflow: hidden
 		@include index.shadow
 
-	&__list
-		position: relative
-		display: flex
-		align-items: center
-		gap: 12px
-
-	/* Footer Items */
-	&__item
-		flex-shrink: 0
-		display: flex
-		align-items: center
-		justify-content: center
-		width: 40px
-		height: 40px
-		padding: 8px
-		@include index.button
-		transition: 0.2s ease
-		cursor: pointer
-		&.active
-			@include index.button-active
-			color: index.$c-text-active
+	/* Animations on buttons */
 	.footer-item1
 		animation: footer-item1 0.8s ease
 	.footer-item2
 		animation: footer-item2 0.8s ease
 	.footer-item3
 		animation: footer-item3 0.8s ease
-
-@media (any-hover:hover)
-	.footer
-		&__item:hover
-			@include index.button-hover

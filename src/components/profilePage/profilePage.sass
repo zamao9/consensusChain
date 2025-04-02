@@ -2,27 +2,36 @@
 
 .profile-page
 	/* Wrapper Nickname, Registration Dates */
-	&__user
+	&__user-wrapper
 		display: flex
-		align-items: flex-start !important
-		flex-direction: column !important
-		gap: 10px !important
+		align-items: flex-start
+		flex-direction: column
+		gap: 10px
 		padding: 14px 20px
 		@include index.border15
 		background-color: index.$c-bg-900
-
-	/* Nickname */
-	&__user-name
-		display: flex
-		align-items: center
-		gap: 4px
 		& svg
 			width: 30px
 			height: 30px
-			stroke: index.$c-text !important
+			stroke: index.$c-title !important
+
+	/* User */
+	&__user-name
+		font-size: 18px
+		color: index.$c-title !important
+
+	/* Links wrapper */
+	&__links-wrapper
+		display: flex
+		flex-wrap: wrap
+		gap: 16px
+		/* Wrapper for buttons, links, tabs etc. in index.sass */
+		/* Link | Profile link */
+		.link
+			border: none
 
 	/* Statistics Wrapper */
-	.stats
+	.statsistics
 		padding: 14px 20px
 		@include index.border15
 		background-color: index.$c-bg-900

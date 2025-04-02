@@ -17,10 +17,9 @@
 		-webkit-line-clamp: 2
 		-webkit-box-orient: vertical
 		transition: 0.2s ease
+		font-weight: 400 !important
 
-	/* Filter Button Wrapper */
-	&__button-wrapper
-		flex-shrink: 0
+	/* Button Wrapper in index.sass */
 
 	/* Filter list */
 	.notifications-filter
@@ -48,8 +47,9 @@
 			position: relative
 			width: 44px
 			height: 24px
-			@include index.border15
 			background-color: index.$c-stroke
+			@include index.button-hover
+			@include index.border15
 			transition: 0.2s ease
 			&__button
 				position: absolute
@@ -64,10 +64,15 @@
 				transition: 0.2s ease
 			&.active
 				background-color: index.$c-bg-button-active
+				@include index.button-active
+				@include index.border15
 				.radio__button
 					left: 20px
+			&:focus-visible
+				.radio__button
+					background-color: index.$c-title
 
-	/* Notification list */
+	/* Notifications list */
 	&__list
 		position: relative
 		display: grid
@@ -75,7 +80,7 @@
 		& li
 			width: 100%
 
-	/* Notification list items */
+	/* Notifications list items */
 	&__item
 		position: relative
 		display: flex
@@ -87,31 +92,29 @@
 		background-color: index.$c-bg-900
 		overflow: hidden
 		transition: 0.2s ease
-		/* Keyboard focus */
 		&:focus-visible
 			.notifications-page__title
 				color: index.$c-text-active
-			.notifications-page__date
+			.notifications-page__date-wrapper
 				color: index.$c-text-active
 			.notifications-page__icon
 				box-shadow: 2px 2px 4px rgba(index.$c-black, 0.32) inset, -2px -2px 4px rgba(index.$c-white, 0.16) inset
+			.fill-icon
+				fill: index.$c-text-active
 		&.is-read
-			color: index.$c-text-disabled
-			& svg
-				stroke: index.$c-text-disabled
 			.notifications-page__title
 				color: index.$c-text-disabled
 			.notifications-page__date-wrapper
 				color: index.$c-text-disabled
 			.notifications-page__icon
 				@include index.bg-button
-			/* Keyboard focus */
-			&.is-read:focus-visible
-				.notifications-page__date-wrapper
-					color: index.$c-text-disabled
-				.notifications-page__icon
-					& svg
-						stroke: index.$c-text-disabled !important
+			& svg
+				stroke: index.$c-text-disabled
+			.fill-icon
+				fill: index.$c-text-disabled
+			&:focus-visible
+				.notifications-page__icon svg
+					stroke: index.$c-text-disabled !important
 
 	/* Wrapping the date and time of the item */
 	&__date-wrapper
@@ -137,27 +140,30 @@
 		border-left: 1px solid index.$c-stroke
 		transition: 0.2s ease
 
+	/* Pagination in index.sass */
+
 @media (any-hover:hover)
 	.notifications-page
-		.radio:focus-visible
+		.radio:hover
 			.radio__button
-				background-color: index.$c-title
-		.radio__button:hover
-			background-color: index.$c-title
+				background-color: index.$c-title !important
 
 		&__item:hover
 			@include index.button-hover
 			.notifications-page__title
 				color: index.$c-text-active
-			.notifications-page__date
+			.notifications-page__date-wrapper
 				color: index.$c-text-active
 			.notifications-page__icon
 				box-shadow: 2px 2px 4px rgba(index.$c-black, 0.32) inset, -2px -2px 4px rgba(index.$c-white, 0.16) inset
+			.fill-icon
+				fill: index.$c-text-active
 		&__item.is-read:hover
 			.notifications-page__title
 				color: index.$c-text-disabled
-			.notifications-page__date
+			.notifications-page__date-wrapper
 				color: index.$c-text-disabled
-			.notifications-page__icon
-				& svg
-					stroke: index.$c-text-disabled !important
+			& svg
+				stroke: index.$c-text-disabled !important
+			.fill-icon
+				fill: index.$c-text-disabled

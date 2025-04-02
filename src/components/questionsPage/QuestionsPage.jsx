@@ -173,12 +173,12 @@ const QuestionsPage = ({ curItem, setItem, setPage, setPopup, setPopupText, setP
 			) : (
 				<>
 					{/* Tabs and Filters wrapper */}
-					<div className='tabs-filter-wrapper mb--32'>
+					<div className='button-wrapper mb--32'>
 						{/* Tabs */}
 						<ul className='tabs'>
 							<li>
 								<button
-									className={`button tabs__item ${tab === 'first' ? 'active' : ''}`}
+									className={`tabs__item ${tab === 'first' ? 'active' : ''}`}
 									onClick={() => setTab('first')}
 								>
 									All
@@ -186,30 +186,29 @@ const QuestionsPage = ({ curItem, setItem, setPage, setPopup, setPopupText, setP
 							</li>
 							<li>
 								<button
-									className={`button tabs__item ${tab === 'third' ? 'active' : ''}`}
+									className={`tabs__item ${tab === 'third' ? 'active' : ''}`}
 									onClick={() => setTab('third')}
 								>
 									Yours
 								</button>
 							</li>
 						</ul>
+
 						{/* Filter button wrapper */}
-						<div className='button-wrapper'>
-							<button
-								className={`button button-wrapper__button ${filterButton ? 'active' : ''}`}
-								onClick={() => setFilterButton(!filterButton)}
-							>
-								<FilterIcon />
-							</button>
-						</div>
+						<button
+							className={`button ${filterButton ? 'active' : ''}`}
+							onClick={() => setFilterButton(!filterButton)}
+						>
+							<FilterIcon />
+						</button>
 					</div>
 
 					{/* Questions filter wrapper */}
 					{filterButton && (
 						<AnimatePresence>
-							<motion.div className='questions-page__filter'>
+							<motion.div className='questions-page__filter-wrapper'>
 								{/* Search tag input */}
-								<div className='input input-relative questions-page__input'>
+								<div className='input input-relative'>
 									<input
 										placeholder='Find a tag'
 										type='text'
@@ -217,14 +216,17 @@ const QuestionsPage = ({ curItem, setItem, setPage, setPopup, setPopupText, setP
 									/>
 									<SearchInputIcon />
 								</div>
+
+								{/* Dividing line */}
 								<hr />
-								{/* Languages filter list */}
-								<ul className='language-filter'>
+
+								{/* Filter list */}
+								<ul className='filters-list'>
 									{languageFilter.map((element) => (
-										<li className='language-filter-item' key={element.id}>
+										<li key={element.id}>
 											<button
 												type='button'
-												className={`filters-item ${element.status ? 'active' : ''}`}
+												className={`button filters-list__button ${element.status ? 'active' : ''}`}
 												onClick={() => handleLanguageChange(element.id)}
 											>
 												{element.label}
@@ -265,16 +267,18 @@ const QuestionsPage = ({ curItem, setItem, setPage, setPopup, setPopupText, setP
 					</ul>
 
 					{/* Pagination */}
-					<div className='pagination'>
+					<div className='button-wrapper pagination'>
 						<button
-							className={`pagination__button ${currentPage === 1 ? 'disabled' : ''}`}
+							className='button pagination__button'
 							onClick={goToFirstPage}
+							disabled={currentPage === 1}
 						>
 							<DblArrowLeftIcon />
 						</button>
 						<button
-							className={`pagination__button ${currentPage === 1 ? 'disabled' : ''}`}
+							className='button pagination__button'
 							onClick={goToPreviousPage}
+							disabled={currentPage === 1}
 						>
 							<ArrowLeftIcon />
 						</button>
@@ -282,14 +286,16 @@ const QuestionsPage = ({ curItem, setItem, setPage, setPopup, setPopupText, setP
 							{currentPage} / {totalPages}
 						</div>
 						<button
-							className={`pagination__button ${currentPage === totalPages ? 'disabled' : ''}`}
+							className='button pagination__button'
 							onClick={goToNextPage}
+							disabled={currentPage === totalPages}
 						>
 							<ArrowRightIcon />
 						</button>
 						<button
-							className={`pagination__button ${currentPage === totalPages ? 'disabled' : ''}`}
+							className='button pagination__button'
 							onClick={goToLastPage}
+							disabled={currentPage === totalPages}
 						>
 							<DblArrowRightIcon />
 						</button>

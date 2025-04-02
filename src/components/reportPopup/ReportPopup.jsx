@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import './reportPopup.sass';
+import { useState } from 'react';
 import { ArrowLeftIcon } from '../../constants/SvgIcons';
 import { setPopupText } from '../../feature/userInterface/userInterfaceSlice';
 import { useAppDispatch } from '../../hooks/store';
@@ -117,30 +117,28 @@ const ReportPopup = ({ setPopupSource }) => {
 
 	return (
 		<form action='' className='report-popup'>
-			{/* Кнопка "Назад", отображается только если мы не на первом уровне */}
+			{/* Link button back */}
 			{currentPath.length > 0 && (
-				<button type='button' className='report-popup__back' onClick={handleBackClick}>
+				<button type='button' className='link report-popup__back' onClick={handleBackClick}>
 					<ArrowLeftIcon /> Back
 				</button>
 			)}
 
 			{/* Заголовок репорта */}
-			<h2 className='title lh--140 mb--16 report-popup__title'>
-				{currentCategory[0]?.title || 'Сhoose a problem'}
-			</h2>
+			<h2 className='title mb--16 ta--c'>{currentCategory[0]?.title || 'Сhoose a problem'}</h2>
 
 			{/* Разделительная линия */}
-			<hr className='mb--16' />
+			<hr className='mb--22' />
 
 			{/* Список вариантов жалобы */}
-			<ul className='report-popup__list'>
+			<ul className='report-popup__list ta--c'>
 				{currentCategory.some((item) => item.subcategories) ? (
 					<li>
 						{/* Если есть подкатегории, отображаем кнопки для тегов */}
 						{currentCategory.map((item) => (
 							<button
 								key={item.id}
-								className='report-popup__item lh--140'
+								className='link report-popup__item ta--c'
 								onClick={() => handleTagClick(item.id)} // Клик по тегу
 							>
 								{item.tags.join(', ')} {/* Отображаем теги для текущей категории */}
@@ -148,24 +146,24 @@ const ReportPopup = ({ setPopupSource }) => {
 						))}
 					</li>
 				) : (
-					<div className='report-popup__textarea-wrapper'>
+					<>
 						{/* Если вложенность закончилась, отображаем поле для текста */}
 						<textarea
-							className='mb--16 report-popup__textarea'
+							className='mb--16'
 							placeholder='. . .'
 							value={reportText}
 							onChange={(e) => setReportText(e.target.value)}
 						/>
 						{/* Кнопка для отправки репорта */}
 						<button
-							className='button'
+							className='submit-button'
 							onClick={() => {
 								handleSubmit();
 							}}
 						>
 							Send report
 						</button>
-					</div>
+					</>
 				)}
 			</ul>
 		</form>

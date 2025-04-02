@@ -93,7 +93,7 @@ const PopupBackground = ({ setPopup, popupSvg, popupSource, setPopupSource, setP
 						{/* Popup close button */}
 						<button
 							type='button'
-							className='popup-background__close'
+							className='link popup-background__close'
 							onClick={() => {
 								setPopup(false);
 								setPopupSource('cancel');
@@ -106,12 +106,15 @@ const PopupBackground = ({ setPopup, popupSvg, popupSource, setPopupSource, setP
 						{popupSource === 'success' && (
 							<>
 								{/* Icon */}
-								<div className='popup-background__svg popup-background__success mb--10'>
+								<div className='popup-svg popup-svg__success mb--10'>
 									<SuccessIcon />
 								</div>
 
+								{/* Dividing line */}
+								<hr className='mb--22' />
+
 								{/* Text */}
-								<p className='lh--140 popup-background__text'>{popupText}</p>
+								<p className='ta--c'>{popupText}</p>
 							</>
 						)}
 
@@ -119,12 +122,15 @@ const PopupBackground = ({ setPopup, popupSvg, popupSource, setPopupSource, setP
 						{popupSource === 'error' && (
 							<>
 								{/* Icon */}
-								<div className='popup-background__svg popup-background__error mb--10'>
+								<div className='popup-svg popup-svgd__error mb--10'>
 									<CloseIcon />
 								</div>
 
+								{/* Dividing line */}
+								<hr className='mb--22' />
+
 								{/* Text */}
-								<p className='lh--140 popup-background__text'>{popupText}</p>
+								<p className='ta--c'>{popupText}</p>
 							</>
 						)}
 
@@ -132,15 +138,13 @@ const PopupBackground = ({ setPopup, popupSvg, popupSource, setPopupSource, setP
 						{popupSource === 'notifications-page' && (
 							<>
 								{/* Icon */}
-								<div className='popup-background__svg popup-background__notifications-svg mb--16 '>
-									{popupSvg}
-								</div>
+								<div className='popup-svg popup-svg__notifications-svg mb--16'>{popupSvg}</div>
 
 								{/* Dividing line */}
 								<hr className='mb--22' />
 
 								{/* Text */}
-								<p className='lh--140 popup-background__text'>{popupText}</p>
+								<p className='ta--c'>{popupText}</p>
 							</>
 						)}
 
@@ -148,22 +152,22 @@ const PopupBackground = ({ setPopup, popupSvg, popupSource, setPopupSource, setP
 						{popupSource === 'answer' && (
 							<>
 								{/* Title */}
-								<h2 className='title mb--16 lh--140 popup-background__title'>Your answer</h2>
+								<h2 className='title mb--16'>Your answer</h2>
 
 								{/* Dividing line */}
-								<hr className='mb--16' />
+								<hr className='mb--22' />
 
 								{/* Textarea */}
 								<textarea
 									placeholder='. . .'
-									className='text mb--16 lh--140 popup-background__textarea'
+									className='mb--16'
 									value={questionText}
 									onChange={(e) => setQuestionText(e.target.value)}
 									required
 								/>
 
 								{/* Submit button */}
-								<button type='submit' className='button' onClick={handleCommentSubmit}>
+								<button type='submit' className='submit-button' onClick={handleCommentSubmit}>
 									Submit
 								</button>
 							</>

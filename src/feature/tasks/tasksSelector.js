@@ -10,3 +10,12 @@ export const selectAllTasks = createSelector(selectTasksState, (tasksState) => t
 export const selectVisibleTasks = createSelector(selectAllTasks, (tasks) =>
 	tasks.filter((task) => !task.isClaimed)
 );
+
+export const selectDailyTasks = createSelector(
+	selectTasksState,
+	(tasksState) => tasksState.dailyTasks
+);
+
+export const selectVisibleDailyTasks = createSelector(selectDailyTasks, (tasks) =>
+	tasks.filter((task) => !task.isClaimed)
+);

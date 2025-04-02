@@ -44,7 +44,6 @@ export const CommentsIcon = () => (
 	<svg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
 		<path
 			d='M12 6.26667C4 6.26667 4 7.90127 4 12C4 16.0987 4 17.7333 12 17.7333H20V12C20 7.90127 20 6.26667 12 6.26667Z'
-			stroke='#CECECE'
 			strokeLinecap='round'
 		/>
 		<circle cx='8.00111' cy='11.95' r='1' className='fill-icon' />

@@ -1,8 +1,13 @@
 @use '../../index'
 
 .questions-page
+	/* Tabs in index.sass */
+
+	/* Filter button wrapper */
+	/* Button in index.sass */
+
 	/* Questions filter wrapper */
-	&__filter
+	&__filter-wrapper
 		position: absolute
 		z-index: 2
 		top: 72px
@@ -17,21 +22,18 @@
 		background-color: index.$c-bg-900
 		@include index.shadow
 
-	/* Languages filter items */
-	.language-filter-item
-		flex-grow: 1
+	/* Input in index.sass */
 
-	/* Input */
-	&__input
-		& input
-			padding-right: 40px !important
+	/* Dividing line in index.sass */
+
+	/* Filters list in index.sass	*/
 
 	/* List of questions */
 	&__list
 		display: grid
 		gap: 16px
 
-	/* Questions item */
+	/* Questions page item */
 	&__item
 		position: relative
 		display: flex
@@ -50,6 +52,8 @@
 		position: absolute
 		top: 0
 		right: 20px
+		width: 35px !important
+		height: 35px !important
 		@include index.button-active
 		border-radius: 0 0 7px 7px !important
 		pointer-events: none
@@ -63,133 +67,75 @@
 
 	/* Tags in index.sass */
 
+	/* Wrapper for Question author, Date */
+	&__user-wrapper
+		display: flex
+		justify-content: space-between
+		align-items: center
+		color: index.$c-text-disabled
+
+	/* User in index.sass */
+
 	/* Wrapper for Report, Track, Like, Comment and Leave Comment Buttons */
-	&__buttons-wrapper
+	&__item-footer
 		display: flex
 		justify-content: space-between
 
 	/* Wrapper for Report, Tracking, Likes */
-	&__buttons
+	&__buttons-wrapper
 		display: flex
 		align-items: center
 		gap: 8px
+		width: 100%
 
-	/* Report, Track, Like Buttons */
+	/* Report, Track, Likes Buttons */
 	&__button
-		@include index.button
+		position: relative
+		z-index: 1
 		width: 35px !important
 		height: 35px !important
 
-		&.active
-			@include index.button-active
-
 	/* Wrapper of the like and counter button */
-	&__like-wrapper
-		display: flex
-		align-items: center
-		@include index.border7
-		overflow: hidden
-		color: index.$c-text
-		transition: 0.2s ease
-
-	/* Like button */
-	&__like
-		position: relative
-		z-index: 1
-
-	/* Likes counter */
-	&__like-count
-		display: flex
-		align-items: center
-		justify-content: center
-		height: 35px
-		min-width: 70px
-		margin-left: -8px
-		padding: 0 8px 0 16px
-		background-color: index.$c-bg-900
-		border-radius: 0 7px 7px 0 !important
-		border: 1px solid index.$c-stroke
-		animation: likes-translate 1s ease
-
-	/* Comment Wrapper */
-	&__comments-wrapper
-		display: flex
-		align-items: center
-		min-height: 35px
-		overflow: hidden
-		border-radius: 7px
-		color: index.$c-text
-		box-sizing: content-box
-		transition: 0.2s ease
-		&:focus
-			@include index.link-hover
-			.questions-page__comments-count
-				border-color: transparent !important
-			.questions-page__comments
-				background: transparent !important
-				border-color: transparent !important
-
-	/* Comments count */
-	&__comments-count
-		display: flex
-		align-items: center
-		justify-content: center
-		height: 100%
-		min-width: 70px
-		padding: 0 16px
-		margin-right: -8px
-		@include index.link
-		border-radius: 7px 0 0 7px !important
-		transition: 0.2s ease
-		animation: comments-translate 1.5s ease
+	&__likes:focus-visible
+		box-shadow: none !important
+		.button
+			@include index.button-hover
 
 	/* Comments button */
 	&__comments
-		display: flex
-		align-items: center
-		justify-content: center
-		@include index.link
-		transition: 0.2s ease
-		background-color: index.$c-bg-900 !important
+		margin-left: auto
+		&:focus-visible
+			.icon-counter__icon
+				background: none
+				border-color: transparent
+				box-shadow: none
+			.icon-counter__icon svg
+				stroke: index.$c-text-active !important
+			.icon-counter__counter
+				border-color: transparent
+
+	/* Animations for counters */
+	.counter-left
+		animation: icon-counter-left 1.5s ease
+	.counter-right
+		animation: icon-counter-right 1.5s ease
 
 	/* Leave a comment button */
-	&__leave-a-comment
+	&__send-comment
 		width: fit-content !important
 		padding: 0 20px
-		color: index.$c-text
-		@include index.link
 
-/* Animations */
-@keyframes likes-translate
-	from
-		transform: translateX(-100%)
-	to
-		transform: translateX(0)
-@keyframes comments-translate
-	from
-		transform: translateX(100%)
-	to
-		transform: translateX(0)
-
-/* Hover effects */
 @media (any-hover:hover)
 	.questions-page
-		&__button:hover
-			@include index.button-hover
-
-		&__like-wrapper:focus-visible
-			.questions-page__like
+		&__likes:hover
+			.button
 				@include index.button-hover
 
-		&__comments-wrapper:hover
-			@include index.link-hover
-			.questions-page__comments-count
-				border-color: transparent !important
-			.questions-page__comments
-				background: transparent !important
-				border-color: transparent !important
 		&__comments:hover
-			box-shadow: none !important
-
-		&__leave-a-comment:hover
 			@include index.link-hover
+			.icon-counter__icon
+				background: none
+				border-color: transparent
+				box-shadow: none
+			.icon-counter__counter
+				border-color: transparent

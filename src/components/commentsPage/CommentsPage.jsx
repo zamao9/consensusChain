@@ -215,8 +215,8 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 	// Framer Motion variants for animations
 	const questionVariants = {
 		initial: { opacity: 0, y: -50 },
-		animate: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-		exit: { opacity: 0, x: -200, transition: { duration: 0.5 } },
+		animate: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+		exit: { opacity: 0, x: -200, transition: { duration: 0.3 } },
 	};
 
 	const [position, setPosition] = useState({ x: 0, y: 0, rotation: 0 });
@@ -343,7 +343,7 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 
 	return (
 		<div className='comments-page'>
-			{/* Отображение текущего вопроса */}
+			{/* Displaying the current question */}
 			<AnimatePresence mode='wait'>
 				<motion.div
 					key={questionsItem?.question_id}
@@ -364,7 +364,7 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 				</motion.div>
 			</AnimatePresence>
 
-			{/* Обертка свайпа ответов */}
+			{/* Answer Swipe Wrapper */}
 			<div className='answers-block'>
 				{isLoading && (
 					<Preloader
@@ -391,54 +391,50 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 						>
 							{commentsState.length > 0 && commentsState !== null ? (
 								<>
-									{/* Обертка данных ответа */}
+									{/* Response Data Wrapper */}
 									<div className='comment-card'>
-										{/* Текст ответа */}
-										<h2 className='answers__title lh--140 mb--16'>
+										{/* Answer Text */}
+										<p className='answers__text mb--16'>
 											{' '}
 											{commentsState[currentIndex]?.text || 'waiting text'}
-										</h2>
+										</p>
 
-										{/* Реакции на ответ */}
-										<div className='reactions-counter mb--32'>
-											{/* Лайк */}
+										{/* Reactions */}
+										<div className='reactions mb--32'>
+											{/* Reactions item */}
 											<div
-												className={`reactions-counter__icon-wrapper ${
+												className={`reactions__item answers__reactions-item ${
 													commentsState[currentIndex].likedByUser ? 'active' : ''
 												}`}
 											>
 												<LikeIcon />
-												<span className='reactions-counter__count'>
-													{commentsState[currentIndex]?.likes || 0}
-												</span>
+												<span>{commentsState[currentIndex]?.likes || 0}</span>
 											</div>
 
-											{/* Дизлайк */}
+											{/* Reactions item */}
 											<div
-												className={`reactions-counter__icon-wrapper ${
+												className={`reactions__item answers__reactions-item ${
 													commentsState[currentIndex].dislikedByUser ? 'active' : ''
 												}`}
 											>
 												<DislikeIcon />
-												<span className='reactions-counter__count'>
-													{commentsState[currentIndex]?.dislikes || 0}
-												</span>
+												<span>{commentsState[currentIndex]?.dislikes || 0}</span>
 											</div>
 
-											{/* Профиль ответчика */}
-											<div className='user reactions-counter__user'>
+											{/* User */}
+											<div className='user answers__user'>
 												<ProfileIcon />
 												<span className='user__name'>{questionsItem?.user_name}</span>
 											</div>
 										</div>
 									</div>
 
-									{/* Кнопки реакций */}
-									<div className='reactions'>
-										{/* Кнопка лайка */}
+									{/* Reactions buttons */}
+									<div className='reactions-button'>
+										{/* Reaction buttons item */}
 										<button
 											type='button'
-											className={`reactions__button ${
+											className={`reactions-button__item ${
 												hoverState.isDragging && hoverState.direction === 'left' ? 'like-hover' : ''
 											}`}
 											onClick={() => handleReaction('like')}
@@ -446,10 +442,10 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 											<LikeIcon />
 										</button>
 
-										{/* Кнопка дизлайка */}
+										{/* Reaction buttons item */}
 										<button
 											type='button'
-											className={`reactions__button ${
+											className={`reactions-button__item ${
 												hoverState.isDragging && hoverState.direction === 'right'
 													? 'dislike-hover'
 													: ''
@@ -465,26 +461,28 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 							)}
 						</motion.div>
 
-						{/* Нижний ответ */}
+						{/* Bottom Answer */}
 						{nextCommentVisible && currentIndex < commentsState.length - 1 && (
-							<div className='answers answers__next-comment-card'>
-								<h2 className='answers__title lh--140 mb--16'>
-									{commentsState[currentIndex + 1]?.text}
-								</h2>
-								<div className='reactions-counter mb--32'>
-									<div className='reactions-counter__icon-wrapper'>
+							<div className='answers'>
+								{/* Answer Text */}
+								<p className='answers__text mb--16'>{commentsState[currentIndex + 1]?.text}</p>
+
+								{/* Reactions */}
+								<div className='reactions mb--32'>
+									{/* Reactions item */}
+									<div className='reactions__item'>
 										<LikeIcon />
-										<span className='reactions-counter__count'>
-											{commentsState[currentIndex + 1]?.likes}
-										</span>
+										<span>{commentsState[currentIndex + 1]?.likes}</span>
 									</div>
-									<div className='reactions-counter__icon-wrapper'>
+
+									{/* Reactions item */}
+									<div className='reactions__item'>
 										<DislikeIcon />
-										<span className='reactions-counter__count'>
-											{commentsState[currentIndex + 1]?.dislikes}
-										</span>
+										<span>{commentsState[currentIndex + 1]?.dislikes}</span>
 									</div>
-									<div className='user reactions-counter__user'>
+
+									{/* User */}
+									<div className='user answers__user'>
 										<ProfileIcon />
 										<span className='user__name'>{questionsItem?.user_name}</span>
 									</div>

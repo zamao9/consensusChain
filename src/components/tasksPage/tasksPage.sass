@@ -1,12 +1,14 @@
 @use '../../index'
 
 .tasks-page
-	/* Список тасков */
+	/* Tabs in index.sass */
+
+	/* Task page list */
 	&__list
 		display: grid
 		gap: 16px
 
-	/* Список тасков */
+	/* Task page item */
 	&__item
 		display: flex
 		flex-direction: column
@@ -15,43 +17,43 @@
 		@include index.border15
 		background-color: index.$c-bg-900
 
-	/* Обертка Заголовка и Цены */
+	/* Wrapper for title and cost */
 	&__header
 		display: flex
 		justify-content: space-between
 		align-items: flex-start
-		gap: 8px
+		gap: 16px
 
-	/* Заголовок таска */
+	/* Title */
 	&__item-title
-		width: 100%
 		font-size: 16px
 
-	/* Цена таска */
+	/* Cost */
 	&__cost
 		min-width: 80px
 		text-align: right
 
-	/* Обертка Таймера и Кнопки */
+	/* Dividing line in index.sass */
+
+	/* Wrapper for date and button */
 	&__footer
 		display: flex
 		justify-content: space-between
 		align-items: center
 		gap: 16px
 
-	&__timer
+	/* Date */
+	&__date
 		flex-grow: 1
 
+	/* Button in index.sass */
+	/* Button if task is not done */
 	&__button
 		width: 90px !important
 		height: 30px !important
 		font-weight: 400 !important
-	&__claim
-		background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(102, 100, 62, 0.4)) !important
-		background-color: index.$c-bg-button-active !important
-		border-color: index.$c-stroke-active !important
 
-@media (any-hover:hover)
-	.tasks-page
-		&__button:hover
-			@include index.button-hover
+	/* Button if task is done */
+	&__claim
+		@include index.button-active
+		color: index.$c-text-active !important

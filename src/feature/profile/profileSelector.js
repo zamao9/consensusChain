@@ -25,3 +25,13 @@ export const selectReceivedAnswersCount = createSelector(
 	selectProfile,
 	(profile) => profile.receivedAnswersCount
 );
+
+export const selectIntroducingStatus = createSelector(
+	selectProfile,
+	(profile) => profile.introducingCheck
+);
+
+export const selectDailyTasksStatus = createSelector(
+	selectProfile,
+	(profile) => profile.dailyTaskCheck
+);
