@@ -306,11 +306,11 @@ const QuestionsItem = ({
 		}
 	}, [questionItem.commentsCount]);
 
-	const questionsItemDate = '18.01.2025'; ///////////
+	const questionsItemDate = '2025-10-18';
 
 	return (
 		// Questions page item
-		<li
+		<article
 			className={`questions-page__item ${isVisible ? 'visible' : ''}`}
 			style={{ transition: 'opacity 0.5s ease-in-out', opacity: isVisible ? 1 : 0 }}
 		>
@@ -343,7 +343,7 @@ const QuestionsItem = ({
 				</div>
 
 				{/* Questions item date */}
-				<span>{questionsItemDate}</span>
+				<time dateTime={questionsItemDate}>{questionsItemDate}</time>
 			</div>
 
 			{/* Wrapper for Report, Track, Likes, Comment and Leave Comment Buttons   */}
@@ -427,7 +427,7 @@ const QuestionsItem = ({
 					</button>
 				)}
 			</div>
-		</li>
+		</article>
 	);
 };
 

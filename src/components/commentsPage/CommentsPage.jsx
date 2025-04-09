@@ -463,7 +463,7 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 
 						{/* Bottom Answer */}
 						{nextCommentVisible && currentIndex < commentsState.length - 1 && (
-							<div className='answers'>
+							<motion.div className='answers'>
 								{/* Answer Text */}
 								<p className='answers__text mb--16'>{commentsState[currentIndex + 1]?.text}</p>
 
@@ -487,7 +487,7 @@ const CommentsPage = ({ setPopup, setPopupText, setPopupSource }) => {
 										<span className='user__name'>{questionsItem?.user_name}</span>
 									</div>
 								</div>
-							</div>
+							</motion.div>
 						)}
 					</>
 				)}

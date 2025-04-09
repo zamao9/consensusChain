@@ -17,10 +17,7 @@
 
 	/* Introducing Title */
 	&__title
-		width: 100%
 		font-size: 20px
-		line-height: 120%
-		margin-bottom: 8px
 
 	/* Introducing Image */
 	&__image
@@ -28,11 +25,9 @@
 		overflow: hidden
 
 	/* Introducing Input Field */
-	.input-field
-		width: 100%
-		padding: 8px
-		background-color: index.$c-bg-900
-		@include index.border15
+	&__button-wrapper
+		flex-direction: column
+		gap: 8px
 
 	/* Submit button */
 	&__submit-button
@@ -53,7 +48,7 @@
 				background-color: index.$c-text
 
 	/* Buttons Wrapper */
-	&__button-wrapper
+	&__buttons
 		display: flex
 		justify-content: center
 		gap: 32px

@@ -84,12 +84,11 @@ $c-stroke-active: #45442A
 	border-radius: 7px
 
 @mixin shadow
-	box-shadow: 0 0 4px 2px $c-bg-main
+	box-shadow: 0 0 8px 6px $c-bg-main
 
 body
 	font-family: $f-global
 	font-size: 16px
-	line-height: 16px
 	font-weight: 400
 	color: $c-text
 	user-select: none
@@ -98,13 +97,6 @@ body
 	line-height: 140%
 	&::-webkit-scrollbar
 		width: 0
-		background: transparent
-	&::-webkit-scrollbar-track
-		background: transparent
-	&::-webkit-scrollbar-thumb
-		background-color: $c-stroke
-		border-radius: 6px
-		border: 3px solid $c-bg-main
 
 /* Abort scrolling */
 .no-scroll
@@ -130,7 +122,7 @@ body
 	font-weight: 600
 	font-family: $f-title
 	color: $c-title
-	line-height: 140%
+	line-height: 120%
 
 /* Dividing line */
 hr
@@ -175,6 +167,8 @@ textarea
 	line-height: 140%
 	@include border7
 	border: none
+	&::-webkit-scrollbar
+		width: 0
 	&::placeholder
 		font-size: 16px
 		font-family: $f-global
@@ -188,7 +182,19 @@ textarea
 
 /* Input field without an icon inside */
 .input
+	display: flex
+	flex-direction: column
 	width: 100%
+	&__invalid
+		display: flex
+		align-items: center
+		gap: 4px
+		font-size: 14px
+		color: $c-text-disabled
+		& svg
+			width: 22px
+			height: 22px
+			stroke: $c-text-disabled
 	& input
 		-webkit-appearance: none
 		width: 100%
@@ -211,6 +217,8 @@ textarea
 		&:not(:placeholder-shown)
 			outline: none
 			box-shadow: 0 0 0 1px $c-stroke
+		&:invalid
+			color: $c-text-disabled
 /* Input field with an icon inside */
 .input-relative
 	position: relative
@@ -356,11 +364,26 @@ button
 		display: flex
 		align-items: center
 		justify-content: center
-		padding: 8px
+		width: fit-content !important
+		height: 30px
+		padding: 8px 12px
 		font-size: 14px
 		line-height: 14px
 		@include border7
 		border: 1px solid $c-stroke
+		/* Tags items for search */
+		&-filter
+			display: flex
+			gap: 8px
+			padding: 8px 8px 8px 12px
+		&-delete
+			display: flex
+			justify-content: center
+			align-items: center
+			cursor: pointer
+			& svg
+				width: 14px
+				height: 14px
 
 /* Link */
 .link
@@ -447,13 +470,7 @@ button
 		align-items: center
 		gap: 4px
 
-//
-
-.spinner-overlay
-	display: flex
-	justify-content: center
-	align-items: center
-
+/* Empty block */
 .empty-block
 	@include border15
 	background-color: $c-bg-900
@@ -491,6 +508,19 @@ button
 /* Text align */	
 .ta--c
 	text-align: center
+
+/* Visually hidden */
+.visually-hidden
+	position: absolute
+	width: 1px
+	height: 1px
+	margin: -1px
+	border: 0
+	padding: 0
+	white-space: nowrap
+	clip-path: inset(100%)
+	clip: rect(0 0 0 0)
+	overflow: hidden
 
 /* Logo animation */
 @keyframes animate-svg-stroke-1

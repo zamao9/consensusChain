@@ -125,7 +125,7 @@ const ReportPopup = ({ setPopupSource }) => {
 			)}
 
 			{/* Заголовок репорта */}
-			<h2 className='title mb--16 ta--c'>{currentCategory[0]?.title || 'Сhoose a problem'}</h2>
+			<h2 className='title mb--22 ta--c'>{currentCategory[0]?.title || 'Сhoose a problem'}</h2>
 
 			{/* Разделительная линия */}
 			<hr className='mb--22' />

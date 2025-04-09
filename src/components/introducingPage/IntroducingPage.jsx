@@ -143,10 +143,10 @@ const IntroducingPage = () => {
 				)}
 
 				{/* Introducing Title */}
-				<h1 className='title introducing-page__title'>{currentElement.title}</h1>
+				<h1 className='title mb--8 introducing-page__title'>{currentElement.title}</h1>
 
 				{/* Introducing Description */}
-				<p className='lh--140 introducing-page__description'>{currentElement.description}</p>
+				<p>{currentElement.description}</p>
 
 				{/* Introducing Image */}
 				{currentElement.image && (
@@ -157,7 +157,7 @@ const IntroducingPage = () => {
 
 				{/* Introducing Input Field */}
 				{currentElement.input && (
-					<div className='input-field mt--32'>
+					<div className='button-wrapper introducing-page__button-wrapper mt--32'>
 						<div className='input input-relative mb--10'>
 							<input type='text' placeholder='@nickname' />
 							<ProfileInputIcon />
@@ -181,7 +181,7 @@ const IntroducingPage = () => {
 				</div>
 
 				{/* Buttons Wrapper */}
-				<div className='mt--32 introducing-page__button-wrapper'>
+				<div className='mt--32 introducing-page__buttons'>
 					{/* Button */}
 					<button
 						type='button'

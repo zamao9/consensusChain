@@ -106,7 +106,7 @@ const PopupBackground = ({ setPopup, popupSvg, popupSource, setPopupSource, setP
 						{popupSource === 'success' && (
 							<>
 								{/* Icon */}
-								<div className='popup-svg popup-svg__success mb--10'>
+								<div className='popup-svg popup-svg__success mb--22'>
 									<SuccessIcon />
 								</div>
 
@@ -122,7 +122,7 @@ const PopupBackground = ({ setPopup, popupSvg, popupSource, setPopupSource, setP
 						{popupSource === 'error' && (
 							<>
 								{/* Icon */}
-								<div className='popup-svg popup-svgd__error mb--10'>
+								<div className='popup-svg popup-svgd__error mb--22'>
 									<CloseIcon />
 								</div>
 
@@ -138,7 +138,7 @@ const PopupBackground = ({ setPopup, popupSvg, popupSource, setPopupSource, setP
 						{popupSource === 'notifications-page' && (
 							<>
 								{/* Icon */}
-								<div className='popup-svg popup-svg__notifications-svg mb--16'>{popupSvg}</div>
+								<div className='popup-svg popup-svg__notifications-svg mb--22'>{popupSvg}</div>
 
 								{/* Dividing line */}
 								<hr className='mb--22' />
@@ -152,7 +152,7 @@ const PopupBackground = ({ setPopup, popupSvg, popupSource, setPopupSource, setP
 						{popupSource === 'answer' && (
 							<>
 								{/* Title */}
-								<h2 className='title mb--16'>Your answer</h2>
+								<h2 className='title mb--22'>Your answer</h2>
 
 								{/* Dividing line */}
 								<hr className='mb--22' />

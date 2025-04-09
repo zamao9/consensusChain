@@ -133,7 +133,7 @@ const ProfilePage = ({ tab, setTab, setPage, setItem }) => {
 
 						{/* Registration Dates */}
 						<div>
-							Registered: <span>{profileRegistrationDate}</span>
+							Registered: <time dateTime={profileRegistrationDate}>{profileRegistrationDate}</time>
 						</div>
 					</div>
 
@@ -178,17 +178,18 @@ const ProfilePage = ({ tab, setTab, setPage, setItem }) => {
 			{tab === 'second' && (
 				<>
 					{/* Achievement List */}
-					<ul className='achievements'>
+					<section className='achievements'>
 						{/* Achievements list item */}
 						{achievementsData.map((element) => (
-							<li
+							<article
 								className={`achievements__item ${element.done === true ? 'done' : ''}`}
 								key={element.id}
 							>
+								<h2 className='visually-hidden'>achievements item</h2>
 								{/* Element content*/}
 								<div className='achievements__content'>
 									{/* Achievement Title */}
-									<h2 className='title achievements__title'>{element.title}</h2>
+									<h3 className='title achievements__title'>{element.title}</h3>
 
 									{/* Achievement Text */}
 									<p className='achievements__text'>{element.text}</p>
@@ -207,9 +208,9 @@ const ProfilePage = ({ tab, setTab, setPage, setItem }) => {
 										{element.progress + ' / ' + element.goal}
 									</div>
 								)}
-							</li>
+							</article>
 						))}
-					</ul>
+					</section>
 				</>
 			)}
 		</div>

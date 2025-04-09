@@ -1,8 +1,9 @@
 import './questionsPage.sass';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
 	ArrowLeftIcon,
 	ArrowRightIcon,
+	CloseIcon,
 	DblArrowLeftIcon,
 	DblArrowRightIcon,
 	FilterIcon,
@@ -144,10 +145,19 @@ const QuestionsPage = ({ curItem, setItem, setPage, setPopup, setPopupText, setP
 		setFilterButton(false);
 	};
 
+	// Click outside of an element makes filter button and wrapper close
+	const filterWrapper = useRef(null);
+	const handleCLickOutsideFilterWrapper = () => {
+		if (filterWrapper.current && !filterWrapper.current.contains(event.target)) {
+			setFilterButton(false);
+		}
+	};
+
 	// When filtering is open, disallow scrolling
 	useEffect(() => {
 		if (filterButton) {
 			document.body.classList.add('no-scroll');
+			document.addEventListener('mousedown', handleCLickOutsideFilterWrapper);
 		} else {
 			document.body.classList.remove('no-scroll');
 		}
@@ -160,6 +170,12 @@ const QuestionsPage = ({ curItem, setItem, setPage, setPopup, setPopupText, setP
 			setIsFiltering(false);
 		}, 300); // Задержка в 300 мс
 	}, [selectedTags, selectedLanguage]);
+
+	const tagsFilter = [
+		{ id: 1, label: 'Asfaaasfafasfasa' },
+		{ id: 2, label: 'Sasfas' },
+		{ id: 3, label: 'Fafaasfa' },
+	];
 
 	return (
 		<div className='questions-page'>
@@ -197,7 +213,8 @@ const QuestionsPage = ({ curItem, setItem, setPage, setPopup, setPopupText, setP
 						{/* Filter button wrapper */}
 						<button
 							className={`button ${filterButton ? 'active' : ''}`}
-							onClick={() => setFilterButton(!filterButton)}
+							onClick={() => setFilterButton(true)}
+							disabled={filterButton}
 						>
 							<FilterIcon />
 						</button>
@@ -206,35 +223,62 @@ const QuestionsPage = ({ curItem, setItem, setPage, setPopup, setPopupText, setP
 					{/* Questions filter wrapper */}
 					{filterButton && (
 						<AnimatePresence>
-							<motion.div className='questions-page__filter-wrapper'>
-								{/* Search tag input */}
-								<div className='input input-relative'>
-									<input
-										placeholder='Find a tag'
-										type='text'
-										onChange={(e) => handleTagSearch(e.target.value.split(','))}
-									/>
-									<SearchInputIcon />
-								</div>
+							<search>
+								<form>
+									<motion.div
+										className='questions-page__filter-wrapper'
+										ref={filterWrapper}
+										initial={{ opacity: 0 }}
+										animate={{ opacity: 1 }}
+										exit={{ opacity: 0 }}
+										transition={{ duration: 0.2 }}
+									>
+										{/* Search tag input */}
+										<div className='input input-relative'>
+											<input
+												placeholder='Find a tag'
+												type='text'
+												onChange={(e) => handleTagSearch(e.target.value.split(','))}
+											/>
+											<SearchInputIcon />
+										</div>
 
-								{/* Dividing line */}
-								<hr />
+										{/* Filter tags */}
+										<ul className='tags'>
+											{tagsFilter.map((element) => (
+												<li key={element.id}>
+													<button type='button' className='link tags__item tags__item-filter'>
+														{element.label}
+														<div className='tags__item-delete'>
+															<CloseIcon />
+														</div>
+													</button>
+												</li>
+											))}
+										</ul>
 
-								{/* Filter list */}
-								<ul className='filters-list'>
-									{languageFilter.map((element) => (
-										<li key={element.id}>
-											<button
-												type='button'
-												className={`button filters-list__button ${element.status ? 'active' : ''}`}
-												onClick={() => handleLanguageChange(element.id)}
-											>
-												{element.label}
-											</button>
-										</li>
-									))}
-								</ul>
-							</motion.div>
+										{/* Dividing line */}
+										<hr />
+
+										{/* Filter list */}
+										<ul className='filters-list'>
+											{languageFilter.map((element) => (
+												<li key={element.id}>
+													<button
+														type='button'
+														className={`button filters-list__button ${
+															element.status ? 'active' : ''
+														}`}
+														onClick={() => handleLanguageChange(element.id)}
+													>
+														{element.label}
+													</button>
+												</li>
+											))}
+										</ul>
+									</motion.div>
+								</form>
+							</search>
 						</AnimatePresence>
 					)}
 
@@ -249,7 +293,7 @@ const QuestionsPage = ({ curItem, setItem, setPage, setPopup, setPopupText, setP
 					)}
 
 					{/* List of questions */}
-					<ul className='mb--32 questions-page__list'>
+					<section className='mb--32 questions-page__list'>
 						{displayedQuestions.map((element, index) => (
 							<QuestionsItem
 								key={element.question_id}
@@ -264,38 +308,38 @@ const QuestionsPage = ({ curItem, setItem, setPage, setPopup, setPopupText, setP
 								animationDelay={index * 200}
 							/>
 						))}
-					</ul>
+					</section>
 
 					{/* Pagination */}
 					<div className='button-wrapper pagination'>
 						<button
 							className='button pagination__button'
 							onClick={goToFirstPage}
-							disabled={currentPage === 1}
+							disabled={currentPage - 1 < 1}
 						>
 							<DblArrowLeftIcon />
 						</button>
 						<button
 							className='button pagination__button'
 							onClick={goToPreviousPage}
-							disabled={currentPage === 1}
+							disabled={currentPage - 1 < 1}
 						>
 							<ArrowLeftIcon />
 						</button>
 						<div className='pagination__counter'>
-							{currentPage} / {totalPages}
+							{currentPage > totalPages ? '0' : currentPage} / {totalPages}
 						</div>
 						<button
 							className='button pagination__button'
 							onClick={goToNextPage}
-							disabled={currentPage === totalPages}
+							disabled={currentPage + 1 > totalPages}
 						>
 							<ArrowRightIcon />
 						</button>
 						<button
 							className='button pagination__button'
 							onClick={goToLastPage}
-							disabled={currentPage === totalPages}
+							disabled={currentPage + 1 > totalPages}
 						>
 							<DblArrowRightIcon />
 						</button>

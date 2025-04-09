@@ -11,16 +11,18 @@ const repliesSentSlice = createSlice({
 	initialState,
 	reducers: {
 		setRepliesSent(state, action) {
-			const initialList = action.payload;
-			initialList.map((element) => {
-				state.repliesSentList.push({
-					id: element.commentId,
-					text: element.text,
-					likes: element.likes,
-					dislikes: element.dislikes,
-					questionId: element.questionId,
+			if (state.repliesSentList.length === 0) {
+				const initialList = action.payload;
+				initialList.map((element) => {
+					state.repliesSentList.push({
+						id: element.commentId,
+						text: element.text,
+						likes: element.likes,
+						dislikes: element.dislikes,
+						questionId: element.questionId,
+					});
 				});
-			});
+			}
 		},
 		addRepliesSentItem(state, action) {
 			state.repliesSentList.push({

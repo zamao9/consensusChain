@@ -1,20 +1,20 @@
 import { createSelector } from '@reduxjs/toolkit';
 // Базовый селектор
-export const selectRepliseSentState = (state) => state.repliesSent;
+export const selectRepliesSentState = (state) => state.repliesSent;
 
 // Селектор для всех задач
 export const selectRepliesSentList = createSelector(
-	selectRepliseSentState,
+	selectRepliesSentState,
 	(repliseSent) => repliseSent.repliesSentList
 );
 
 export const selectCurrentPage = createSelector(
-	selectRepliseSentState,
+	selectRepliesSentState,
 	(repliseSent) => repliseSent.currentPage
 );
 
 export const selectItemsPerList = createSelector(
-	selectRepliseSentState,
+	selectRepliesSentState,
 	(repliseSent) => repliseSent.itemsPerPage
 );
 

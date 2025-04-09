@@ -159,7 +159,7 @@ const AppScreen = () => {
 				const data = await response.json();
 				console.log(data);
 				dispatch(setDailyTaskCheck(data.dailyTaskStatus));
-				dispatch(setDailyTasks(data.dailyTaskText));
+				dispatch(setDailyTasks(data.dailyTasks));
 			} catch (error) {
 				setError('Error fetching user statistics');
 				console.error('Error fetching user statistics:', error);
@@ -329,7 +329,13 @@ const AppScreen = () => {
 
 									{/* TASKS */}
 									{curPage === 'tasks-page' && (
-										<TasksPage tab={tab} setTab={(tab) => dispatch(setTab(tab))} />
+										<TasksPage
+											curItem={curItem}
+											setPage={(page) => dispatch(setCurPage(page))}
+											setItem={(item) => dispatch(setCurItem(item))}
+											tab={tab}
+											setTab={(tab) => dispatch(setTab(tab))}
+										/>
 									)}
 								</div>
 							</main>

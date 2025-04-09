@@ -4,7 +4,7 @@ import { a } from 'framer-motion/client';
 const initialState = {
 	id: null, // Идентификатор пользователя
 	name: 'gugugaga', // Имя пользователя
-	registrationDate: '01.01.2025', // Дата регистрации
+	registrationDate: '2025-01-01', // Дата регистрации
 	balance: 0, // Баланс пользователя
 	rating: 0, // Рейтинг пользователя
 	likesReceived: 0, // Количество лайков, полученных на вопросы и ответы

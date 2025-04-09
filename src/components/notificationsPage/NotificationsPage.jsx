@@ -1,5 +1,5 @@
 import './notificationsPage.sass';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
 	ArrowLeftIcon,
 	ArrowRightIcon,
@@ -23,8 +23,8 @@ const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource
 	const userId = useAppSelector(selectUserId);
 	const [isLoading, setIsLoading] = useState(true);
 	const [currentPage, setCurrentPage] = useState(1); // Current page
-	const [itemsPerPage] = useState(3); // Number of elements on the page
-	const [filterButton, setFilterButton] = useState(false); // click on filter button
+	const [itemsPerPage] = useState(5); // Number of elements on the page
+	const [filterButtonNav, setFilterButtonNav] = useState(false); // click on filter button
 
 	const [radio, setRadio] = useState([
 		{ key: 1, type: 'trace', text: 'Trace notices', status: true },
@@ -104,29 +104,38 @@ const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource
 	// Pagination handlers
 	const goToFirstPage = () => {
 		setCurrentPage(1);
-		setFilterButton(false);
+		setFilterButtonNav(false);
 	};
 	const goToPreviousPage = () => {
 		setCurrentPage((prev) => Math.max(prev - 1, 1));
-		setFilterButton(false);
+		setFilterButtonNav(false);
 	};
 	const goToNextPage = () => {
 		setCurrentPage((prev) => Math.min(prev + 1, totalPages));
-		setFilterButton(false);
+		setFilterButtonNav(false);
 	};
 	const goToLastPage = () => {
 		setCurrentPage(totalPages);
-		setFilterButton(false);
+		setFilterButtonNav(false);
+	};
+
+	// Click outside of an element makes filter button and wrapper close
+	const filterWrapper = useRef(null);
+	const handleCLickOutsideFilterWrapper = () => {
+		if (filterWrapper.current && !filterWrapper.current.contains(event.target)) {
+			setFilterButtonNav(false);
+		}
 	};
 
 	// When filtering is open, disallow scrolling
 	useEffect(() => {
-		if (filterButton) {
+		if (filterButtonNav) {
 			document.body.classList.add('no-scroll');
 		} else {
 			document.body.classList.remove('no-scroll');
 		}
-	}, [filterButton]);
+		document.addEventListener('mousedown', handleCLickOutsideFilterWrapper);
+	}, [filterButtonNav]);
 
 	return (
 		<div className='notifications-page'>
@@ -148,8 +157,9 @@ const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource
 						<div className='button-wrapper'>
 							{/* Filter Button */}
 							<button
-								className={`button ${filterButton ? 'active' : ''}`}
-								onClick={() => setFilterButton(!filterButton)}
+								className={`button ${filterButtonNav ? 'active' : ''}`}
+								onClick={() => setFilterButtonNav(!filterButtonNav)}
+								disabled={filterButtonNav}
 							>
 								<FilterIcon />
 							</button>
@@ -157,33 +167,45 @@ const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource
 					</div>
 
 					{/* Filter list */}
-					{filterButton && (
-						<AnimatePresence>
-							<motion.ul className='notifications-filter'>
-								{/* Filter list item */}
-								{radio.map((element) => (
-									<li className='notifications-filter__item' key={element.key}>
-										{/* Filter Text */}
-										<span>{element.text}</span>
+					{filterButtonNav && (
+						<search>
+							<form>
+								<AnimatePresence>
+									<motion.ul
+										className='notifications-filter'
+										ref={filterWrapper}
+										initial={{ opacity: 0 }}
+										animate={{ opacity: 1 }}
+										exit={{ opacity: 0 }}
+										transition={{ duration: 0.2 }}
+									>
+										{/* Filter list item */}
+										{radio.map((element) => (
+											<li className='notifications-filter__item' key={element.key}>
+												{/* Filter Text */}
+												<label>{element.text}</label>
 
-										{/* Radio filter button */}
-										<button
-											type='button'
-											className={`radio ${element.status ? 'active' : ''}`}
-											onClick={() => radioHandler(element.key)}
-										>
-											<div className='radio__button'></div>
-										</button>
-									</li>
-								))}
-							</motion.ul>
-						</AnimatePresence>
+												{/* Radio filter button */}
+												<button
+													type='button'
+													className={`radio ${element.status ? 'active' : ''}`}
+													onClick={() => radioHandler(element.key)}
+												>
+													<div className='radio__button'></div>
+												</button>
+											</li>
+										))}
+									</motion.ul>
+								</AnimatePresence>
+							</form>
+						</search>
 					)}
 
 					{/* Notifications list */}
-					<ul className='mb--32 notifications-page__list'>
+					<section className='mb--32 notifications-page__list'>
 						{currentNotifications.map((element) => (
-							<li key={element.id}>
+							<article key={element.id}>
+								<h2 className='visually-hidden'>Notification item</h2>
 								{/* Notifications list items */}
 								<button
 									type='button'
@@ -202,7 +224,7 @@ const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource
 									}}
 								>
 									{/* Notification list text */}
-									<h2 className='title notifications-page__title'>{element.title}</h2>
+									<h3 className='title notifications-page__title'>{element.title}</h3>
 
 									{/* Dividing line */}
 									<hr />
@@ -210,10 +232,10 @@ const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource
 									{/* Wrapping the date and time of the item */}
 									<div className='notifications-page__date-wrapper'>
 										{/* Date of element */}
-										<span>{element.createdAt.date}</span>
+										<time dateTime={element.createdAt.date}>{element.createdAt.date}</time>
 
 										{/* Element time */}
-										<span>{element.createdAt.time}</span>
+										<time dateTime={element.createdAt.time}>{element.createdAt.time}</time>
 									</div>
 
 									{/* Icon type */}
@@ -224,40 +246,40 @@ const NotificationsPage = ({ setPopup, setPopupSvg, setPopupText, setPopupSource
 											(element.type === 'like' && <LikeIcon />)}
 									</div>
 								</button>
-							</li>
+							</article>
 						))}
-					</ul>
+					</section>
 
 					{/* Pagination */}
 					<div className='button-wrapper pagination'>
 						<button
 							className='button pagination__button'
 							onClick={goToFirstPage}
-							disabled={currentPage === 1}
+							disabled={currentPage - 1 < 1}
 						>
 							<DblArrowLeftIcon />
 						</button>
 						<button
 							className='button pagination__button'
 							onClick={goToPreviousPage}
-							disabled={currentPage === 1}
+							disabled={currentPage - 1 < 1}
 						>
 							<ArrowLeftIcon />
 						</button>
 						<div className='pagination__counter'>
-							{currentPage} / {totalPages}
+							{currentPage > totalPages ? '0' : currentPage} / {totalPages}
 						</div>
 						<button
 							className='button pagination__button'
 							onClick={goToNextPage}
-							disabled={currentPage === totalPages}
+							disabled={currentPage + 1 > totalPages}
 						>
 							<ArrowRightIcon />
 						</button>
 						<button
 							className='button pagination__button'
 							onClick={goToLastPage}
-							disabled={currentPage === totalPages}
+							disabled={currentPage + 1 > totalPages}
 						>
 							<DblArrowRightIcon />
 						</button>

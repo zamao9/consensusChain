@@ -1,8 +1,8 @@
 import './askPage.sass';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks/store';
 import { selectDailyTasksStatus, selectUserId } from '../../feature/profile/profileSelector';
-import { NotificationIcon, SearchInputIcon } from '../../constants/SvgIcons';
+import { NotificationIcon, ReportIcon, SearchInputIcon } from '../../constants/SvgIcons';
 import { setDailyTaskCheck } from '../../feature/profile/profileSlice';
 
 const AskPage = ({ setPage, setTab, setItem, setPopup, setPopupText, setPopupSource }) => {
@@ -145,7 +145,6 @@ const AskPage = ({ setPage, setTab, setItem, setPopup, setPopupText, setPopupSou
 		}
 	};
 
-	// const dailyTaskCheck = useAppSelector(selectDailyTasksStatus);
 	const dailyTaskCheck = useAppSelector(selectDailyTasksStatus);
 
 	return (
@@ -178,8 +177,9 @@ const AskPage = ({ setPage, setTab, setItem, setPopup, setPopupText, setPopupSou
 
 				{/* Textarea */}
 				<textarea
+					inputMode='text'
 					placeholder='Ask your question'
-					className='text mb--22 ask-page__textarea'
+					className='mb--22 ask-page__textarea'
 					required
 					value={questionText}
 					onChange={(e) => setQuestionText(e.target.value)}
@@ -209,14 +209,19 @@ const AskPage = ({ setPage, setTab, setItem, setPopup, setPopupText, setPopupSou
 						{filtersItems[10].active && (
 							// Tag entry field
 							<div className='input mt--8 filters__other'>
-								{' '}
 								<input
+									inputMode='text'
 									type='text'
 									required
 									placeholder='Enter custom tag'
 									value={otherTag}
+									pattern='^[a-zA-Z\s]+$'
 									onChange={(e) => setOtherTag(e.target.value)}
 								/>
+								<div className='input__invalid mt--8'>
+									<ReportIcon />
+									English, no numbers or symbols
+								</div>
 							</div>
 						)}
 					</ul>

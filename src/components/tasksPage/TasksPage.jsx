@@ -4,12 +4,19 @@ import { AnimatePresence } from 'motion/react';
 import { motion } from 'framer-motion';
 import { useAppDispatch, useAppSelector } from '../../hooks/store';
 import { selectVisibleDailyTasks, selectVisibleTasks } from '../../feature/tasks/tasksSelector';
-import { claimTask, markTaskDone, setTasks } from '../../feature/tasks/tasksSlice';
+import {
+	claimDailyTask,
+	claimTask,
+	markDailyTaskDone,
+	markTaskDone,
+	setTasks,
+} from '../../feature/tasks/tasksSlice';
 import { selectDailyTasksStatus, selectUserId } from '../../feature/profile/profileSelector';
 import { incrementBalance, setDailyTaskCheck } from '../../feature/profile/profileSlice';
 import Preloader from '../preloader/Preloader';
+import { title } from 'framer-motion/client';
 
-const TasksPage = ({ tab, setTab }) => {
+const TasksPage = ({ curItem, setPage, setItem, tab, setTab }) => {
 	const dispatch = useAppDispatch();
 	const userId = useAppSelector(selectUserId);
 	const [isProcessing, setIsProcessing] = useState(false);
@@ -152,9 +159,79 @@ const TasksPage = ({ tab, setTab }) => {
 		if (tab === 'second' && dailyTaskCheck === false) {
 			fetchDailyTasksStatusUpdate();
 		}
-	}, [tab]);
+	}, [tab, curItem]);
+
+	useEffect(() => {
+		if (curItem === 'tasks-page') {
+			setTab('first');
+		}
+	}, [curItem]);
 
 	const dailyTask = useAppSelector(selectVisibleDailyTasks);
+
+	const fetchDoneDailyTasks = async () => {
+		try {
+			const response = await fetch(
+				`https://web-production-c0b1.up.railway.app/user-state/${userId}/update-daily-task-status/done`,
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				}
+			);
+			if (!response.ok) throw new Error('Failed to fetch statistics');
+			const data = await response.json();
+			console.log(data.message);
+		} catch (error) {
+			setError('Error fetching user statistics');
+			console.error('Error fetching user statistics:', error);
+		}
+	};
+
+	const dailyTasksHandleGo = (title) => {
+		if (dailyTask[0].type === 'question') {
+			setPage('ask-page');
+			setItem('ask-page');
+		} else if (dailyTask[0].type === 'comment') {
+			setPage('ask-page');
+			setItem('ask-page');
+		} else if (dailyTask[0].type === 'like') {
+			setPage('ask-page');
+			setItem('ask-page');
+		} else if (dailyTask[0].type === 'redirect') {
+			window.open('https://javascript.info/');
+			setPage('ask-page');
+			setItem('ask-page');
+		}
+		fetchDoneDailyTasks();
+		dispatch(markDailyTaskDone(title));
+	};
+
+	const fetchClaimDailyTasks = async () => {
+		try {
+			const response = await fetch(
+				`https://web-production-c0b1.up.railway.app/user-state/${userId}/update-daily-task-status/claimed`,
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				}
+			);
+			if (!response.ok) throw new Error('Failed to fetch statistics');
+			const data = await response.json();
+			console.log(data.message);
+		} catch (error) {
+			setError('Error fetching user statistics');
+			console.error('Error fetching user statistics:', error);
+		}
+	};
+
+	const dailyTasksHandleClaim = (title) => {
+		dispatch(claimDailyTask(title));
+		fetchClaimDailyTasks();
+	};
 
 	return (
 		<div className='tasks-page'>
@@ -225,7 +302,9 @@ const TasksPage = ({ tab, setTab }) => {
 												{/* Wrapper for date and button */}
 												<div className='tasks-page__footer'>
 													{/* Date */}
-													<span className={`tasks-page__date`}>{element.timer}</span>
+													<time dateTime={element.timer} className={`tasks-page__time`}>
+														{element.timer}
+													</time>
 
 													{/* Button if task is not done */}
 													{!element.isDone && (
@@ -257,7 +336,7 @@ const TasksPage = ({ tab, setTab }) => {
 								</ul>
 							) : (
 								<div className='empty-block'>
-									<span className='lh--140'>Task not found for this user</span>
+									<span>Task not found for this user</span>
 								</div>
 							)}
 						</>
@@ -267,68 +346,64 @@ const TasksPage = ({ tab, setTab }) => {
 					{tab === 'second' && (
 						<>
 							{/* Task page list */}
-							{!taskIsEmpty ? (
-								<ul className='tasks-page__list'>
-									<AnimatePresence>
-										{/* Task page item */}
-										{dailyTask.map((element) => (
-											<motion.li
-												initial={{ opacity: 0, y: -20 }}
-												animate={{ opacity: 1, y: 0 }}
-												exit={{ opacity: 0, y: 20 }} // Анимация исчезновения
-												className='tasks-page__item'
-												key={element.id}
-											>
-												{/* Wrapper for title and cost */}
-												<div className='tasks-page__header'>
-													{/* Title */}
-													<h2 className='tasks-page__item-title'>{element.title}</h2>
+							<ul className='tasks-page__list'>
+								<AnimatePresence>
+									{/* Task page item */}
+									{dailyTask.map((element) => (
+										<motion.li
+											initial={{ opacity: 0, y: -20 }}
+											animate={{ opacity: 1, y: 0 }}
+											exit={{ opacity: 0, y: 20 }} // Анимация исчезновения
+											className='tasks-page__item'
+											key={element.id}
+										>
+											{/* Wrapper for title and cost */}
+											<div className='tasks-page__header'>
+												{/* Title */}
+												<h2 className='tasks-page__item-title'>{element.title}</h2>
 
-													{/* Cost */}
-													<span className='tasks-page__cost'>{element.cost} CT</span>
-												</div>
+												{/* Cost */}
+												<span className='tasks-page__cost'>{element.cost} CT</span>
+											</div>
 
-												{/* Dividing line */}
-												<hr />
+											{/* Dividing line */}
+											<hr />
 
-												{/* Wrapper for date and button */}
-												<div className='tasks-page__footer'>
-													{/* Date */}
-													<span className={`tasks-page__date`}>{element.timer}</span>
+											{/* Wrapper for date and button */}
+											<div className='tasks-page__footer'>
+												{/* Date */}
+												<time dateTime={element.timer} className={`tasks-page__time`}>
+													{element.timer}
+												</time>
 
-													{/* Button if task is not done */}
-													{!element.isDone && (
-														<button
-															type='button'
-															className='button tasks-page__button'
-															onClick={() => handleGo(element.key)}
-															// disabled={isProcessing}
-														>
-															Go
-														</button>
-													)}
+												{/* Button if task is not done */}
+												{!element.isDone && (
+													<button
+														type='button'
+														className='button tasks-page__button'
+														onClick={() => dailyTasksHandleGo(element.title)}
+														// disabled={isProcessing}
+													>
+														Go
+													</button>
+												)}
 
-													{/* Button if task is done */}
-													{element.isDone && !element.isClaimed && (
-														<button
-															type='button'
-															className='button tasks-page__button tasks-page__claim'
-															onClick={() => handleClaim(element.key)}
-															// disabled={isProcessing}
-														>
-															Claim
-														</button>
-													)}
-												</div>
-											</motion.li>
-										))}
-									</AnimatePresence>
-								</ul>
-							) : (
-								<div className='empty-block'>
-									<span className='lh--140'>Task not found for this user</span>
-								</div>
-							)}
+												{/* Button if task is done */}
+												{element.isDone && !element.isClaimed && (
+													<button
+														type='button'
+														className='button tasks-page__button tasks-page__claim'
+														onClick={() => dailyTasksHandleClaim(element.title)}
+														// disabled={isProcessing}
+													>
+														Claim
+													</button>
+												)}
+											</div>
+										</motion.li>
+									))}
+								</AnimatePresence>
+							</ul>
 						</>
 					)}
 				</>

@@ -1,24 +1,49 @@
 import './friendsPage.sass';
 import { useDispatch, useSelector } from 'react-redux';
-import { CloseIcon, MessageIcon, StarIcon, SuccessIcon, TrashIcon } from '../../constants/SvgIcons';
+import {
+	ArrowLeftIcon,
+	ArrowRightIcon,
+	CloseIcon,
+	DblArrowLeftIcon,
+	DblArrowRightIcon,
+	MessageIcon,
+	StarIcon,
+	SuccessIcon,
+	TrashIcon,
+} from '../../constants/SvgIcons';
 import { useAppDispatch, useAppSelector } from '../../hooks/store';
-import { filteredFriends } from '../../feature/friends/friendsSelector';
+import {
+	selectCurrentPage,
+	selectCurrentPageFriendsItems,
+	selectTotalPage,
+} from '../../feature/friends/friendsSelector';
 import {
 	changeRating,
 	changeTrash,
 	removeFriend,
-	setFriends,
+	setCurrentPage,
 } from '../../feature/friends/friendsSlice';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { AnimatePresence, motion, transform } from 'framer-motion';
 
 const FriendsPage = () => {
 	const dispatch = useAppDispatch();
-	const allFriends = useAppSelector(filteredFriends);
-	const friendsList = useAppSelector(filteredFriends);
+
 	useEffect(() => {
 		dispatch(changeRating([1, 1000]));
 	}, []);
+
+	{
+		/* Pagination buttons */
+	}
+	const currentPageFriendsItems = useAppSelector(selectCurrentPageFriendsItems);
+	const currentPage = useAppSelector(selectCurrentPage);
+	const totalPages = useAppSelector(selectTotalPage);
+
+	const goToFirstPage = () => dispatch(setCurrentPage(1));
+	const goToPreviousPage = () => dispatch(setCurrentPage(Math.max(currentPage - 1, 1)));
+	const goToNextPage = () => dispatch(setCurrentPage(Math.min(currentPage + 1, totalPages)));
+	const goToLastPage = () => dispatch(setCurrentPage(totalPages));
 
 	return (
 		<div className='friends-page'>
@@ -26,10 +51,10 @@ const FriendsPage = () => {
 			<h2 className='title mb--22'>Friends</h2>
 
 			{/* Friends list */}
-			<ul className='friends-page__list'>
+			<ul className='mb--32 friends-page__list'>
 				{/* Friends list item */}
 				<AnimatePresence>
-					{friendsList.map((element) => (
+					{currentPageFriendsItems.map((element) => (
 						<motion.li
 							initial={{ x: 0, opacity: 1 }}
 							animate={{ x: 0, opacity: 1 }}
@@ -118,6 +143,47 @@ const FriendsPage = () => {
 					))}
 				</AnimatePresence>
 			</ul>
+
+			{/* Pagination */}
+			<div className='button-wrapper pagination'>
+				<button
+					type='button'
+					className='button pagination__button'
+					disabled={currentPage - 1 < 1}
+					onClick={() => goToFirstPage()}
+				>
+					<DblArrowLeftIcon />
+				</button>
+				<button
+					type='button'
+					className='button pagination__button'
+					disabled={currentPage - 1 < 1}
+					onClick={() => goToPreviousPage()}
+				>
+					<ArrowLeftIcon />
+				</button>
+
+				<div className='pagination__counter'>{`${
+					currentPage > totalPages ? '0' : currentPage
+				} / ${totalPages}`}</div>
+
+				<button
+					type='button'
+					className='button pagination__button'
+					disabled={currentPage + 1 > totalPages}
+					onClick={() => goToNextPage()}
+				>
+					<ArrowRightIcon />
+				</button>
+				<button
+					type='button'
+					className='button pagination__button'
+					disabled={currentPage + 1 > totalPages}
+					onClick={() => goToLastPage()}
+				>
+					<DblArrowRightIcon />
+				</button>
+			</div>
 		</div>
 	);
 };

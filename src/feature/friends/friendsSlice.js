@@ -20,10 +20,27 @@ const initialState = {
 			userRating: 3235,
 			trash: false,
 		},
+		{
+			id: 4,
+			userName: 'shamaich',
+			userRating: 3235,
+			trash: false,
+		},
+		{
+			id: 5,
+			userName: 'shamaich',
+			userRating: 3235,
+			trash: false,
+		},
+		{
+			id: 6,
+			userName: 'shamaich',
+			userRating: 3235,
+			trash: false,
+		},
 	],
-	currentPage: 0,
-	totalPage: 0,
-	friendsPerList: 10,
+	currentPage: 1,
+	friendsPerList: 2,
 };
 
 const friendsSlice = createSlice({

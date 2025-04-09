@@ -22,8 +22,6 @@ const RepliesSentPage = () => {
 
 	const totalPage = useAppSelector(selectTotalPage);
 	const currentPageCommentsList = useAppSelector(selectCurrentPageCommentsList);
-	console.log(currentPageCommentsList);
-
 	const currentPage = useAppSelector(selectCurrentPage);
 	const userId = useAppSelector(selectUserId);
 
@@ -61,10 +59,11 @@ const RepliesSentPage = () => {
 			<h2 className='title mb--22'>Replies Sent</h2>
 
 			{/* List of sent reply items */}
-			<ul className='replies-sent-page__list mb--32'>
+			<section className='replies-sent-page__list mb--32'>
 				{/* Items in the list of sent replies */}
 				{currentPageCommentsList.map((element) => (
-					<li className='replies-sent-page__item' key={element.id}>
+					<article className='replies-sent-page__item' key={element.id}>
+						<h2 className='visually-hidden'>replies sent page item</h2>
 						{/* Element Text */}
 						<p>{element.text}</p>
 
@@ -90,41 +89,47 @@ const RepliesSentPage = () => {
 								Go to
 							</button>
 						</div>
-					</li>
+					</article>
 				))}
-			</ul>
+			</section>
 
 			{/* Pagination */}
 			<div className='button-wrapper pagination'>
 				<button
+					type='button'
 					className='button pagination__button'
-					disabled={currentPage === 1}
+					disabled={currentPage - 1 < 1}
 					onClick={() => goToFirstPage()}
 				>
 					<DblArrowLeftIcon />
 				</button>
 				<button
+					type='button'
 					className='button pagination__button '
-					disabled={currentPage === 1}
+					disabled={currentPage - 1 < 1}
 					onClick={() => goToPreviousPage()}
 				>
 					<ArrowLeftIcon />
 				</button>
 
 				{/* Page counter */}
-				<div className='pagination__counter'>{`${currentPage} / ${totalPage}`}</div>
+				<div className='pagination__counter'>{`${
+					currentPage > totalPage ? '0' : currentPage
+				} / ${totalPage}`}</div>
 
 				<button
+					type='button'
 					className='button pagination__button'
 					onClick={() => goToNextPage()}
-					disabled={currentPage === totalPage}
+					disabled={currentPage + 1 > totalPage}
 				>
 					<ArrowRightIcon />
 				</button>
 				<button
+					type='button'
 					className='button pagination__button'
 					onClick={() => goToLastPage()}
-					disabled={currentPage === totalPage}
+					disabled={currentPage + 1 > totalPage}
 				>
 					<DblArrowRightIcon />
 				</button>

@@ -34,16 +34,19 @@
 		@include index.border15
 		@include index.shadow
 		background-color: index.$c-bg-900
-		transition: 0.2s ease
 
 		/* Filter list item */
 		&__item
 			display: flex
 			align-items: center
 			justify-content: space-between
+			gap: 16px
+			& label
+				flex-grow: 1
 
 		/* Radio filter button */
 		.radio
+			flex-shrink: 0
 			position: relative
 			width: 44px
 			height: 24px
